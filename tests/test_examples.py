@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 ROOT=Path(__file__).parents[1]
-PLUGINS=("lifecycle","events","ui-api","advanced")
+PLUGINS=("lifecycle","events","ui-api","advanced","notifications","metadata","events-filter")
 
 def test_manifests_are_v1_and_unique():
     ids=[]
@@ -10,7 +10,7 @@ def test_manifests_are_v1_and_unique():
         assert data["manifest_version"]==1 and data["version"].count(".")==2
         assert data["entrypoint"]=="plugin:main"
         assert len(data["integrity"]["sha256"])==64
-        assert data["integrity"]["key_id"]=="official-example-2026"
+        assert data["integrity"]["key_id"] in {"official-example-2026","official-example-2026-additional"}
         assert data["integrity"]["signature"]
         ids.append(data["plugin_id"])
     assert len(ids)==len(set(ids))
