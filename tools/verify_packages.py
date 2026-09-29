@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import base64
-import hashlib
 import json
 from pathlib import Path
 import sys
@@ -13,8 +12,10 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
 try:
     from .publisher_registry import PublisherRegistryError, load_registry
+    from .package_format import canonical_payload_digest
 except ImportError:  # Direct script execution keeps tools independently usable.
     from publisher_registry import PublisherRegistryError, load_registry
+    from package_format import canonical_payload_digest
 
 
 def verify_package(path: Path) -> None:
@@ -25,13 +26,7 @@ def verify_package(path: Path) -> None:
             for name in archive.namelist()
             if name.startswith("payload/") and not name.endswith("/")
         }
-    digest = hashlib.sha256()
-    for name, content in sorted(files.items()):
-        digest.update(name.encode("utf-8"))
-        digest.update(b"\0")
-        digest.update(content)
-        digest.update(b"\0")
-    payload_digest = digest.hexdigest()
+    payload_digest = canonical_payload_digest(files.items())
     integrity = manifest["integrity"]
     if integrity.get("sha256") != payload_digest:
         raise PublisherRegistryError("package payload digest does not match its manifest")
