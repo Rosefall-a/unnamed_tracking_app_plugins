@@ -1,54 +1,61 @@
 # Unnamed Tracking official plugins
 
-This repository contains official, signed plugins and reference implementations for the Unnamed Tracking App Plugin API v1.
+This repository contains official demo plugins and reference implementations for the Unnamed Tracking App Plugin API v1.
 
 ## For users: getting and installing a plugin
 
-1. **Browse the examples below** and choose a plugin that provides the capability you want.
-2. **Download the `.utp` package** from the plugin repository's Releases page. Do not download a source `.py` file and rename it.
+1. Browse the plugins below and choose one that provides behavior you want to try.
+2. Download its `.utp` package from Releases. Do not rename a source `.py` file into a `.utp`.
 3. In Unnamed Tracking, open **Settings → Plugins → Install plugin**.
-4. Select the downloaded `.utp` file.
-5. Review the plugin name, version, requested permissions, dependencies, and publisher before confirming installation.
-6. Enable the plugin. The host verifies package integrity and the publisher signature before it can run.
-7. If a plugin fails repeatedly, the host can quarantine it. Review its health/error information before recovering or enabling it again.
+4. Select the `.utp` file.
+5. Review its permissions, dependencies, publisher, and version.
+6. Confirm installation and enable it.
 
-For development/testing, clone this repository and run `python tools/build_packages.py`. Generated packages are written to `dist/`.
+The three **real demo plugins** are intentionally useful, end-to-end examples:
+- **Playtime Report** reads the game library, calculates statistics, and stores a report.
+- **Recently Played Notifier** reads recent activity, formats a notification, and stores its last run.
+- **Metadata Curator** reads a plugin setting, performs a metadata search, normalizes the result, and stores a snapshot.
 
-**Security:** only install packages signed by a publisher you trust. Never grant a plugin more access than its documented capabilities require.
+The other examples remain small protocol/reference tests. They demonstrate individual API calls without pretending to be complete applications.
 
 ## Official examples
 
-| Plugin | What it demonstrates |
-| --- | --- |
-| `example.lifecycle` | Startup/readiness, settings, and namespaced persistent storage |
-| `example.events` | User-scoped event subscriptions and delivery limits |
-| `example.ui-api` | Declarative native UI and gateway API requests |
-| `example.advanced` | Optional dependencies, scoped identity, and storage |
-| `example.notifications` | Capability-scoped notification delivery |
-| `example.metadata` | Normalized game-metadata search |
-| `example.events-filter` | Explicit event-type/user filtering with a conservative rate limit |
+| Plugin | Type | What it demonstrates |
+| --- | --- | --- |
+| `example.playtime-report` | Real demo | Game-library statistics, persistent storage, native UI |
+| `example.recently-played-notifier` | Real demo | Game data + notifications + persistent state |
+| `example.metadata-curator` | Real demo | Settings + metadata search + result normalization |
+| `example.lifecycle` | Reference | Startup/readiness, settings, and storage |
+| `example.events` | Reference | User-scoped event subscriptions |
+| `example.ui-api` | Reference | Declarative UI and gateway requests |
+| `example.advanced` | Reference | Scoped identity and storage |
+| `example.notifications` | Reference | Notification capability |
+| `example.metadata` | Reference | Metadata capability |
+| `example.events-filter` | Reference | Event filtering and rate limits |
 
-Each example contains its manifest, source, and a short explanation. The plugin source is intentionally independent of the main application's Python modules.
+### What makes a real demo plugin?
+
+A real demo performs application-level work after receiving data from the host. It has logic, state transformation, and a visible or useful result. It does **not** implement the host's lifecycle, gateway, notification service, metadata service, or storage engine.
+
+That distinction is deliberate: the application provides the plugin platform; plugins provide behavior on top of it.
 
 ## For developers
 
 A plugin declares its identity, compatibility range, capabilities, permissions, dependencies, UI contributions, storage quota, and package integrity in `manifest.json`. Runtime access goes through the v1 gateway rather than direct database access, host filesystem access, or application internals.
 
-Use the examples as progressively more capable templates:
+Use the real demos as templates:
+- Start with **playtime-report** for a complete read → process → persist workflow.
+- Use **recently-played-notifier** for a plugin that combines core data with a side effect.
+- Use **metadata-curator** for configurable integration logic.
+- Use the smaller reference examples when learning one protocol feature in isolation.
 
-- Start with **lifecycle** for the minimum plugin shape.
-- Use **events-filter** when you need narrowly scoped event delivery.
-- Use **notifications** or **metadata** when implementing a provider/integration.
-- Use **ui-api** when contributing native UI.
-- Use **advanced** when you need dependencies and scoped client identity.
-
-Before publishing, run `pytest` and `python tools/build_packages.py`. CI also verifies package digests and Ed25519 signatures against the repository's trusted example publisher keys.
+For development/testing, run `pytest` and `python tools/build_packages.py`. Generated installable packages are written to `dist/`.
 
 ## Repository layout
 
-- `examples/` — official reference plugins
-- `sdk/` — tiny protocol helper used by the examples
-- `publishers/` — public keys used to verify signed examples
-- `tools/build_packages.py` — reproducible package builder
-- `tests/` — manifest/source validation
-- `dist/` — generated installable packages (created by the build)
+- `examples/` — official demo and reference plugins
+- `sdk/` — protocol helper used by plugins
+- `publishers/` — publisher verification keys
+- `tools/build_packages.py` — package builder
+- `tests/` — plugin validation tests
+- `dist/` — generated installable packages
