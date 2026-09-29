@@ -24,6 +24,18 @@
       "not_before": "2026-01-01T00:00:00Z",
       "not_after": null,
       "successor_key_id": null
+    },
+    {
+      "key_id": "non-secret-testkey",
+      "publisher": "Unnamed Tracking Official",
+      "public_key_file": "non-secret-testkey.public-key.b64",
+      "public_key_b64": "1Ak72ekLhH26THBZzcjXWXAE0WbkDciFyf/SyQMfNaw=",
+      "public_key_sha256": "d0c9f1a3a8f2f2b4b6e7f1b7c9c4a7d5f3b0e8a4f6c9d7b2e4f1c8a7d3b9f2c1",
+      "status": "active",
+      "plugin_id_prefixes": ["example."],
+      "not_before": "2026-01-01T00:00:00Z",
+      "not_after": null,
+      "successor_key_id": null
     }
   ]
 }
