@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import json
-import sys
+import os
 import time
+from pathlib import Path
 
 from sdk.plugin_protocol import request
 
@@ -10,7 +11,6 @@ CAPABILITY = "notifications.send"
 
 
 def announce_page(values: dict) -> bool:
-    webhook = str(values.get("discord_webhook", "")).strip()
     context = values.get("_plugin_context", {})
     if isinstance(context, str):
         try:
@@ -19,6 +19,12 @@ def announce_page(values: dict) -> bool:
             context = {}
     page = context.get("page_title") or context.get("page_id") or "Unknown page"
     path = context.get("path") or "/"
+    data_dir = Path(os.environ.get("PLUGIN_DATA_DIR", "/plugin-data"))
+    secret_path = data_dir / "secrets" / "discord_webhook"
+    try:
+        webhook = secret_path.read_text(encoding="utf-8").strip()
+    except OSError:
+        webhook = ""
     if not webhook:
         return False
     print(json.dumps({
@@ -29,12 +35,11 @@ def announce_page(values: dict) -> bool:
 
 
 def main() -> None:
-    # Long-lived so the manager can visibly show the running lifecycle state.
     while True:
         time.sleep(3600)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "announce":
-        raise SystemExit(0 if announce_page(json.load(sys.stdin)) else 1)
+    if len(os.sys.argv) > 1 and os.sys.argv[1] == "announce":
+        raise SystemExit(0 if announce_page(json.load(os.sys.stdin)) else 1)
     main()
