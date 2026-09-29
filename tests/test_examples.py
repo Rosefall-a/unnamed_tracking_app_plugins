@@ -88,3 +88,29 @@ def test_ui_playground_has_every_required_runtime_capability():
         item["capability"]["name"] for item in manifest["permissions"]
     } <= capability_names
     assert manifest["frontend"]["entry"] == "frontend/index.html"
+
+
+def test_package_validator_rejects_undeclared_permission(tmp_path):
+    package = tmp_path / "invalid.utp"
+    manifest = {
+        "manifest_version": 1,
+        "plugin_id": "example.invalid",
+        "name": "Invalid",
+        "version": "1.0.0",
+        "entrypoint": "plugin:main",
+        "sdk_version_range": "^1.0.0",
+        "application_version_range": "*",
+        "capabilities": [{"name": "games.read", "version": 1}],
+        "permissions": [{"capability": {"name": "plugin.storage", "version": 1}, "rationale": "bad"}],
+        "integrity": {"sha256": "0" * 64, "signature": None, "key_id": None},
+    }
+    with zipfile.ZipFile(package, "w") as archive:
+        archive.writestr("manifest.json", json.dumps(manifest))
+    import subprocess
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "tools" / "validate_packages.py"), str(package)],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode != 0
+    assert "not declared by capabilities" in result.stderr
