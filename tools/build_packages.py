@@ -34,6 +34,7 @@ DEMO_PLUGINS = (
     "playtime-report",
     "recently-played-notifier",
     "metadata-curator",
+    "ui-playground",
 )
 
 SIGNING_KEY_B64 = os.environ.get("PLUGIN_SIGNING_KEY_B64", "").strip()
