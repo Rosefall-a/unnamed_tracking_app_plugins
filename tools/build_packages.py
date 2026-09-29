@@ -12,6 +12,8 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 ROOT = Path(__file__).parents[1]
 OUT = ROOT / "dist"
 OUT.mkdir(exist_ok=True)
+for stale in OUT.glob("*.utp"):
+    stale.unlink()
 
 REFERENCE_PLUGINS = (
     "lifecycle",
