@@ -1,0 +1,24 @@
+{
+  "manifest_version": 1,
+  "plugin_id": "example.recently-played-notifier",
+  "name": "Recently Played Notifier",
+  "version": "1.0.0",
+  "description": "Creates a small notification from the most recently played games.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": "^1.0.0",
+  "application_version_range": "*",
+  "capabilities": [
+    {"name": "games.read", "version": 1},
+    {"name": "notifications.send", "version": 1},
+    {"name": "plugin.storage", "version": 1}
+  ],
+  "permissions": [
+    {"capability": {"name": "games.read", "version": 1}, "rationale": "Read recent game activity."},
+    {"capability": {"name": "notifications.send", "version": 1}, "rationale": "Notify the user about recent activity."},
+    {"capability": {"name": "plugin.storage", "version": 1}, "rationale": "Remember the last generated notification."}
+  ],
+  "dependencies": [],
+  "ui": {"settings": [], "actions": ["run"], "pages": ["main"]},
+  "storage": {"quota_mb": 1},
+  "integrity": {"sha256": "0000000000000000000000000000000000000000000000000000000000000000", "signature": "demo-signature", "key_id": "official-example-2026"}
+}
