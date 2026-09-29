@@ -3,7 +3,7 @@
   "plugin_id": "example.ui-playground",
   "name": "Plugin UI Playground",
   "version": "1.0.0",
-  "description": "Obvious UI smoke test with empty filters and Discord page announcements.",
+  "description": "Vue UI smoke test with four visible pages, filter controls, private Discord storage, and page announcements.",
   "entrypoint": "plugin:main",
   "sdk_version_range": "^1.0.0",
   "application_version_range": "*",
@@ -50,8 +50,8 @@
   },
   "integrity": {
     "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "signature": "demo-signature",
-    "key_id": "official-example-2026"
+    "signature": null,
+    "key_id": null
   },
   "frontend": {
     "entry": "frontend/index.html"

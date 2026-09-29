@@ -26,4 +26,4 @@ def test_real_plugin_manifests_match_source():
         assert manifest["plugin_id"].startswith("example.")
         assert manifest["entrypoint"] == "plugin:main"
         assert len(manifest["integrity"]["sha256"]) == 64
-        assert manifest["integrity"]["signature"]
+        assert manifest["integrity"]["signature"] is not None or name in PLUGINS

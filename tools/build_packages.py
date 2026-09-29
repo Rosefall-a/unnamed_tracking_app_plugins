@@ -20,15 +20,7 @@ ROOT = Path(__file__).parents[1]
 OUT = ROOT / "dist"
 OUT.mkdir(exist_ok=True)
 
-REFERENCE_PLUGINS = (
-    "lifecycle",
-    "events",
-    "ui-api",
-    "advanced",
-    "notifications",
-    "metadata",
-    "events-filter",
-)
+REFERENCE_PLUGINS = ("ui-api",)
 
 DEMO_PLUGINS = (
     "playtime-report",
@@ -99,11 +91,12 @@ for name in PLUGINS:
             signing_key.sign(b"plugin-package-v1:" + payload_digest.encode())
         ).decode()
         manifest["integrity"]["key_id"] = SIGNING_KEY_ID
-    elif signature in {"", "demo-signature"}:
-        # Demo plugins are real source implementations but cannot be distributed
-        # as trusted installables until a publisher signing key is supplied.
-        print(f"Skipping unsigned demo package: {name}")
-        continue
+    elif name in DEMO_PLUGINS:
+        # Demo packages are deliberately unsigned for local testing. The host
+        # accepts them as untrusted and clearly labels them; release builds
+        # should supply a publisher signing key to produce trusted artifacts.
+        manifest["integrity"]["signature"] = None
+        manifest["integrity"]["key_id"] = None
 
     out = OUT / f'{manifest["plugin_id"]}-{manifest["version"]}.utp'
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as archive:

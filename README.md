@@ -11,13 +11,13 @@ This repository contains official demo plugins and reference implementations for
 5. Review its permissions, dependencies, publisher, and version.
 6. Confirm installation and enable it.
 
-The four **real demo plugins** are intentionally useful, end-to-end examples. Their source is included here, but they are not emitted as installable `.utp` packages until a trusted publisher signing key is supplied:
+The four **real demo plugins** are intentionally useful, end-to-end examples. Demo packages are buildable as explicitly **untrusted** `.utp` files for local testing; release builds can sign them with the configured publisher key:
 - **Playtime Report** reads the game library, calculates statistics, and stores a report.
 - **Recently Played Notifier** reads recent activity, formats a notification, and stores its last run.
 - **Metadata Curator** reads a plugin setting, performs a metadata search, normalizes the result, and stores a snapshot.
 - **Plugin UI Playground** demonstrates a real Vue 3 frontend, lifecycle state, private plugin storage, and Discord page announcements.
 
-The other examples remain small protocol/reference tests. They demonstrate individual API calls without pretending to be complete applications.
+`example.ui-api` is the only small protocol/reference example retained. The older lifecycle/events/advanced/notifications/metadata/event-filter examples were removed because they duplicated platform internals rather than demonstrating useful plugin behavior.
 
 ## Official examples
 
@@ -27,13 +27,7 @@ The other examples remain small protocol/reference tests. They demonstrate indiv
 | `example.recently-played-notifier` | Real demo | Game data + notifications + persistent state |
 | `example.metadata-curator` | Real demo | Settings + metadata search + result normalization |
 | `example.ui-playground` | Real demo | Vue 3 frontend + private storage + Discord page announcements |
-| `example.lifecycle` | Reference | Startup/readiness, settings, and storage |
-| `example.events` | Reference | User-scoped event subscriptions |
 | `example.ui-api` | Reference | Declarative UI and gateway requests |
-| `example.advanced` | Reference | Scoped identity and storage |
-| `example.notifications` | Reference | Notification capability |
-| `example.metadata` | Reference | Metadata capability |
-| `example.events-filter` | Reference | Event filtering and rate limits |
 
 ### What makes a real demo plugin?
 
@@ -53,7 +47,7 @@ Use the real demos as templates:
 - Start with **playtime-report** for a complete read → process → persist workflow.
 - Use **recently-played-notifier** for a plugin that combines core data with a side effect.
 - Use **metadata-curator** for configurable integration logic.
-- Use the smaller reference examples when learning one protocol feature in isolation.
+- Use **ui-api** when learning the declarative UI/gateway contract in isolation.
 
 For development/testing, run `pytest`, `python tools/build_packages.py`, and `python tools/verify_packages.py dist/*.utp`. Without a signing key, the builder preserves the checked-in signed `.utp` artifacts and does not regenerate them, because changing the SDK would invalidate their existing signatures. To build/re-sign the reference and demo plugins, provide `PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for an active key in `publishers/registry.json`. Never commit the private key. The registry binds every public key to its publisher, status, permitted plugin-ID prefixes and source file; release builds fail closed if the signer is missing, inactive, unregistered or outside scope.
 
@@ -71,4 +65,4 @@ For key rotation, add and review the successor public key before it signs releas
 
 ### Currently installable packages
 
-The repository currently ships signed `.utp` artifacts for the four reference plugins: **lifecycle**, **events**, **ui-api**, and **advanced**. These are the packages the application can accept immediately. The three real demos are source-complete and tested, but release packaging is intentionally gated on publisher signing.
+The repository retains the signed `example.ui-api` reference package. The four real demos, including `example.ui-playground`, can be built as unsigned local-test packages; signed release artifacts should be produced with the publisher key.
