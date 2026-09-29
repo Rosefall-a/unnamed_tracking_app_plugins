@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 import subprocess
 import sys
-import tempfile
 
 ROOT = Path(__file__).parents[1]
 PLUGINS = (
@@ -65,7 +64,7 @@ def test_ui_playground_action_never_echoes_secret(tmp_path: Path) -> None:
 
     result = subprocess.run(
         [sys.executable, str(ROOT / "examples" / "ui-playground" / "plugin.py"), "announce"],
-        input=json.dumps({"page_title": "Overview", "path": "/plugins/example.ui-playground"}) + "\n",
+        input=json.dumps({"_plugin_context": {"page_title": "Overview", "path": "/plugins/example.ui-playground"}}) + "\n",
         text=True,
         capture_output=True,
         env=monkeypatch_env,
@@ -74,6 +73,7 @@ def test_ui_playground_action_never_echoes_secret(tmp_path: Path) -> None:
     assert result.returncode == 0
     assert "SECRET" not in result.stdout
     payload = json.loads(result.stdout)
+    assert payload["discord"] is True
     assert "content" in payload
 
 
