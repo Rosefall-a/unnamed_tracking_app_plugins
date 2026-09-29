@@ -43,3 +43,16 @@ def test_real_plugin_manifests_declare_required_capabilities():
         granted = {item["capability"]["name"] for item in data["permissions"]}
         assert capabilities <= declared
         assert capabilities <= granted
+
+
+def test_demo_manifests_do_not_claim_fake_signatures():
+    for name in ("playtime-report", "recently-played-notifier", "metadata-curator", "ui-playground"):
+        data = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        assert data["integrity"]["signature"] is None
+        assert data["integrity"]["key_id"] is None
+
+
+def test_ui_playground_manifest_points_to_real_frontend_entry():
+    data = json.loads((ROOT / "examples" / "ui-playground" / "manifest.json").read_text())
+    assert data["frontend"]["entry"] == "frontend/index.html"
+    assert (ROOT / "examples" / "ui-playground" / "frontend" / "index.html").is_file()
