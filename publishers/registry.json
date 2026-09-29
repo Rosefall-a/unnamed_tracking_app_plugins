@@ -22,19 +22,6 @@
       "public_key_b64": "WhB68DO1RI9EgdknsvW5s+3QqEvwShxfL0fCcIwR0/s=",
       "public_key_sha256": "65dcdfba7de21c9238b39d8a4d5f1237d9664894566542ac435186691bedaada",
       "status": "active",
-      "plugin_id_prefixes": ["example."],
-      "not_before": "2026-01-01T00:00:00Z",
-      "not_after": null,
-      "successor_key_id": null
-    },
-    {
-      "key_id": "non-secret-testkey",
-      "publisher": "Unnamed Tracking Official",
-      "public_key_file": "non-secret-testkey.public-key.b64",
-      "public_key_b64": "1Ak72ekLhH26THBZzcjXWXAE0WbkDciFyf/SyQMfNaw=",
-      "public_key_sha256": "2ebaa98408ef66adc15e5d7983900e50b6cdabc38ac076026ebaea05f2335860",
-      "status": "active",
-      "plugin_id_prefixes": ["example."],
       "plugin_id_prefixes": [
         "example."
       ],
