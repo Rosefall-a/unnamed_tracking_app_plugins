@@ -1,0 +1,36 @@
+name: Example plugin checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip pytest
+      - run: pytest
+      - run: python tools/build_packages.py
+      - run: |
+          python - <<'PY'
+          import hashlib, json, zipfile
+          from pathlib import Path
+          for package in sorted(Path("dist").glob("*.utp")):
+              with zipfile.ZipFile(package) as archive:
+                  manifest=json.loads(archive.read("manifest.json"))
+                  files={}
+                  for name in archive.namelist():
+                      if name.startswith("payload/") and not name.endswith("/"):
+                          files[name.removeprefix("payload/")]=archive.read(name)
+              digest=hashlib.sha256()
+              for name,data in sorted(files.items()):
+                  digest.update(name.encode()); digest.update(b"\\0"); digest.update(data); digest.update(b"\\0")
+              assert digest.hexdigest() == manifest["integrity"]["sha256"]
+              assert manifest["integrity"]["signature"]
+              assert manifest["integrity"]["key_id"] == "official-example-2026"
+          PY
