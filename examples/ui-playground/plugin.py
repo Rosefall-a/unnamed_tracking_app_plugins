@@ -27,8 +27,9 @@ def announce_page(values: dict) -> bool:
         webhook = ""
     if not webhook:
         return False
+    # The webhook is only used as a private presence check in this demo.
+    # Never echo the secret into the runtime response/log stream.
     print(json.dumps({
-        "discord_webhook": webhook,
         "content": f"Unnamed Tracking: a user is viewing **{page}** ({path}).",
     }), flush=True)
     return True
