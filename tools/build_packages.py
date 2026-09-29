@@ -64,9 +64,10 @@ if signing_key is not None:
     for stale in OUT.glob("*.utp"):
         stale.unlink()
 else:
-    # Existing checked-in packages are already signed artifacts. Do not rebuild
-    # them with a changed SDK and silently invalidate their signatures.
-    PLUGINS = ()
+    # Local development builds intentionally produce unsigned demo packages.
+    # They are accepted by the host only after the user confirms the
+    # untrusted-install prompt. Reference artifacts remain untouched.
+    PLUGINS = DEMO_PLUGINS
 
 for name in PLUGINS:
     src = ROOT / "examples" / name

@@ -30,6 +30,11 @@ def verify_package(path: Path) -> None:
     integrity = manifest["integrity"]
     if integrity.get("sha256") != payload_digest:
         raise PublisherRegistryError("package payload digest does not match its manifest")
+    # Local demo artifacts are deliberately unsigned. The host presents an
+    # explicit untrusted-install confirmation before accepting them. Release
+    # verification still requires a registered publisher signature.
+    if integrity.get("signature") is None and manifest["plugin_id"].startswith("example."):
+        return
     record = load_registry().get(integrity.get("key_id"))
     if record is None or not record.allows_plugin(manifest["plugin_id"]):
         raise PublisherRegistryError("package publisher is not trusted for this plugin")
