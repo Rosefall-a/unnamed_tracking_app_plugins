@@ -21,7 +21,10 @@ jobs:
           import base64, hashlib, json, zipfile
           from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
           from pathlib import Path
-          public=Ed25519PublicKey.from_public_bytes(base64.b64decode(Path("publishers/official-example-2026.public-key.b64").read_text()))
+          keys={
+              "official-example-2026": Ed25519PublicKey.from_public_bytes(base64.b64decode(Path("publishers/official-example-2026.public-key.b64").read_text())),
+              "official-example-2026-additional": Ed25519PublicKey.from_public_bytes(base64.b64decode(Path("publishers/official-example-2026-additional.public-key.b64").read_text())),
+          }
           for package in sorted(Path("dist").glob("*.utp")):
               with zipfile.ZipFile(package) as archive:
                   manifest=json.loads(archive.read("manifest.json"))
@@ -31,9 +34,10 @@ jobs:
                           files[name.removeprefix("payload/")]=archive.read(name)
               digest=hashlib.sha256()
               for name,data in sorted(files.items()):
-                  digest.update(name.encode()); digest.update(b"\\0"); digest.update(data); digest.update(b"\\0")
+                  digest.update(name.encode()); digest.update(b"\0"); digest.update(data); digest.update(b"\0")
               assert digest.hexdigest() == manifest["integrity"]["sha256"]
               assert manifest["integrity"]["signature"]
-              assert manifest["integrity"]["key_id"] == "official-example-2026"
-              public.verify(base64.b64decode(manifest["integrity"]["signature"]), b"plugin-package-v1:" + digest.hexdigest().encode())
+              key_id = manifest["integrity"]["key_id"]
+              assert key_id in keys
+              keys[key_id].verify(base64.b64decode(manifest["integrity"]["signature"]), b"plugin-package-v1:" + digest.hexdigest().encode())
           PY
