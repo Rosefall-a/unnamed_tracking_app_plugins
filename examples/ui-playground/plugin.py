@@ -19,17 +19,10 @@ def announce_page(values: dict) -> bool:
             context = {}
     page = context.get("page_title") or context.get("page_id") or "Unknown page"
     path = context.get("path") or "/"
-    data_dir = Path(os.environ.get("PLUGIN_DATA_DIR", "/plugin-data"))
-    secret_path = data_dir / "secrets" / "discord_webhook"
-    try:
-        webhook = secret_path.read_text(encoding="utf-8").strip()
-    except OSError:
-        webhook = ""
-    if not webhook:
-        return False
-    # The webhook is only used as a private presence check in this demo.
-    # Never echo the secret into the runtime response/log stream.
+    # Ask the host runtime to deliver the message. The runtime reads the
+    # private webhook from plugin storage; the plugin never echoes the secret.
     print(json.dumps({
+        "discord": True,
         "content": f"Unnamed Tracking: a user is viewing **{page}** ({path}).",
     }), flush=True)
     return True
