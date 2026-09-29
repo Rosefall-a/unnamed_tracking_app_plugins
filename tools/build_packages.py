@@ -12,8 +12,6 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 ROOT = Path(__file__).parents[1]
 OUT = ROOT / "dist"
 OUT.mkdir(exist_ok=True)
-for stale in OUT.glob("*.utp"):
-    stale.unlink()
 
 REFERENCE_PLUGINS = (
     "lifecycle",
@@ -45,6 +43,14 @@ else:
     signing_key = None
 
 PLUGINS = REFERENCE_PLUGINS + DEMO_PLUGINS
+
+if signing_key is not None:
+    for stale in OUT.glob("*.utp"):
+        stale.unlink()
+else:
+    # Existing checked-in packages are already signed artifacts. Do not rebuild
+    # them with a changed SDK and silently invalidate their signatures.
+    PLUGINS = ()
 
 for name in PLUGINS:
     src = ROOT / "examples" / name
