@@ -48,7 +48,8 @@ else:
 if REQUIRE_SIGNING and signing_key is None:
     raise SystemExit("a release build requires PLUGIN_SIGNING_KEY_B64 and PLUGIN_SIGNING_KEY_ID")
 
-PLUGINS = REFERENCE_PLUGINS + DEMO_PLUGINS
+LOCAL_PLUGINS = REFERENCE_PLUGINS + DEMO_PLUGINS
+PLUGINS = LOCAL_PLUGINS
 
 if signing_key is not None:
     try:
@@ -64,10 +65,10 @@ if signing_key is not None:
     for stale in OUT.glob("*.utp"):
         stale.unlink()
 else:
-    # Local development builds intentionally produce unsigned demo packages.
-    # They are accepted by the host only after the user confirms the
-    # untrusted-install prompt. Reference artifacts remain untouched.
-    PLUGINS = DEMO_PLUGINS
+    # Local development builds intentionally produce unsigned packages for
+    # every example plugin so every shipped package is rebuilt and exercised.
+    # The host accepts them only after the explicit untrusted-install prompt.
+    PLUGINS = LOCAL_PLUGINS
 
 for name in PLUGINS:
     src = ROOT / "examples" / name
@@ -92,8 +93,8 @@ for name in PLUGINS:
             signing_key.sign(b"plugin-package-v1:" + payload_digest.encode())
         ).decode()
         manifest["integrity"]["key_id"] = SIGNING_KEY_ID
-    elif name in DEMO_PLUGINS:
-        # Demo packages are deliberately unsigned for local testing. The host
+    elif name in LOCAL_PLUGINS:
+        # Local packages are deliberately unsigned for testing. The host
         # accepts them as untrusted and clearly labels them; release builds
         # should supply a publisher signing key to produce trusted artifacts.
         manifest["integrity"]["signature"] = None
