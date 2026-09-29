@@ -65,3 +65,16 @@ def test_every_example_has_an_executable_entrypoint_source():
         assert module == "plugin"
         assert function == "main"
         assert (ROOT / "examples" / name / "plugin.py").is_file()
+
+
+def test_permissions_are_declared_capabilities():
+    for name in ("ui-api", "playtime-report", "recently-played-notifier", "metadata-curator", "ui-playground"):
+        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        capabilities = {
+            (item["name"], item["version"]) for item in manifest.get("capabilities", [])
+        }
+        for permission in manifest.get("permissions", []):
+            capability = permission["capability"]
+            assert (capability["name"], capability["version"]) in capabilities, (
+                f"{name}: permission {capability['name']} is not declared as a capability"
+            )
