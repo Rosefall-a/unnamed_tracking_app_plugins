@@ -78,3 +78,13 @@ def test_permissions_are_declared_capabilities():
             assert (capability["name"], capability["version"]) in capabilities, (
                 f"{name}: permission {capability['name']} is not declared as a capability"
             )
+
+
+def test_ui_playground_has_every_required_runtime_capability():
+    manifest = json.loads((ROOT / "examples" / "ui-playground" / "manifest.json").read_text())
+    capability_names = {item["name"] for item in manifest["capabilities"]}
+    assert {"notifications.send", "plugin.storage"} <= capability_names
+    assert {
+        item["capability"]["name"] for item in manifest["permissions"]
+    } <= capability_names
+    assert manifest["frontend"]["entry"] == "frontend/index.html"
