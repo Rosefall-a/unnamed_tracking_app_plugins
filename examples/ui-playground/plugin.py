@@ -4,6 +4,8 @@ import json
 import sys
 import time
 
+CAPABILITY = "notifications.send"
+
 
 def announce_page(values: dict) -> bool:
     webhook = str(values.get("discord_webhook", "")).strip()
