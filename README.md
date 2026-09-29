@@ -15,7 +15,7 @@ The four **real demo plugins** are intentionally useful, end-to-end examples. Th
 - **Playtime Report** reads the game library, calculates statistics, and stores a report.
 - **Recently Played Notifier** reads recent activity, formats a notification, and stores its last run.
 - **Metadata Curator** reads a plugin setting, performs a metadata search, normalizes the result, and stores a snapshot.
-- **Plugin UI Playground** demonstrates native pages, empty filter controls, lifecycle state, and Discord page announcements.
+- **Plugin UI Playground** demonstrates a real Vue 3 frontend, lifecycle state, private plugin storage, and Discord page announcements.
 
 The other examples remain small protocol/reference tests. They demonstrate individual API calls without pretending to be complete applications.
 
@@ -26,7 +26,7 @@ The other examples remain small protocol/reference tests. They demonstrate indiv
 | `example.playtime-report` | Real demo | Game-library statistics, persistent storage, native UI |
 | `example.recently-played-notifier` | Real demo | Game data + notifications + persistent state |
 | `example.metadata-curator` | Real demo | Settings + metadata search + result normalization |
-| `example.ui-playground` | Real demo | Native pages + empty filters + Discord page announcements |
+| `example.ui-playground` | Real demo | Vue 3 frontend + private storage + Discord page announcements |
 | `example.lifecycle` | Reference | Startup/readiness, settings, and storage |
 | `example.events` | Reference | User-scoped event subscriptions |
 | `example.ui-api` | Reference | Declarative UI and gateway requests |
@@ -43,7 +43,11 @@ That distinction is deliberate: the application provides the plugin platform; pl
 
 ## For developers
 
-A plugin declares its identity, compatibility range, capabilities, permissions, dependencies, UI contributions, storage quota, and package integrity in `manifest.json`. Runtime access goes through the v1 gateway rather than direct database access, host filesystem access, or application internals.
+A plugin declares its identity, compatibility range, capabilities, permissions, dependencies, UI contributions, storage quota, optional frontend bundle, and package integrity in `manifest.json`. Runtime access goes through the v1 gateway rather than direct database access, host filesystem access, or application internals.
+
+### Plugin frontends
+
+Plugins may ship a static `frontend/` bundle. The host serves that bundle inside a sandboxed iframe, so a plugin can ship a complete Vue/Vite application without being able to modify the host Vue application or access its DOM. The frontend communicates with the host through a small `postMessage` bridge for approved operations such as saving settings, storing secrets, and running declared plugin actions. Production plugins should bundle their frontend dependencies; the UI Playground uses a pinned Vue CDN dependency only to keep the example source small.
 
 Use the real demos as templates:
 - Start with **playtime-report** for a complete read → process → persist workflow.
