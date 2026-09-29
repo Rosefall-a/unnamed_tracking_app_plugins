@@ -35,9 +35,6 @@
       "public_key_sha256": "2ebaa98408ef66adc15e5d7983900e50b6cdabc38ac076026ebaea05f2335860",
       "status": "active",
       "plugin_id_prefixes": ["example."],
-      "plugin_id_prefixes": [
-        "example."
-      ],
       "not_before": "2026-01-01T00:00:00Z",
       "not_after": null,
       "successor_key_id": null

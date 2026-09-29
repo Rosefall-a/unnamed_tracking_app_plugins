@@ -84,6 +84,10 @@ for name in PLUGINS:
     }
     if (src / "ui.json").is_file():
         files["ui.json"] = (src / "ui.json").read_bytes()
+    frontend_root = src / "frontend"
+    if frontend_root.is_dir():
+        for frontend_file in sorted(p for p in frontend_root.rglob("*") if p.is_file()):
+            files["frontend/" + frontend_file.relative_to(frontend_root).as_posix()] = frontend_file.read_bytes()
 
     manifest = json.loads((src / "manifest.json").read_text())
     payload_digest = canonical_payload_digest(files.items())
