@@ -12,6 +12,11 @@ CAPABILITY = "notifications.send"
 def announce_page(values: dict) -> bool:
     webhook = str(values.get("discord_webhook", "")).strip()
     context = values.get("_plugin_context", {})
+    if isinstance(context, str):
+        try:
+            context = json.loads(context)
+        except json.JSONDecodeError:
+            context = {}
     page = context.get("page_title") or context.get("page_id") or "Unknown page"
     path = context.get("path") or "/"
     if not webhook:
