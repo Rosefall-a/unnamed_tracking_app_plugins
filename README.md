@@ -49,7 +49,7 @@ Use the real demos as templates:
 - Use **metadata-curator** for configurable integration logic.
 - Use **ui-api** when learning the declarative UI/gateway contract in isolation.
 
-For development/testing, run `pytest`, `python tools/build_packages.py`, `python tools/verify_packages.py dist/*.utp`, and `python tools/validate_packages.py dist/*.utp`. A normal development build deliberately produces fresh unsigned packages for the four real demo plugins so their current source, including the UI Playground frontend, is exercised by CI. Release builds use `PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for an active key in `publishers/registry.json`; they rebuild every example package and fail closed if the signer is missing, inactive, unregistered or outside scope. Never commit the private key.
+For development/testing, run `pytest`, `python tools/build_packages.py`, `python tools/verify_packages.py dist/*.utp`, and `python tools/validate_packages.py dist/*.utp`. A normal development build deliberately produces fresh unsigned packages for every example plugin, including the reference UI/API example and the UI Playground frontend, so the complete shipped example set is exercised by CI. Release builds use `PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for an active key in `publishers/registry.json`; they rebuild every example package and fail closed if the signer is missing, inactive, unregistered or outside scope. Never commit the private key.
 
 For key rotation, add and review the successor public key before it signs releases, retain the predecessor as `retiring` only for the approved overlap, then mark it `revoked`. A revoked key must not be used to produce a release. Publish the matching reviewed registry to the host deployment before switching release signing, and never alter historical release artifacts to simulate a rotation.
 
@@ -65,4 +65,4 @@ For key rotation, add and review the successor public key before it signs releas
 
 ### Currently installable packages
 
-The repository retains the signed `example.ui-api` reference package. The four real demos, including `example.ui-playground`, can be built as unsigned local-test packages; signed release artifacts should be produced with the publisher key.
+All five example plugins are rebuilt as unsigned local-test packages during normal development CI; signed release artifacts should be produced with the publisher key.
