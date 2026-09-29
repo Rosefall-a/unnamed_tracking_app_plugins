@@ -5,7 +5,7 @@ ROOT = Path(__file__).parents[1]
 PLUGINS = (
     "lifecycle", "events", "ui-api", "advanced", "notifications",
     "metadata", "events-filter", "playtime-report",
-    "recently-played-notifier", "metadata-curator",
+    "recently-played-notifier", "metadata-curator", "ui-playground",
 )
 
 
@@ -29,7 +29,7 @@ def test_plugins_do_not_import_application_source():
 
 
 def test_real_plugins_contain_application_logic():
-    for name in ("playtime-report", "recently-played-notifier", "metadata-curator"):
+    for name in ("playtime-report", "recently-played-notifier", "metadata-curator", "ui-playground"):
         source = (ROOT / "examples" / name / "plugin.py").read_text()
         assert len(source.splitlines()) >= 30
 
@@ -39,6 +39,7 @@ def test_real_plugin_manifests_declare_required_capabilities():
         "playtime-report": {"games.read", "plugin.storage"},
         "recently-played-notifier": {"games.read", "notifications.send", "plugin.storage"},
         "metadata-curator": {"games.read", "plugin.settings", "plugin.storage"},
+        "ui-playground": {"notifications.send"},
     }
     for name, capabilities in expected.items():
         data = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
