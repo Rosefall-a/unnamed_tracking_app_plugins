@@ -11,6 +11,10 @@
     {
       "name": "notifications.send",
       "version": 1
+    },
+    {
+      "name": "plugin.storage",
+      "version": 1
     }
   ],
   "permissions": [
