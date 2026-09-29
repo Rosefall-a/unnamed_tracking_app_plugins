@@ -49,7 +49,9 @@ Use the real demos as templates:
 - Use **metadata-curator** for configurable integration logic.
 - Use the smaller reference examples when learning one protocol feature in isolation.
 
-For development/testing, run `pytest` and `python tools/build_packages.py`. Without a signing key, the builder preserves the checked-in signed `.utp` artifacts and does not regenerate them, because changing the SDK would invalidate their existing signatures. To build/re-sign the reference and demo plugins, provide `PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for a key whose public key is already trusted by the application. Never commit the private key.
+For development/testing, run `pytest`, `python tools/build_packages.py`, and `python tools/verify_packages.py dist/*.utp`. Without a signing key, the builder preserves the checked-in signed `.utp` artifacts and does not regenerate them, because changing the SDK would invalidate their existing signatures. To build/re-sign the reference and demo plugins, provide `PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for an active key in `publishers/registry.json`. Never commit the private key. The registry binds every public key to its publisher, status, permitted plugin-ID prefixes and source file; release builds fail closed if the signer is missing, inactive, unregistered or outside scope.
+
+For key rotation, add and review the successor public key before it signs releases, retain the predecessor as `retiring` only for the approved overlap, then mark it `revoked`. A revoked key must not be used to produce a release. Publish the matching reviewed registry to the host deployment before switching release signing, and never alter historical release artifacts to simulate a rotation.
 
 ## Repository layout
 

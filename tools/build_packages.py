@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import argparse
 import hashlib
 import json
 import os
@@ -8,6 +9,11 @@ import zipfile
 from pathlib import Path
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+try:
+    from .publisher_registry import PublisherRegistryError, release_signer
+except ImportError:  # Direct script execution keeps tools independently usable.
+    from publisher_registry import PublisherRegistryError, release_signer
 
 ROOT = Path(__file__).parents[1]
 OUT = ROOT / "dist"
@@ -31,6 +37,9 @@ DEMO_PLUGINS = (
 
 SIGNING_KEY_B64 = os.environ.get("PLUGIN_SIGNING_KEY_B64", "").strip()
 SIGNING_KEY_ID = os.environ.get("PLUGIN_SIGNING_KEY_ID", "").strip()
+argument_parser = argparse.ArgumentParser(add_help=False)
+argument_parser.add_argument("--require-signing", action="store_true")
+REQUIRE_SIGNING = argument_parser.parse_known_args()[0].require_signing
 
 if SIGNING_KEY_B64:
     try:
@@ -42,7 +51,20 @@ if SIGNING_KEY_B64:
 else:
     signing_key = None
 
+if REQUIRE_SIGNING and signing_key is None:
+    raise SystemExit("a release build requires PLUGIN_SIGNING_KEY_B64 and PLUGIN_SIGNING_KEY_ID")
+
 PLUGINS = REFERENCE_PLUGINS + DEMO_PLUGINS
+
+if signing_key is not None:
+    try:
+        plugin_ids = tuple(
+            json.loads((ROOT / "examples" / name / "manifest.json").read_text())["plugin_id"]
+            for name in PLUGINS
+        )
+        release_signer(SIGNING_KEY_ID, plugin_ids, signing_key.public_key().public_bytes_raw())
+    except PublisherRegistryError as exc:
+        raise SystemExit(str(exc)) from exc
 
 if signing_key is not None:
     for stale in OUT.glob("*.utp"):

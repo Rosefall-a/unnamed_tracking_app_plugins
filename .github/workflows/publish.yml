@@ -19,7 +19,9 @@ jobs:
         env:
           PLUGIN_SIGNING_KEY_B64: ${{ secrets.PLUGIN_SIGNING_KEY_B64 }}
           PLUGIN_SIGNING_KEY_ID: ${{ secrets.PLUGIN_SIGNING_KEY_ID }}
-        run: python tools/build_packages.py
+        run: python tools/build_packages.py --require-signing
+      - name: Verify signed packages against publisher registry
+        run: python tools/verify_packages.py dist/*.utp
       - name: Upload packages to release
         if: github.event_name == 'release'
         env:
