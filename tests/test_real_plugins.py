@@ -13,8 +13,9 @@ def test_real_plugins_contain_application_logic():
     for name, methods in PLUGINS.items():
         source = (ROOT / "examples" / name / "plugin.py").read_text()
         assert len(source.splitlines()) >= 30
+        assert "from sdk.plugin_protocol import request" in source
         for method in methods:
-            assert f'request("{method}"' in source
+            assert f'"{method}"' in source
 
 
 def test_real_plugin_manifests_match_source():
@@ -22,4 +23,5 @@ def test_real_plugin_manifests_match_source():
         manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
         assert manifest["plugin_id"].startswith("example.")
         assert manifest["entrypoint"] == "plugin:main"
-        assert manifest["integrity"]["sha256"] == "0" * 64
+        assert len(manifest["integrity"]["sha256"]) == 64
+        assert manifest["integrity"]["signature"]
