@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "plugin_id": "example.playtime-report",
+  "title": "Playtime Report",
+  "pages": [
+    {
+      "id": "report",
+      "title": "Playtime Report",
+      "components": [
+        {"type": "text", "text": "Generates a playtime summary from the current library."},
+        {"type": "action", "action_id": "refresh", "label": "Refresh report"}
+      ]
+    }
+  ],
+  "settings": [],
+  "actions": [{"id": "refresh", "label": "Refresh report"}]
+}
