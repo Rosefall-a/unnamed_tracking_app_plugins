@@ -2,7 +2,7 @@ from __future__ import annotations
 import hashlib,json,zipfile
 from pathlib import Path
 ROOT=Path(__file__).parents[1]; OUT=ROOT/"dist"; OUT.mkdir(exist_ok=True)
-for name in ("lifecycle","events","ui-api","advanced"):
+for name in ("lifecycle","events","ui-api","advanced","notifications","metadata","events-filter"):
     src=ROOT/"examples"/name; files={"plugin.py":(src/"plugin.py").read_bytes(),"sdk/plugin_protocol.py":(ROOT/"sdk/plugin_protocol.py").read_bytes()}
     d=hashlib.sha256()
     for path,data in sorted(files.items()): d.update(path.encode()); d.update(b"\0"); d.update(data); d.update(b"\0")
