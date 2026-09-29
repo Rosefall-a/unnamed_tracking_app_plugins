@@ -49,7 +49,7 @@ Use the real demos as templates:
 - Use **metadata-curator** for configurable integration logic.
 - Use the smaller reference examples when learning one protocol feature in isolation.
 
-For development/testing, run `pytest` and `python tools/build_packages.py`. The builder emits only trusted signed packages by default, so the three demo sources are skipped until signing is configured. To build the demos as installable packages, provide `PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for a key whose public key is already trusted by the application. Never commit the private key.
+For development/testing, run `pytest` and `python tools/build_packages.py`. Without a signing key, the builder preserves the checked-in signed `.utp` artifacts and does not regenerate them, because changing the SDK would invalidate their existing signatures. To build/re-sign the reference and demo plugins, provide `PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for a key whose public key is already trusted by the application. Never commit the private key.
 
 ## Repository layout
 
