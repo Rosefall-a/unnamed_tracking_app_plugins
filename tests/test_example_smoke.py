@@ -8,6 +8,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).parents[1]
+sys.path.insert(0, str(ROOT))
 PLUGINS = (
     "playtime-report",
     "recently-played-notifier",
