@@ -62,6 +62,7 @@ def test_ui_playground_action_never_echoes_secret(tmp_path: Path) -> None:
     (data_dir / "discord_webhook").write_text("https://discord.example/SECRET", encoding="utf-8")
     monkeypatch_env = os.environ.copy()
     monkeypatch_env["PLUGIN_DATA_DIR"] = str(data_dir.parent)
+    monkeypatch_env["PYTHONPATH"] = str(ROOT) + os.pathsep + monkeypatch_env.get("PYTHONPATH", "")
 
     result = subprocess.run(
         [sys.executable, str(ROOT / "examples" / "ui-playground" / "plugin.py"), "announce"],
