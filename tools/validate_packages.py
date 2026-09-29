@@ -17,6 +17,24 @@ def validate_package(path: Path) -> None:
             if name.startswith("payload/") and not name.endswith("/")
         }
 
+    capabilities = {
+        (item.get("name"), item.get("version"))
+        for item in manifest.get("capabilities", [])
+        if isinstance(item, dict)
+    }
+    for permission in manifest.get("permissions", []):
+        if not isinstance(permission, dict):
+            raise ValueError(f"{path.name}: permission declaration must be an object")
+        capability = permission.get("capability")
+        if not isinstance(capability, dict):
+            raise ValueError(f"{path.name}: permission capability must be an object")
+        key = (capability.get("name"), capability.get("version"))
+        if key not in capabilities:
+            raise ValueError(
+                f"{path.name}: permission {capability.get('name')!r} v{capability.get('version')!r} "
+                "is not declared by capabilities"
+            )
+
     frontend = manifest.get("frontend")
     if frontend is None:
         return
