@@ -8,17 +8,60 @@
   "sdk_version_range": "^1.0.0",
   "application_version_range": "*",
   "capabilities": [
-    {"name": "games.read", "version": 1},
-    {"name": "plugin.settings", "version": 1},
-    {"name": "plugin.storage", "version": 1}
+    {
+      "name": "games.read",
+      "version": 1
+    },
+    {
+      "name": "plugin.settings",
+      "version": 1
+    },
+    {
+      "name": "plugin.storage",
+      "version": 1
+    }
   ],
   "permissions": [
-    {"capability": {"name": "games.read", "version": 1}, "rationale": "Search game metadata."},
-    {"capability": {"name": "plugin.settings", "version": 1}, "rationale": "Read the configured search query."},
-    {"capability": {"name": "plugin.storage", "version": 1}, "rationale": "Store the latest normalized search results."}
+    {
+      "capability": {
+        "name": "games.read",
+        "version": 1
+      },
+      "rationale": "Search game metadata."
+    },
+    {
+      "capability": {
+        "name": "plugin.settings",
+        "version": 1
+      },
+      "rationale": "Read the configured search query."
+    },
+    {
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      },
+      "rationale": "Store the latest normalized search results."
+    }
   ],
   "dependencies": [],
-  "ui": {"settings": ["query"], "actions": ["search"], "pages": ["search"]},
-  "storage": {"quota_mb": 2},
-  "integrity": {"sha256": "0000000000000000000000000000000000000000000000000000000000000000", "signature": "demo-signature", "key_id": "official-example-2026"}
+  "ui": {
+    "settings": [
+      "query"
+    ],
+    "actions": [
+      "search"
+    ],
+    "pages": [
+      "search"
+    ]
+  },
+  "storage": {
+    "quota_mb": 2
+  },
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null,
+    "key_id": null
+  }
 }
