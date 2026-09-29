@@ -11,7 +11,7 @@ This repository contains official demo plugins and reference implementations for
 5. Review its permissions, dependencies, publisher, and version.
 6. Confirm installation and enable it.
 
-The three **real demo plugins** are intentionally useful, end-to-end examples:
+The three **real demo plugins** are intentionally useful, end-to-end examples. Their source is included here, but they are not emitted as installable `.utp` packages until a trusted publisher signing key is supplied:
 - **Playtime Report** reads the game library, calculates statistics, and stores a report.
 - **Recently Played Notifier** reads recent activity, formats a notification, and stores its last run.
 - **Metadata Curator** reads a plugin setting, performs a metadata search, normalizes the result, and stores a snapshot.
@@ -49,7 +49,7 @@ Use the real demos as templates:
 - Use **metadata-curator** for configurable integration logic.
 - Use the smaller reference examples when learning one protocol feature in isolation.
 
-For development/testing, run `pytest` and `python tools/build_packages.py`. Generated installable packages are written to `dist/`.
+For development/testing, run `pytest` and `python tools/build_packages.py`. The builder emits only trusted signed packages by default, so the three demo sources are skipped until signing is configured. To build the demos as installable packages, provide `PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for a key whose public key is already trusted by the application. Never commit the private key.
 
 ## Repository layout
 
