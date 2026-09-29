@@ -6,6 +6,7 @@ PLUGINS = {
     "playtime-report": ("games.list", "storage.put", "lifecycle.ready"),
     "recently-played-notifier": ("games.list", "storage.put", "notifications.send", "lifecycle.ready"),
     "metadata-curator": ("settings.get", "games.metadata.search", "storage.put", "lifecycle.ready"),
+    "ui-playground": ("notifications.send",),
 }
 
 
@@ -13,7 +14,8 @@ def test_real_plugins_contain_application_logic():
     for name, methods in PLUGINS.items():
         source = (ROOT / "examples" / name / "plugin.py").read_text()
         assert len(source.splitlines()) >= 30
-        assert "from sdk.plugin_protocol import request" in source
+        if name != "ui-playground":
+            assert "from sdk.plugin_protocol import request" in source
         for method in methods:
             assert f'"{method}"' in source
 
