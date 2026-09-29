@@ -1,6 +1,9 @@
 name: Publish plugin packages
 
 on:
+  push:
+    branches:
+      - main
   release:
     types: [published]
   workflow_dispatch:
@@ -17,21 +20,34 @@ jobs:
           python-version: "3.12"
       - name: Install package build dependencies
         run: python -m pip install --upgrade pip pytest cryptography
-      - name: Build signed packages
+
+      - name: Build unsigned packages on main
+        if: github.event_name != 'release'
+        run: python tools/build_packages.py
+
+      - name: Build signed packages for releases
+        if: github.event_name == 'release'
         env:
           PLUGIN_SIGNING_KEY_B64: ${{ secrets.PLUGIN_SIGNING_KEY_B64 }}
           PLUGIN_SIGNING_KEY_ID: ${{ secrets.PLUGIN_SIGNING_KEY_ID }}
         run: python tools/build_packages.py --require-signing
-      - name: Verify signed packages against publisher registry
+
+      - name: Verify generated packages
         run: python tools/verify_packages.py dist/*.utp
+
+      - name: Validate frontend entries
+        run: python tools/validate_packages.py dist/*.utp
+
       - name: Upload packages to release
         if: github.event_name == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload "${{ github.event.release.tag_name }}" dist/*.utp --clobber
+
       - name: Upload workflow artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: unnamed-tracking-example-plugins
+          name: unnamed-tracking-example-plugins-${{ github.sha }}
           path: dist/*.utp
           if-no-files-found: error
+          retention-days: 7
