@@ -39,5 +39,6 @@ jobs:
               assert manifest["integrity"]["signature"]
               key_id = manifest["integrity"]["key_id"]
               assert key_id in keys
+              print("verifying", package.name, "key", key_id, "digest", digest.hexdigest())
               keys[key_id].verify(base64.b64decode(manifest["integrity"]["signature"]), b"plugin-package-v1:" + digest.hexdigest().encode())
           PY
