@@ -4,6 +4,8 @@ import json
 import sys
 import time
 
+from sdk.plugin_protocol import request
+
 CAPABILITY = "notifications.send"
 
 
