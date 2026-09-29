@@ -30,7 +30,7 @@
       "publisher": "Unnamed Tracking Official",
       "public_key_file": "non-secret-testkey.public-key.b64",
       "public_key_b64": "1Ak72ekLhH26THBZzcjXWXAE0WbkDciFyf/SyQMfNaw=",
-      "public_key_sha256": "c4e0f4c8c3f8f7b6f6a4e2c9b1d7f3a8e4c6b2d1f8a7c3e9b5d2f1c8a4e7b9d0",
+      "public_key_sha256": "2ebaa98408ef66adc15e5d7983900e50b6cdabc38ac076026ebaea05f2335860",
       "status": "active",
       "plugin_id_prefixes": ["example."],
       "not_before": "2026-01-01T00:00:00Z",
