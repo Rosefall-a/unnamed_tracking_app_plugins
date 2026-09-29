@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import base64
 import argparse
-import hashlib
 import json
 import os
 import zipfile
@@ -12,8 +11,10 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 try:
     from .publisher_registry import PublisherRegistryError, release_signer
+    from .package_format import canonical_payload_digest
 except ImportError:  # Direct script execution keeps tools independently usable.
     from publisher_registry import PublisherRegistryError, release_signer
+    from package_format import canonical_payload_digest
 
 ROOT = Path(__file__).parents[1]
 OUT = ROOT / "dist"
@@ -83,20 +84,14 @@ for name in PLUGINS:
     if (src / "ui.json").is_file():
         files["ui.json"] = (src / "ui.json").read_bytes()
 
-    digest = hashlib.sha256()
-    for path, data in sorted(files.items()):
-        digest.update(path.encode())
-        digest.update(b"\\0")
-        digest.update(data)
-        digest.update(b"\\0")
-
     manifest = json.loads((src / "manifest.json").read_text())
-    manifest["integrity"]["sha256"] = digest.hexdigest()
+    payload_digest = canonical_payload_digest(files.items())
+    manifest["integrity"]["sha256"] = payload_digest
 
     signature = manifest["integrity"].get("signature", "")
     if signing_key is not None:
         manifest["integrity"]["signature"] = base64.b64encode(
-            signing_key.sign(b"plugin-package-v1:" + digest.hexdigest().encode())
+            signing_key.sign(b"plugin-package-v1:" + payload_digest.encode())
         ).decode()
         manifest["integrity"]["key_id"] = SIGNING_KEY_ID
     elif signature in {"", "demo-signature"}:

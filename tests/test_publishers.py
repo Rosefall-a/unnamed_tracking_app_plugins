@@ -9,6 +9,7 @@ ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from publisher_registry import PublisherRegistryError, load_registry, release_signer
+from package_format import canonical_payload_digest
 from verify_packages import verify_package
 
 
@@ -28,3 +29,10 @@ def test_release_signer_requires_an_active_scoped_registered_key() -> None:
 def test_checked_in_packages_verify_with_the_publisher_registry() -> None:
     for package in (ROOT / "dist").glob("*.utp"):
         verify_package(package)
+
+
+def test_canonical_payload_digest_is_order_independent_and_content_bound() -> None:
+    entries = [("sdk/protocol.py", b"protocol"), ("plugin.py", b"plugin")]
+    digest = canonical_payload_digest(entries)
+    assert digest == canonical_payload_digest(reversed(entries))
+    assert digest != canonical_payload_digest([("sdk/protocol.py", b"changed"), entries[1]])
