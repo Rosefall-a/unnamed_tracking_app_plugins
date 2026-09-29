@@ -9,7 +9,9 @@ def test_manifests_are_v1_and_unique():
         data=json.loads((ROOT/"examples"/name/"manifest.json").read_text())
         assert data["manifest_version"]==1 and data["version"].count(".")==2
         assert data["entrypoint"]=="plugin:main"
-        assert data["integrity"]["sha256"]=="REPLACE_WITH_BUILD_DIGEST"
+        assert len(data["integrity"]["sha256"])==64
+        assert data["integrity"]["key_id"]=="official-example-2026"
+        assert data["integrity"]["signature"]
         ids.append(data["plugin_id"])
     assert len(ids)==len(set(ids))
 
