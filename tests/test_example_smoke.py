@@ -10,6 +10,7 @@ import sys
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT))
 PLUGINS = (
+    "ui-api",
     "playtime-report",
     "recently-played-notifier",
     "metadata-curator",
@@ -47,7 +48,7 @@ def test_all_real_plugins_execute_their_main_logic(monkeypatch) -> None:
         calls.append((method, capability, payload))
         return responses.get(method, {})
 
-    for name in PLUGINS[:3]:
+    for name in PLUGINS[:4]:
         module = _load_plugin(name)
         monkeypatch.setattr(module, "request", fake_request)
         module.main()
