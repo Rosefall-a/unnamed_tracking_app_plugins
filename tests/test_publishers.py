@@ -15,7 +15,7 @@ from verify_packages import verify_package
 
 def test_registry_matches_reviewed_public_key_files() -> None:
     registry = load_registry()
-    assert set(registry) == {"official-example-2026", "official-example-2026-additional"}
+    assert set(registry) == {"official-example-2026", "official-example-2026-additional", "non-secret-testkey"}
     assert all(record.allows_plugin("example.lifecycle") for record in registry.values())
 
 
