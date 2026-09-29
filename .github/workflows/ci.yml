@@ -34,7 +34,7 @@ jobs:
                           files[name.removeprefix("payload/")]=archive.read(name)
               digest=hashlib.sha256()
               for name,data in sorted(files.items()):
-                  digest.update(name.encode()); digest.update(b"\\0"); digest.update(data); digest.update(b"\\0")
+                  digest.update(name.encode()); digest.update(b"\0"); digest.update(data); digest.update(b"\0")
               assert digest.hexdigest() == manifest["integrity"]["sha256"]
               assert manifest["integrity"]["signature"]
               key_id = manifest["integrity"]["key_id"]
