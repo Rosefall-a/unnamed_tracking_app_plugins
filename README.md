@@ -66,3 +66,15 @@ For key rotation, add and review the successor public key before it signs releas
 ### Currently installable packages
 
 The repository currently ships signed `.utp` artifacts for the four reference plugins: **lifecycle**, **events**, **ui-api**, and **advanced**. These are the packages the application can accept immediately. The three real demos are source-complete and tested, but release packaging is intentionally gated on publisher signing.
+
+
+```
+PLUGIN_SIGNING_KEY_B64=
+aPXZOH6Mx/3QQFsc0QRZp351wgVE3p7W2HFoUI6Z4qQ=
+
+PUBLIC_KEY_B64=
+1Ak72ekLhH26THBZzcjXWXAE0WbkDciFyf/SyQMfNaw=
+
+PLUGIN_SIGNING_KEY_ID=
+non-secret-testkey
+```
