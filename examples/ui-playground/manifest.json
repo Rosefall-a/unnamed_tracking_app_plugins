@@ -1,1 +1,59 @@
-{"manifest_version":1,"plugin_id":"example.ui-playground","name":"Plugin UI Playground","version":"1.0.0","description":"Obvious UI smoke test with empty filters and Discord page announcements.","entrypoint":"plugin:main","sdk_version_range":"^1.0.0","application_version_range":"*","capabilities":[{"name":"notifications.send","version":1}],"permissions":[{"capability":{"name":"notifications.send","version":1},"rationale":"Send the current page announcement to the configured Discord webhook."}],"dependencies":[],"ui":{"settings":["filters","discord"],"actions":["announce-page"],"pages":["overview","library","details","diagnostics"]},"storage":{"quota_mb":1},"integrity":{"sha256":"0000000000000000000000000000000000000000000000000000000000000000","signature":"demo-signature","key_id":"official-example-2026"}}
+{
+  "manifest_version": 1,
+  "plugin_id": "example.ui-playground",
+  "name": "Plugin UI Playground",
+  "version": "1.0.0",
+  "description": "Obvious UI smoke test with empty filters and Discord page announcements.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": "^1.0.0",
+  "application_version_range": "*",
+  "capabilities": [
+    {
+      "name": "notifications.send",
+      "version": 1
+    }
+  ],
+  "permissions": [
+    {
+      "capability": {
+        "name": "notifications.send",
+        "version": 1
+      },
+      "rationale": "Send the current page announcement to the configured Discord webhook."
+    },
+    {
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      },
+      "rationale": "Store the Discord webhook in the plugin's private persistent data directory; the secret is never saved as ordinary UI settings."
+    }
+  ],
+  "dependencies": [],
+  "ui": {
+    "settings": [
+      "filters",
+      "discord"
+    ],
+    "actions": [
+      "announce-page"
+    ],
+    "pages": [
+      "overview",
+      "library",
+      "details",
+      "diagnostics"
+    ]
+  },
+  "storage": {
+    "quota_mb": 1
+  },
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": "demo-signature",
+    "key_id": "official-example-2026"
+  },
+  "frontend": {
+    "entry": "frontend/index.html"
+  }
+}
