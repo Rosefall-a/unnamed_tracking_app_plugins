@@ -11,10 +11,11 @@ This repository contains official demo plugins and reference implementations for
 5. Review its permissions, dependencies, publisher, and version.
 6. Confirm installation and enable it.
 
-The three **real demo plugins** are intentionally useful, end-to-end examples. Their source is included here, but they are not emitted as installable `.utp` packages until a trusted publisher signing key is supplied:
+The four **real demo plugins** are intentionally useful, end-to-end examples. Their source is included here, but they are not emitted as installable `.utp` packages until a trusted publisher signing key is supplied:
 - **Playtime Report** reads the game library, calculates statistics, and stores a report.
 - **Recently Played Notifier** reads recent activity, formats a notification, and stores its last run.
 - **Metadata Curator** reads a plugin setting, performs a metadata search, normalizes the result, and stores a snapshot.
+- **Plugin UI Playground** demonstrates native pages, empty filter controls, lifecycle state, and Discord page announcements.
 
 The other examples remain small protocol/reference tests. They demonstrate individual API calls without pretending to be complete applications.
 
@@ -25,6 +26,7 @@ The other examples remain small protocol/reference tests. They demonstrate indiv
 | `example.playtime-report` | Real demo | Game-library statistics, persistent storage, native UI |
 | `example.recently-played-notifier` | Real demo | Game data + notifications + persistent state |
 | `example.metadata-curator` | Real demo | Settings + metadata search + result normalization |
+| `example.ui-playground` | Real demo | Native pages + empty filters + Discord page announcements |
 | `example.lifecycle` | Reference | Startup/readiness, settings, and storage |
 | `example.events` | Reference | User-scoped event subscriptions |
 | `example.ui-api` | Reference | Declarative UI and gateway requests |
@@ -66,15 +68,3 @@ For key rotation, add and review the successor public key before it signs releas
 ### Currently installable packages
 
 The repository currently ships signed `.utp` artifacts for the four reference plugins: **lifecycle**, **events**, **ui-api**, and **advanced**. These are the packages the application can accept immediately. The three real demos are source-complete and tested, but release packaging is intentionally gated on publisher signing.
-
-
-```
-PLUGIN_SIGNING_KEY_B64=
-aPXZOH6Mx/3QQFsc0QRZp351wgVE3p7W2HFoUI6Z4qQ=
-
-PUBLIC_KEY_B64=
-1Ak72ekLhH26THBZzcjXWXAE0WbkDciFyf/SyQMfNaw=
-
-PLUGIN_SIGNING_KEY_ID=
-non-secret-testkey
-```
