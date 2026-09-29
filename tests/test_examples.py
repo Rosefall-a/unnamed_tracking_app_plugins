@@ -56,3 +56,12 @@ def test_ui_playground_manifest_points_to_real_frontend_entry():
     data = json.loads((ROOT / "examples" / "ui-playground" / "manifest.json").read_text())
     assert data["frontend"]["entry"] == "frontend/index.html"
     assert (ROOT / "examples" / "ui-playground" / "frontend" / "index.html").is_file()
+
+
+def test_every_example_has_an_executable_entrypoint_source():
+    for name in ("ui-api", "playtime-report", "recently-played-notifier", "metadata-curator", "ui-playground"):
+        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        module, function = manifest["entrypoint"].split(":")
+        assert module == "plugin"
+        assert function == "main"
+        assert (ROOT / "examples" / name / "plugin.py").is_file()
