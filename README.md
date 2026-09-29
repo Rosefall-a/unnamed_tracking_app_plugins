@@ -59,3 +59,8 @@ For development/testing, run `pytest` and `python tools/build_packages.py`. With
 - `tools/build_packages.py` — package builder
 - `tests/` — plugin validation tests
 - `dist/` — generated installable packages
+
+
+### Currently installable packages
+
+The repository currently ships signed `.utp` artifacts for the four reference plugins: **lifecycle**, **events**, **ui-api**, and **advanced**. These are the packages the application can accept immediately. The three real demos are source-complete and tested, but release packaging is intentionally gated on publisher signing.
