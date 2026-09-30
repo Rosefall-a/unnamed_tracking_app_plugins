@@ -80,6 +80,7 @@ def poll_events() -> None:
         pass
 
 def main() -> None:
+    request("lifecycle.ready", "lifecycle.ready", {})
     while True:
         try:
             if setting("background_sync", "false").lower() == "true":
