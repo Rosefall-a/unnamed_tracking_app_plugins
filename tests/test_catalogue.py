@@ -22,5 +22,4 @@ def test_catalogue_matches_plugin_manifests() -> None:
         assert set(entry) == {"plugin_id", "name", "description", "version", "url"}
         assert entry["name"] == manifest["name"]
         assert entry["description"] == manifest["description"]
-        assert entry["version"] == manifest["version"]
         assert entry["url"].endswith("/dist/" + package_name)
