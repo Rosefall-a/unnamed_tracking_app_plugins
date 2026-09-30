@@ -20,12 +20,19 @@ jobs:
       - name: Detect changes outside dist/
         id: changes
         run: |
-          # Find changed files compared to previous commit
-          CHANGED=$(git diff --name-only HEAD^ HEAD)
-
+          # Determine the diff range safely
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            RANGE="${{ github.event.before }}..${{ github.sha }}"
+          else
+            # Fallback for release/workflow_dispatch
+            RANGE="$(git rev-parse HEAD~1 2>/dev/null || echo HEAD)..HEAD"
+          fi
+      
+          echo "Using diff range: $RANGE"
+      
+          CHANGED=$(git diff --name-only $RANGE || true)
           echo "changed=$CHANGED" >> $GITHUB_OUTPUT
-
-          # If ANY changed file is NOT inside dist/, mark as 'needs_build'
+      
           if echo "$CHANGED" | grep -vq "^dist/"; then
             echo "needs_build=true" >> $GITHUB_OUTPUT
           else
