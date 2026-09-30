@@ -13,6 +13,8 @@ PLUGINS = (
     "recently-played-notifier",
     "metadata-curator",
     "ui-playground",
+    "help-button",
+    "jellyfin-media-sync",
 )
 
 
@@ -56,6 +58,8 @@ def test_real_plugin_manifests_declare_required_capabilities():
         },
         "metadata-curator": {"games.read", "plugin.settings", "plugin.storage"},
         "ui-playground": {"notifications.send"},
+        "help-button": set(),
+        "jellyfin-media-sync": {"media.read", "media.write", "plugin.settings", "plugin.storage", "tasks.background", "events.subscribe"},
     }
     for name, capabilities in expected.items():
         data = json.loads((ROOT / "examples" / name / "manifest.json").read_text())

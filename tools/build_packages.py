@@ -25,6 +25,8 @@ REFERENCE_PLUGINS = (
     "scoped-document-viewer",
     "self-service-session-manager",
     "discord-delivery-provider",
+    "help-button",
+    "jellyfin-media-sync",
 )
 
 DEMO_PLUGINS = (

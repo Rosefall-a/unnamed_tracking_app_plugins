@@ -7,6 +7,8 @@ PLUGINS = {
     "recently-played-notifier": ("games.list", "storage.put", "notifications.send", "lifecycle.ready"),
     "metadata-curator": ("settings.get", "games.metadata.search", "storage.put", "lifecycle.ready"),
     "ui-playground": ("notifications.send",),
+    "help-button": (),
+    "jellyfin-media-sync": ("settings.get", "storage.get", "media.import", "events.poll", "lifecycle.ready"),
 }
 
 

@@ -16,6 +16,8 @@ The four **real demo plugins** are intentionally useful, end-to-end examples. De
 - **Recently Played Notifier** reads recent activity, formats a notification, and stores its last run.
 - **Metadata Curator** reads a plugin setting, performs a metadata search, normalizes the result, and stores a snapshot.
 - **Plugin UI Playground** demonstrates a real Vue 3 frontend, lifecycle state, private plugin storage, and Discord page announcements.
+- **Help Button (Totally Not Helpful)** demonstrates global UI injection, Home Hub replacement, plugin routes/navigation, and external navigation actions.
+- **Jellyfin Media Sync** demonstrates secret storage, external API calls, media import, background work, and event polling.
 
 Three security-focused reference plugins exercise the scoped Phase 2 domain APIs without importing host code: a document viewer, a self-service session manager, and an external Discord delivery provider. `example.ui-api` remains the smallest general protocol example. Older lifecycle/events/advanced/notifications/metadata/event-filter examples were removed because they duplicated platform internals rather than demonstrating useful plugin behavior.
 
