@@ -3,7 +3,7 @@
   "plugin_id": "example.help-button",
   "title": "Help Button (Totally Not Helpful)",
   "settings": [],
-  "actions": [{"id": "rickroll", "label": "Press to get help", "handler": "plugin:rickroll", "external_navigation": true, "confirmation": "Are you sure you want to get help?"}],
+  "actions": [{"id": "rickroll", "label": "Press to get help", "handler": "plugin:rickroll", "confirmation": "Are you sure you want to get help?"}],
   "tables": [],
   "dialogs": [],
   "menus": [{"id": "help", "label": "Totally Not Helpful", "page_id": "help"}],
