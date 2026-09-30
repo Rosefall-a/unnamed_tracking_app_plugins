@@ -12,15 +12,15 @@
       "plugin_id": "example.scoped-document-viewer",
       "name": "Scoped Document Viewer",
       "description": "Lists and safely opens the active user's PDF, UTF-8 text, and sanitized HTML game documents.",
-      "version": "1.2.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.scoped-document-viewer-1.2.0.utp"
+      "version": "1.0.0",
+      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.scoped-document-viewer-1.0.0.utp"
     },
     {
       "plugin_id": "example.self-service-session-manager",
       "name": "Self-Service Session Manager",
       "description": "A full user-facing browser session manager backed by the scoped session API.",
-      "version": "1.1.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.self-service-session-manager-1.1.0.utp"
+      "version": "1.0.0",
+      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.self-service-session-manager-1.0.0.utp"
     },
     {
       "plugin_id": "example.discord-delivery-provider",
@@ -28,48 +28,6 @@
       "description": "Registers a Discord notification destination while core retains preferences, retry state, and delivery ownership.",
       "version": "1.0.0",
       "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.discord-delivery-provider-1.0.0.utp"
-    },
-    {
-      "plugin_id": "example.help-button",
-      "name": "Help Button (Totally Not Helpful)",
-      "description": "A deliberately unhelpful global help button and Home Hub override.",
-      "version": "1.0.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.help-button-1.0.0.utp"
-    },
-    {
-      "plugin_id": "example.jellyfin-media-sync",
-      "name": "Jellyfin Media Sync",
-      "description": "Imports Jellyfin media metadata and playback information into Unnamed Tracking.",
-      "version": "1.1.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.jellyfin-media-sync-1.1.0.utp"
-    },
-    {
-      "plugin_id": "example.playtime-report",
-      "name": "Playtime Report",
-      "description": "Builds a persistent playtime report from the user's game library.",
-      "version": "1.0.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.playtime-report-1.0.0.utp"
-    },
-    {
-      "plugin_id": "example.recently-played-notifier",
-      "name": "Recently Played Notifier",
-      "description": "Creates a small notification from the most recently played games.",
-      "version": "1.0.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.recently-played-notifier-1.0.0.utp"
-    },
-    {
-      "plugin_id": "example.metadata-curator",
-      "name": "Metadata Curator",
-      "description": "Runs a configurable metadata search and stores a normalized local result set.",
-      "version": "1.0.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.metadata-curator-1.0.0.utp"
-    },
-    {
-      "plugin_id": "example.ui-playground",
-      "name": "Plugin UI Playground",
-      "description": "Vue UI smoke test with four visible pages, filter controls, private Discord storage, and page announcements.",
-      "version": "1.0.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.ui-playground-1.0.0.utp"
     }
   ]
 }
