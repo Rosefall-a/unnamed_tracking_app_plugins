@@ -16,6 +16,8 @@ function pluginRequest(method, payload = {}) {
   });
 }
 
+function safeHtml(source) { const doc = new DOMParser().parseFromString(source, "text/html"); for (const element of doc.querySelectorAll("script,iframe,object,embed,form,input,link,meta,style,video,audio,source")) element.remove(); for (const element of doc.querySelectorAll("*")) for (const attr of [...element.attributes]) { if (attr.name.toLowerCase().startsWith("on") || attr.name.toLowerCase() === "style" || attr.name.toLowerCase() === "srcdoc") element.removeAttribute(attr.name); if (attr.name.toLowerCase() === "href" && !/^(https?:|mailto:|#)/i.test(attr.value)) element.removeAttribute(attr.name); } return doc.body.innerHTML; }
+
 function clearViewer() {
   if (activeObjectUrl) URL.revokeObjectURL(activeObjectUrl);
   activeObjectUrl = null;
@@ -40,6 +42,11 @@ async function openDocument(item) {
       const pre = document.createElement("pre");
       pre.textContent = text;
       viewer.append(pre);
+    } else if (mediaType === "text/html") {
+      const text = new TextDecoder("utf-8", {fatal: true}).decode(bytes);
+      const article = document.createElement("article");
+      article.innerHTML = safeHtml(text);
+      viewer.append(article);
     } else {
       throw new Error("The host returned an unsupported document representation.");
     }

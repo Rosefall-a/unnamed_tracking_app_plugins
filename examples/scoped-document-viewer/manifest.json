@@ -2,7 +2,7 @@
   "manifest_version": 1,
   "plugin_id": "example.scoped-document-viewer",
   "name": "Scoped Document Viewer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Lists and safely opens the active user's PDF and UTF-8 text game documents.",
   "entrypoint": "plugin:main",
   "sdk_version_range": "^1.0.0",
