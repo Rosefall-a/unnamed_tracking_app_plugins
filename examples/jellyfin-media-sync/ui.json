@@ -14,11 +14,12 @@
   }],
   "actions": [
     {"id": "sync-now", "label": "Sync Now", "handler": "plugin:sync_now", "capability": {"name": "media.write", "version": 1}},
-    {"id": "refresh-status", "label": "Refresh activity", "handler": "plugin:refresh_status", "capability": {"name": "events.subscribe", "version": 1}}
+    {"id": "refresh-status", "label": "Refresh activity", "handler": "plugin:refresh_status", "capability": {"name": "events.subscribe", "version": 1}},
+    {"id": "list-media", "label": "Refresh imported media", "handler": "plugin:list_media", "capability": {"name": "media.read", "version": 1}}
   ],
   "tables": [],
   "dialogs": [],
   "menus": [{"id": "sync", "label": "Jellyfin Sync", "page_id": "sync"}],
-  "pages": [{"id": "sync", "title": "Jellyfin Media Sync", "description": "Synchronize Jellyfin movies into the media library.", "settings": ["jellyfin"], "actions": ["sync-now", "refresh-status"], "tables": [], "dialogs": [], "navigation": {"sidebar": true, "label": "Jellyfin Sync", "order": 60}}],
+  "pages": [{"id": "sync", "title": "Jellyfin Media Sync", "description": "Synchronize Jellyfin movies into the media library.", "settings": ["jellyfin"], "actions": ["sync-now", "refresh-status", "list-media"], "tables": [], "dialogs": [], "navigation": {"sidebar": true, "label": "Jellyfin Sync", "order": 60}}],
   "extensions": []
 }

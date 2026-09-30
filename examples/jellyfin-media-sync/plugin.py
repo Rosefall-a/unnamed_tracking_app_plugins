@@ -28,6 +28,12 @@ def auth(server: str, user: str, api_key: str, password: str) -> tuple[str, str]
     data = jf(server, "/Users/AuthenticateByName", "", "POST", body)
     return str(data["AccessToken"]), str(data["User"]["Id"])
 
+def list_media(values: dict[str, Any]) -> dict[str, Any]:
+    limit = values.get("limit", 100)
+    if not isinstance(limit, int) or isinstance(limit, bool):
+        limit = 100
+    return request("media.list", "media.read", {"limit": max(1, min(limit, 100))})
+
 def sync_now(values: dict[str, Any]) -> dict[str, Any]:
     del values
     server, user = setting("server_url").strip(), setting("user_id").strip()
@@ -58,13 +64,27 @@ def sync_now(values: dict[str, Any]) -> dict[str, Any]:
 
 def refresh_status(values: dict[str, Any]) -> dict[str, Any]:
     del values
-    return request("events.poll", "events.subscribe", {"limit": 50})
+    raw = request("storage.get", "plugin.storage", {"key": "last_event_cursor"}).get("value")
+    since = int(raw) if isinstance(raw, str) and raw.isdigit() else 0
+    result = request("events.poll", "events.subscribe", {"limit": 50, "since": since})
+    cursor = result.get("cursor")
+    if isinstance(cursor, int):
+        request("storage.put", "plugin.storage", {"key": "last_event_cursor", "value": str(cursor)})
+    return result
+
+
+def poll_events() -> None:
+    try:
+        refresh_status({})
+    except Exception:
+        pass
 
 def main() -> None:
     while True:
         try:
             if setting("background_sync", "false").lower() == "true":
                 sync_now({})
+            poll_events()
         except Exception as exc:
             try:
                 request("storage.put", "plugin.storage", {"key": "last_error", "value": str(exc)[:1000]})
