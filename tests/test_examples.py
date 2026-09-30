@@ -150,3 +150,19 @@ def test_package_validator_rejects_undeclared_permission(tmp_path):
     )
     assert result.returncode != 0
     assert "not declared by capabilities" in result.stderr
+
+
+def test_help_button_declares_global_and_home_extensions() -> None:
+    data = json.loads((ROOT / "examples" / "help-button" / "ui.json").read_text())
+    slots = {item["slot"] for item in data["extensions"]}
+    assert {"app.global", "home.replace"} <= slots
+    action = next(item for item in data["actions"] if item["id"] == "rickroll")
+    assert action["external_navigation"] is True
+
+
+def test_jellyfin_declares_secret_storage_and_background_capabilities() -> None:
+    manifest = json.loads((ROOT / "examples" / "jellyfin-media-sync" / "manifest.json").read_text())
+    capabilities = {item["name"] for item in manifest["capabilities"]}
+    assert {"media.read", "media.write", "plugin.storage", "tasks.background", "events.subscribe"} <= capabilities
+    ui = json.loads((ROOT / "examples" / "jellyfin-media-sync" / "ui.json").read_text())
+    assert any(action["id"] == "list-media" for action in ui["actions"])

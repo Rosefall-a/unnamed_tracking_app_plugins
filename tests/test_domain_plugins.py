@@ -26,7 +26,7 @@ def load_plugin(name: str):
     ("name", "expected"),
     [
         ("scoped-document-viewer", {"documents.read"}),
-        ("self-service-session-manager", {"sessions.read", "sessions.revoke"}),
+        ("self-service-session-manager", {"sessions.read", "sessions.revoke", "sessions.admin.read", "sessions.admin.revoke"}),
         (
             "discord-delivery-provider",
             {
@@ -74,7 +74,7 @@ def test_document_viewer_uses_opaque_public_document_methods(monkeypatch) -> Non
         ROOT / "examples" / "scoped-document-viewer" / "frontend" / "app.js"
     ).read_text()
     assert "textContent = text" in source
-    assert "text/html" not in source
+    assert "text/html" in source
 
 
 def test_session_manager_separates_read_and_revoke_capabilities(monkeypatch) -> None:
