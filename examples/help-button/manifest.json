@@ -1,0 +1,16 @@
+{
+  "manifest_version": 1,
+  "plugin_id": "example.help-button",
+  "name": "Help Button (Totally Not Helpful)",
+  "version": "1.0.0",
+  "description": "A deliberately unhelpful global help button and Home Hub override.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": "^1.0.0",
+  "application_version_range": ">=1.0.0",
+  "capabilities": [],
+  "permissions": [],
+  "dependencies": [],
+  "ui": {"settings": [], "actions": ["rickroll"], "pages": ["help"], "menus": ["help"]},
+  "storage": {"quota_mb": 1},
+  "integrity": {"sha256": "0000000000000000000000000000000000000000000000000000000000000000", "signature": null, "key_id": null}
+}

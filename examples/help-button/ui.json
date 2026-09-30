@@ -1,0 +1,24 @@
+{
+  "schema_version": "v1",
+  "plugin_id": "example.help-button",
+  "title": "Help Button (Totally Not Helpful)",
+  "settings": [],
+  "actions": [{"id": "rickroll", "label": "Press to get help", "handler": "plugin:rickroll", "external_navigation": true, "confirmation": "Are you sure you want to get help?"}],
+  "tables": [],
+  "dialogs": [],
+  "menus": [{"id": "help", "label": "Totally Not Helpful", "page_id": "help"}],
+  "pages": [{
+    "id": "help",
+    "title": "Help",
+    "description": "This is a completely legitimate help page.",
+    "settings": [],
+    "actions": ["rickroll"],
+    "tables": [],
+    "dialogs": [],
+    "navigation": {"sidebar": true, "label": "Totally Not Helpful", "order": 900}
+  }],
+  "extensions": [
+    {"id": "global-help", "slot": "app.global", "page_id": "help", "order": 900},
+    {"id": "home-override", "slot": "home.replace", "page_id": "help", "order": 900}
+  ]
+}

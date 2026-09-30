@@ -1,0 +1,24 @@
+{
+  "schema_version": "v1",
+  "plugin_id": "example.jellyfin-media-sync",
+  "title": "Jellyfin Media Sync",
+  "settings": [{
+    "id": "jellyfin",
+    "title": "Jellyfin",
+    "description": "Server URL and user ID are normal settings; credentials are write-only plugin secrets.",
+    "fields": [
+      {"id": "server_url", "label": "Jellyfin server URL", "type": "text", "required": true, "secret": false, "options": []},
+      {"id": "user_id", "label": "Jellyfin user ID or username", "type": "text", "required": true, "secret": false, "options": []},
+      {"id": "background_sync", "label": "Enable background sync", "type": "boolean", "default": false, "required": false, "secret": false, "options": []}
+    ]
+  }],
+  "actions": [
+    {"id": "sync-now", "label": "Sync Now", "handler": "plugin:sync_now", "capability": {"name": "media.write", "version": 1}},
+    {"id": "refresh-status", "label": "Refresh activity", "handler": "plugin:refresh_status", "capability": {"name": "events.subscribe", "version": 1}}
+  ],
+  "tables": [],
+  "dialogs": [],
+  "menus": [{"id": "sync", "label": "Jellyfin Sync", "page_id": "sync"}],
+  "pages": [{"id": "sync", "title": "Jellyfin Media Sync", "description": "Synchronize Jellyfin movies into the media library.", "settings": ["jellyfin"], "actions": ["sync-now", "refresh-status"], "tables": [], "dialogs": [], "navigation": {"sidebar": true, "label": "Jellyfin Sync", "order": 60}}],
+  "extensions": []
+}

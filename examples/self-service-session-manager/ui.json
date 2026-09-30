@@ -4,33 +4,17 @@
   "title": "Session Manager",
   "settings": [],
   "actions": [
-    {
-      "id": "list-sessions",
-      "label": "Refresh sessions",
-      "handler": "plugin:list_sessions",
-      "capability": {"name": "sessions.read", "version": 1}
-    },
-    {
-      "id": "revoke-session",
-      "label": "Revoke session",
-      "handler": "plugin:revoke_session",
-      "capability": {"name": "sessions.revoke", "version": 1},
-      "confirmation": "Revoke this session? That device will need to sign in again."
-    }
+    {"id": "list-sessions", "label": "Refresh sessions", "handler": "plugin:list_sessions", "capability": {"name": "sessions.read", "version": 1}},
+    {"id": "revoke-session", "label": "Revoke session", "handler": "plugin:revoke_session", "capability": {"name": "sessions.revoke", "version": 1}, "confirmation": "Revoke this session? That device will need to sign in again."},
+    {"id": "list-admin-sessions", "label": "Refresh admin sessions", "handler": "plugin:list_admin_sessions", "capability": {"name": "sessions.admin.read", "version": 1}},
+    {"id": "revoke-admin-session", "label": "Revoke session", "handler": "plugin:revoke_admin_session", "capability": {"name": "sessions.admin.revoke", "version": 1}, "confirmation": "Revoke this user's session? That device will need to sign in again."},
+    {"id": "revoke-all-admin-sessions", "label": "Revoke all sessions", "handler": "plugin:revoke_all_admin_sessions", "capability": {"name": "sessions.admin.revoke", "version": 1}, "confirmation": "Revoke every active browser session for every user?"}
   ],
   "tables": [],
   "dialogs": [],
-  "menus": [],
+  "menus": [{"id": "sessions", "label": "Account sessions", "page_id": "sessions"}, {"id": "admin-sessions", "label": "Admin sessions", "page_id": "admin-sessions"}],
   "pages": [
-    {
-      "id": "sessions",
-      "title": "Account sessions",
-      "description": "Review and revoke your own active sessions.",
-      "settings": [],
-      "actions": ["list-sessions", "revoke-session"],
-      "tables": [],
-      "dialogs": [],
-      "navigation": {"sidebar": true, "label": "Account sessions", "order": 50}
-    }
+    {"id": "sessions", "title": "Account sessions", "description": "Review and revoke your own browser sessions.", "settings": [], "actions": ["list-sessions", "revoke-session"], "tables": [], "dialogs": [], "navigation": {"sidebar": true, "label": "Account sessions", "order": 50}},
+    {"id": "admin-sessions", "title": "Admin sessions", "description": "Administrator session inspection and revocation.", "settings": [], "actions": ["list-admin-sessions", "revoke-admin-session", "revoke-all-admin-sessions"], "tables": [], "dialogs": [], "navigation": {"sidebar": true, "label": "Admin sessions", "order": 51}}
   ]
 }

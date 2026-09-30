@@ -1,0 +1,31 @@
+{
+  "manifest_version": 1,
+  "plugin_id": "example.jellyfin-media-sync",
+  "name": "Jellyfin Media Sync",
+  "version": "1.0.0",
+  "description": "Imports Jellyfin media metadata and playback information into Unnamed Tracking.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": "^1.0.0",
+  "application_version_range": ">=1.0.0",
+  "capabilities": [
+    {"name": "media.read", "version": 1},
+    {"name": "media.write", "version": 1},
+    {"name": "plugin.settings", "version": 1},
+    {"name": "plugin.storage", "version": 1},
+    {"name": "tasks.background", "version": 1},
+    {"name": "events.subscribe", "version": 1}
+  ],
+  "permissions": [
+    {"capability": {"name": "media.read", "version": 1}, "rationale": "Read the user's imported media state to avoid duplicate imports."},
+    {"capability": {"name": "media.write", "version": 1}, "rationale": "Create or update normalized Jellyfin movie metadata."},
+    {"capability": {"name": "plugin.settings", "version": 1}, "rationale": "Read the non-secret Jellyfin server URL and user ID."},
+    {"capability": {"name": "plugin.storage", "version": 1}, "rationale": "Store the Jellyfin credential and plugin-owned sync state privately."},
+    {"capability": {"name": "tasks.background", "version": 1}, "rationale": "Run a conservative periodic synchronization loop while enabled."},
+    {"capability": {"name": "events.subscribe", "version": 1}, "rationale": "Poll host-owned activity events without receiving ORM objects."}
+  ],
+  "dependencies": [],
+  "ui": {"settings": ["jellyfin"], "actions": ["sync-now", "refresh-status"], "pages": ["sync"], "menus": ["sync"]},
+  "storage": {"quota_mb": 32},
+  "integrity": {"sha256": "0000000000000000000000000000000000000000000000000000000000000000", "signature": null, "key_id": null},
+  "frontend": {"entry": "frontend/index.html"}
+}
