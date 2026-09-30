@@ -13,41 +13,68 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Detect changes outside dist/
+        id: changes
+        run: |
+          # Find changed files compared to previous commit
+          CHANGED=$(git diff --name-only HEAD^ HEAD)
+
+          echo "changed=$CHANGED" >> $GITHUB_OUTPUT
+
+          # If ANY changed file is NOT inside dist/, mark as 'needs_build'
+          if echo "$CHANGED" | grep -vq "^dist/"; then
+            echo "needs_build=true" >> $GITHUB_OUTPUT
+          else
+            echo "needs_build=false" >> $GITHUB_OUTPUT
+          fi
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
       - name: Install package build dependencies
+        if: steps.changes.outputs.needs_build == 'true'
         run: python -m pip install --upgrade pip pytest cryptography
 
       - name: Run plugin test suite
+        if: steps.changes.outputs.needs_build == 'true'
         run: pytest
 
-      - name: Build unsigned packages on main
-        if: github.event_name != 'release'
-        run: python tools/build_packages.py
-
-      - name: Build signed packages for releases
-        if: github.event_name == 'release'
+      # Signed builds for main + releases
+      - name: Build signed packages
+        if: >
+          steps.changes.outputs.needs_build == 'true' &&
+          (github.event_name == 'release' || github.ref == 'refs/heads/main')
         env:
           PLUGIN_SIGNING_KEY_B64: ${{ secrets.PLUGIN_SIGNING_KEY_B64 }}
           PLUGIN_SIGNING_KEY_ID: ${{ secrets.PLUGIN_SIGNING_KEY_ID }}
         run: python tools/build_packages.py --require-signing
 
+      # Unsigned builds only for non-main pushes
+      - name: Build unsigned packages
+        if: >
+          steps.changes.outputs.needs_build == 'true' &&
+          github.event_name != 'release' &&
+          github.ref != 'refs/heads/main'
+        run: python tools/build_packages.py
+
       - name: Verify generated packages
+        if: steps.changes.outputs.needs_build == 'true'
         run: python tools/verify_packages.py dist/*.utp
 
       - name: Validate frontend entries
+        if: steps.changes.outputs.needs_build == 'true'
         run: python tools/validate_packages.py dist/*.utp
 
       - name: Commit packages and catalogue on main
-        if: github.event_name == 'push'
+        if: >
+          github.ref == 'refs/heads/main' &&
+          steps.changes.outputs.needs_build == 'true'
         run: |
-          if git diff --quiet -- dist list.json; then
-            echo "Generated packages and catalogue are already up to date."
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add dist/*.utp list.json
