@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Scoped Document Viewer</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header><h1>Documents</h1><p>PDF and UTF-8 text files authorized for your account.</p></header>
+    <div class="toolbar"><button id="refresh" type="button">Refresh</button><span id="status" role="status"></span></div>
+    <section class="layout">
+      <ul id="documents" aria-label="Documents"></ul>
+      <article id="viewer"><p class="empty">Choose a document to open it.</p></article>
+    </section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>

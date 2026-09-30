@@ -1,0 +1,35 @@
+{
+  "schema_version": "v1",
+  "plugin_id": "example.scoped-document-viewer",
+  "title": "Scoped Document Viewer",
+  "settings": [],
+  "actions": [
+    {
+      "id": "list-documents",
+      "label": "Refresh documents",
+      "handler": "plugin:list_documents",
+      "capability": {"name": "documents.read", "version": 1}
+    },
+    {
+      "id": "read-document",
+      "label": "Open document",
+      "handler": "plugin:read_document",
+      "capability": {"name": "documents.read", "version": 1}
+    }
+  ],
+  "tables": [],
+  "dialogs": [],
+  "menus": [],
+  "pages": [
+    {
+      "id": "documents",
+      "title": "Documents",
+      "description": "Safe PDF and UTF-8 text documents from your game library.",
+      "settings": [],
+      "actions": ["list-documents", "read-document"],
+      "tables": [],
+      "dialogs": [],
+      "navigation": {"sidebar": true, "label": "Documents", "order": 40}
+    }
+  ]
+}
