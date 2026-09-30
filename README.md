@@ -2,6 +2,10 @@
 
 This repository contains official demo plugins and reference implementations for the Unnamed Tracking App Plugin API v1.
 
+## Security warning
+
+**Full API access allows plugins to read and modify all user data. Only enable this for plugins you trust.** Prefer scoped capabilities whenever a plugin does not require unrestricted access.
+
 ## For users: getting and installing a plugin
 
 1. Browse the plugins below and choose one that provides behavior you want to try.
