@@ -1,6 +1,6 @@
 import json
+import re
 from pathlib import Path
-
 
 ROOT = Path(__file__).parents[1]
 
@@ -11,18 +11,23 @@ def test_catalogue_matches_shipped_plugins() -> None:
     entries = catalogue["plugins"]
     assert entries
 
-    built_ids = set()
-    for path in (ROOT / "dist").glob("*.utp"):
-        built_ids.add(path.name.rsplit("-", 1)[0])
+    manifests = {}
+    for path in (ROOT / "examples").glob("*/manifest.json"):
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+        manifests[manifest["plugin_id"]] = manifest
 
-    assert {entry["plugin_id"] for entry in entries} == built_ids
+    shipped_ids = {
+        re.sub(r"-[0-9]+\.[0-9]+\.[0-9]+$", "", path.stem)
+        for path in (ROOT / "dist").glob("*.utp")
+    }
+    assert {entry["plugin_id"] for entry in entries} == shipped_ids
+
     for entry in entries:
+        manifest = manifests[entry["plugin_id"]]
         assert set(entry) == {"plugin_id", "name", "description", "version", "url"}
-        manifest = json.loads(
-            (ROOT / "examples" / entry["plugin_id"].split(".", 1)[-1] / "manifest.json").read_text(
-                encoding="utf-8"
-            )
-        ) if (ROOT / "examples" / entry["plugin_id"].split(".", 1)[-1] / "manifest.json").is_file() else None
+        assert entry["name"] == manifest["name"]
+        assert entry["description"] == manifest["description"]
+        assert entry["version"] == manifest["version"]
         assert entry["url"].endswith(
-            f"/dist/{entry['plugin_id']}-{entry['version']}.utp"
+            "/dist/" + manifest["plugin_id"] + "-" + manifest["version"] + ".utp"
         )
