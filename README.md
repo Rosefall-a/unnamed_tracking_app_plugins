@@ -17,7 +17,7 @@ The four **real demo plugins** are intentionally useful, end-to-end examples. De
 - **Metadata Curator** reads a plugin setting, performs a metadata search, normalizes the result, and stores a snapshot.
 - **Plugin UI Playground** demonstrates a real Vue 3 frontend, lifecycle state, private plugin storage, and Discord page announcements.
 
-`example.ui-api` is the only small protocol/reference example retained. The older lifecycle/events/advanced/notifications/metadata/event-filter examples were removed because they duplicated platform internals rather than demonstrating useful plugin behavior.
+Three security-focused reference plugins exercise the scoped Phase 2 domain APIs without importing host code: a document viewer, a self-service session manager, and an external Discord delivery provider. `example.ui-api` remains the smallest general protocol example. Older lifecycle/events/advanced/notifications/metadata/event-filter examples were removed because they duplicated platform internals rather than demonstrating useful plugin behavior.
 
 ## Official examples
 
@@ -28,6 +28,9 @@ The four **real demo plugins** are intentionally useful, end-to-end examples. De
 | `example.metadata-curator` | Real demo | Settings + metadata search + result normalization |
 | `example.ui-playground` | Real demo | Vue 3 frontend + private storage + Discord page announcements |
 | `example.ui-api` | Reference | Declarative UI and gateway requests |
+| `example.scoped-document-viewer` | Reference | User-scoped document DTOs and safe PDF/text rendering |
+| `example.self-service-session-manager` | Reference | Minimized session DTOs and confirmed self-service revocation |
+| `example.discord-delivery-provider` | Reference | Core-coordinated external delivery and write-only secrets |
 
 ### What makes a real demo plugin?
 
@@ -48,6 +51,9 @@ Use the real demos as templates:
 - Use **recently-played-notifier** for a plugin that combines core data with a side effect.
 - Use **metadata-curator** for configurable integration logic.
 - Use **ui-api** when learning the declarative UI/gateway contract in isolation.
+- Use **Scoped Document Viewer** for a sandboxed sidebar frontend that calls a read-only domain API.
+- Use **Self-Service Session Manager** for separate read/destructive grants and host-owned confirmation.
+- Use **External Discord Delivery Provider** for provider registration, write-only secrets, and core-owned delivery state.
 
 For development/testing, run `pytest`, `python tools/build_packages.py`, `python tools/verify_packages.py dist/*.utp`, and `python tools/validate_packages.py dist/*.utp`. A normal development build deliberately produces fresh unsigned packages for every example plugin, including the reference UI/API example and the UI Playground frontend, so the complete shipped example set is exercised by CI. Release builds use `PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for an active key in `publishers/registry.json`; they rebuild every example package and fail closed if the signer is missing, inactive, unregistered or outside scope. Never commit the private key.
 
@@ -65,4 +71,4 @@ For key rotation, add and review the successor public key before it signs releas
 
 ### Currently installable packages
 
-All five example plugins are rebuilt as unsigned local-test packages during normal development CI; signed release artifacts should be produced with the publisher key.
+All eight example plugins are rebuilt as unsigned local-test packages during normal development CI; signed release artifacts are produced by the release workflow with the reviewed publisher key.

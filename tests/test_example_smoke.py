@@ -15,12 +15,17 @@ PLUGINS = (
     "recently-played-notifier",
     "metadata-curator",
     "ui-playground",
+    "scoped-document-viewer",
+    "self-service-session-manager",
+    "discord-delivery-provider",
 )
 
 
 def _load_plugin(name: str):
     path = ROOT / "examples" / name / "plugin.py"
-    spec = importlib.util.spec_from_file_location(f"smoke_{name.replace('-', '_')}", path)
+    spec = importlib.util.spec_from_file_location(
+        f"smoke_{name.replace('-', '_')}", path
+    )
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -29,14 +34,26 @@ def _load_plugin(name: str):
 
 def test_all_real_plugins_execute_their_main_logic(monkeypatch) -> None:
     responses = {
-        "games.list": {"games": [
-            {"id": "1", "title": "Alpha", "playtime_minutes": 120, "last_played": "2026-09-29T00:00:00Z"},
-            {"id": "2", "title": "Beta", "playtime_minutes": 30, "last_played": "2026-09-28T00:00:00Z"},
-        ]},
+        "games.list": {
+            "games": [
+                {
+                    "id": "1",
+                    "title": "Alpha",
+                    "playtime_minutes": 120,
+                    "last_played": "2026-09-29T00:00:00Z",
+                },
+                {
+                    "id": "2",
+                    "title": "Beta",
+                    "playtime_minutes": 30,
+                    "last_played": "2026-09-28T00:00:00Z",
+                },
+            ]
+        },
         "settings.get": {"value": "Example Game"},
-        "games.metadata.search": {"results": [
-            {"id": "m1", "title": "Example Game", "provider": "smoke"}
-        ]},
+        "games.metadata.search": {
+            "results": [{"id": "m1", "title": "Example Game", "provider": "smoke"}]
+        },
         "storage.put": {},
         "notifications.send": {},
         "lifecycle.ready": {},
@@ -57,17 +74,33 @@ def test_all_real_plugins_execute_their_main_logic(monkeypatch) -> None:
 
 
 def test_ui_playground_action_never_echoes_secret(tmp_path: Path) -> None:
-    module = _load_plugin("ui-playground")
+    _load_plugin("ui-playground")
     data_dir = tmp_path / "plugin-data" / "secrets"
     data_dir.mkdir(parents=True)
-    (data_dir / "discord_webhook").write_text("https://discord.example/SECRET", encoding="utf-8")
+    (data_dir / "discord_webhook").write_text(
+        "https://discord.example/SECRET", encoding="utf-8"
+    )
     monkeypatch_env = os.environ.copy()
     monkeypatch_env["PLUGIN_DATA_DIR"] = str(data_dir.parent)
-    monkeypatch_env["PYTHONPATH"] = str(ROOT) + os.pathsep + monkeypatch_env.get("PYTHONPATH", "")
+    monkeypatch_env["PYTHONPATH"] = (
+        str(ROOT) + os.pathsep + monkeypatch_env.get("PYTHONPATH", "")
+    )
 
     result = subprocess.run(
-        [sys.executable, str(ROOT / "examples" / "ui-playground" / "plugin.py"), "announce"],
-        input=json.dumps({"_plugin_context": {"page_title": "Overview", "path": "/plugins/example.ui-playground"}}) + "\n",
+        [
+            sys.executable,
+            str(ROOT / "examples" / "ui-playground" / "plugin.py"),
+            "announce",
+        ],
+        input=json.dumps(
+            {
+                "_plugin_context": {
+                    "page_title": "Overview",
+                    "path": "/plugins/example.ui-playground",
+                }
+            }
+        )
+        + "\n",
         text=True,
         capture_output=True,
         env=monkeypatch_env,

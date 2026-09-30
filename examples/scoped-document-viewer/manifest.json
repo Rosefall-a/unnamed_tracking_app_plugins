@@ -1,0 +1,33 @@
+{
+  "manifest_version": 1,
+  "plugin_id": "example.scoped-document-viewer",
+  "name": "Scoped Document Viewer",
+  "version": "1.0.0",
+  "description": "Lists and safely opens the active user's PDF and UTF-8 text game documents.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": "^1.0.0",
+  "application_version_range": ">=1.0.0",
+  "capabilities": [
+    {"name": "documents.read", "version": 1}
+  ],
+  "permissions": [
+    {
+      "capability": {"name": "documents.read", "version": 1},
+      "rationale": "List and open only documents belonging to the signed-in user's games. Host paths and unsupported active content are never exposed."
+    }
+  ],
+  "dependencies": [],
+  "ui": {
+    "settings": [],
+    "actions": ["list-documents", "read-document"],
+    "pages": ["documents"],
+    "menus": []
+  },
+  "storage": {"quota_mb": 1},
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null,
+    "key_id": null
+  },
+  "frontend": {"entry": "frontend/index.html"}
+}

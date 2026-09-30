@@ -1,0 +1,38 @@
+{
+  "manifest_version": 1,
+  "plugin_id": "example.self-service-session-manager",
+  "name": "Self-Service Session Manager",
+  "version": "1.0.0",
+  "description": "Lists and revokes only the signed-in user's sessions without exposing credentials.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": "^1.0.0",
+  "application_version_range": ">=1.0.0",
+  "capabilities": [
+    {"name": "sessions.read", "version": 1},
+    {"name": "sessions.revoke", "version": 1}
+  ],
+  "permissions": [
+    {
+      "capability": {"name": "sessions.read", "version": 1},
+      "rationale": "Display minimized creation, expiry, and active-state metadata for the signed-in user's sessions. Tokens, hashes, cookies, IP addresses, and user agents are not exposed."
+    },
+    {
+      "capability": {"name": "sessions.revoke", "version": 1},
+      "rationale": "Revoke a session selected by the signed-in user after host-owned confirmation. Other users' sessions cannot be addressed."
+    }
+  ],
+  "dependencies": [],
+  "ui": {
+    "settings": [],
+    "actions": ["list-sessions", "revoke-session"],
+    "pages": ["sessions"],
+    "menus": []
+  },
+  "storage": {"quota_mb": 1},
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null,
+    "key_id": null
+  },
+  "frontend": {"entry": "frontend/index.html"}
+}

@@ -20,7 +20,12 @@ ROOT = Path(__file__).parents[1]
 OUT = ROOT / "dist"
 OUT.mkdir(exist_ok=True)
 
-REFERENCE_PLUGINS = ("ui-api",)
+REFERENCE_PLUGINS = (
+    "ui-api",
+    "scoped-document-viewer",
+    "self-service-session-manager",
+    "discord-delivery-provider",
+)
 
 DEMO_PLUGINS = (
     "playtime-report",
@@ -37,16 +42,24 @@ REQUIRE_SIGNING = argument_parser.parse_known_args()[0].require_signing
 
 if SIGNING_KEY_B64:
     try:
-        signing_key = Ed25519PrivateKey.from_private_bytes(base64.b64decode(SIGNING_KEY_B64))
+        signing_key = Ed25519PrivateKey.from_private_bytes(
+            base64.b64decode(SIGNING_KEY_B64)
+        )
     except (ValueError, TypeError) as exc:
-        raise SystemExit("PLUGIN_SIGNING_KEY_B64 is not a valid Ed25519 private key") from exc
+        raise SystemExit(
+            "PLUGIN_SIGNING_KEY_B64 is not a valid Ed25519 private key"
+        ) from exc
     if not SIGNING_KEY_ID:
-        raise SystemExit("PLUGIN_SIGNING_KEY_ID is required when PLUGIN_SIGNING_KEY_B64 is set")
+        raise SystemExit(
+            "PLUGIN_SIGNING_KEY_ID is required when PLUGIN_SIGNING_KEY_B64 is set"
+        )
 else:
     signing_key = None
 
 if REQUIRE_SIGNING and signing_key is None:
-    raise SystemExit("a release build requires PLUGIN_SIGNING_KEY_B64 and PLUGIN_SIGNING_KEY_ID")
+    raise SystemExit(
+        "a release build requires PLUGIN_SIGNING_KEY_B64 and PLUGIN_SIGNING_KEY_ID"
+    )
 
 LOCAL_PLUGINS = REFERENCE_PLUGINS + DEMO_PLUGINS
 PLUGINS = LOCAL_PLUGINS
@@ -54,10 +67,14 @@ PLUGINS = LOCAL_PLUGINS
 if signing_key is not None:
     try:
         plugin_ids = tuple(
-            json.loads((ROOT / "examples" / name / "manifest.json").read_text())["plugin_id"]
+            json.loads((ROOT / "examples" / name / "manifest.json").read_text())[
+                "plugin_id"
+            ]
             for name in PLUGINS
         )
-        release_signer(SIGNING_KEY_ID, plugin_ids, signing_key.public_key().public_bytes_raw())
+        release_signer(
+            SIGNING_KEY_ID, plugin_ids, signing_key.public_key().public_bytes_raw()
+        )
     except PublisherRegistryError as exc:
         raise SystemExit(str(exc)) from exc
 
@@ -81,7 +98,9 @@ for name in PLUGINS:
     frontend_root = src / "frontend"
     if frontend_root.is_dir():
         for frontend_file in sorted(p for p in frontend_root.rglob("*") if p.is_file()):
-            files["frontend/" + frontend_file.relative_to(frontend_root).as_posix()] = frontend_file.read_bytes()
+            files["frontend/" + frontend_file.relative_to(frontend_root).as_posix()] = (
+                frontend_file.read_bytes()
+            )
 
     manifest = json.loads((src / "manifest.json").read_text())
     payload_digest = canonical_payload_digest(files.items())
@@ -100,9 +119,11 @@ for name in PLUGINS:
         manifest["integrity"]["signature"] = None
         manifest["integrity"]["key_id"] = None
 
-    out = OUT / f'{manifest["plugin_id"]}-{manifest["version"]}.utp'
+    out = OUT / f"{manifest['plugin_id']}-{manifest['version']}.utp"
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        archive.writestr("manifest.json", json.dumps(manifest, sort_keys=True, indent=2))
+        archive.writestr(
+            "manifest.json", json.dumps(manifest, sort_keys=True, indent=2)
+        )
         for path, data in files.items():
             archive.writestr("payload/" + path, data)
     print(out)

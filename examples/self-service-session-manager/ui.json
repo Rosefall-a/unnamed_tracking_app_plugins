@@ -1,0 +1,36 @@
+{
+  "schema_version": "v1",
+  "plugin_id": "example.self-service-session-manager",
+  "title": "Session Manager",
+  "settings": [],
+  "actions": [
+    {
+      "id": "list-sessions",
+      "label": "Refresh sessions",
+      "handler": "plugin:list_sessions",
+      "capability": {"name": "sessions.read", "version": 1}
+    },
+    {
+      "id": "revoke-session",
+      "label": "Revoke session",
+      "handler": "plugin:revoke_session",
+      "capability": {"name": "sessions.revoke", "version": 1},
+      "confirmation": "Revoke this session? That device will need to sign in again."
+    }
+  ],
+  "tables": [],
+  "dialogs": [],
+  "menus": [],
+  "pages": [
+    {
+      "id": "sessions",
+      "title": "Account sessions",
+      "description": "Review and revoke your own active sessions.",
+      "settings": [],
+      "actions": ["list-sessions", "revoke-session"],
+      "tables": [],
+      "dialogs": [],
+      "navigation": {"sidebar": true, "label": "Account sessions", "order": 50}
+    }
+  ]
+}
