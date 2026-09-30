@@ -1,64 +1,7 @@
-const container = document.querySelector("#sessions");
-const status = document.querySelector("#status");
-
-function pluginRequest(method, payload = {}) {
-  return new Promise((resolve, reject) => {
-    const requestId = crypto.randomUUID();
-    const onMessage = (event) => {
-      if (event.source !== window.parent || event.data?.type !== "plugin-api-response" || event.data.requestId !== requestId) return;
-      window.removeEventListener("message", onMessage);
-      event.data.error ? reject(new Error(event.data.error)) : resolve(event.data.result || {});
-    };
-    window.addEventListener("message", onMessage);
-    window.parent.postMessage({type: "plugin-api-request", requestId, method, payload}, "*");
-  });
-}
-
-function when(timestamp) {
-  return new Date(Number(timestamp) * 1000).toLocaleString();
-}
-
-async function revoke(sessionId) {
-  status.textContent = "Waiting for confirmation…";
-  try {
-    const result = await pluginRequest("plugin.run-action", {actionId: "revoke-session", values: {session_id: sessionId}});
-    if (result.cancelled) {
-      status.textContent = "Revocation cancelled.";
-      return;
-    }
-    status.textContent = `Session revoked. Audit request ${result.request_id || "recorded"}.`;
-    await refresh();
-  } catch (error) {
-    status.textContent = error instanceof Error ? error.message : "Session could not be revoked.";
-  }
-}
-
-async function refresh() {
-  status.textContent = "Loading sessions…";
-  container.replaceChildren();
-  try {
-    const result = await pluginRequest("plugin.run-action", {actionId: "list-sessions", values: {limit: 200}});
-    for (const session of result.sessions || []) {
-      const card = document.createElement("section");
-      const title = document.createElement("h2");
-      title.textContent = session.active ? "Active session" : "Expired session";
-      const details = document.createElement("p");
-      details.textContent = `Created ${when(session.created_at)} · Expires ${when(session.expires_at)}`;
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = "Revoke";
-      button.disabled = !session.active;
-      button.addEventListener("click", () => revoke(session.id));
-      card.append(title, details, button);
-      container.append(card);
-    }
-    if (!container.children.length) container.innerHTML = '<p class="empty">No sessions were returned.</p>';
-    status.textContent = `${(result.sessions || []).length} session(s). Audit request ${result.request_id || "recorded"}.`;
-  } catch (error) {
-    container.innerHTML = '<p class="error">Sessions are unavailable. Check that access is still granted.</p>';
-    status.textContent = error instanceof Error ? error.message : "Sessions unavailable.";
-  }
-}
-
-document.querySelector("#refresh").addEventListener("click", refresh);
-refresh();
+const container=document.querySelector("#sessions");const adminContainer=document.querySelector("#admin-sessions");const status=document.querySelector("#status");let adminVisible=false;
+function pluginRequest(method,payload={}){return new Promise((resolve,reject)=>{const requestId=crypto.randomUUID();const onMessage=e=>{if(e.source!==window.parent||e.data?.type!=="plugin-api-response"||e.data.requestId!==requestId)return;window.removeEventListener("message",onMessage);e.data.error?reject(new Error(e.data.error)):resolve(e.data.result||{})};window.addEventListener("message",onMessage);window.parent.postMessage({type:"plugin-api-request",requestId,method,payload},"*")})}
+function when(timestamp){return new Date(Number(timestamp)*1000).toLocaleString()}
+function card(session,admin=false){const el=document.createElement("section");const title=document.createElement("h2");title.textContent=admin?(session.username+" — "+(session.state||"session")):(session.active?"Active session":"Expired session");const details=document.createElement("p");details.textContent="Created "+when(session.created_at)+" · Expires "+when(session.expires_at)+(session.location?.city?" · "+session.location.city:"")+(session.user_agent?" · "+session.user_agent:"");const button=document.createElement("button");button.textContent="Revoke";button.disabled=admin?session.state!=="active":!session.active;button.onclick=async()=>{try{await pluginRequest("plugin.run-action",{actionId:admin?"revoke-admin-session":"revoke-session",values:{session_id:session.id}});admin?await refreshAdmin():await refresh()}catch(e){status.textContent=e.message}};el.append(title,details,button);return el}
+async function refresh(){status.textContent="Loading sessions…";container.replaceChildren();try{const r=await pluginRequest("plugin.run-action",{actionId:"list-sessions",values:{limit:200}});for(const s of r.sessions||[])container.append(card(s));status.textContent=(r.sessions||[]).length+" own session(s)."}catch(e){status.textContent=e.message}}
+async function refreshAdmin(){adminContainer.replaceChildren();try{const r=await pluginRequest("plugin.run-action",{actionId:"list-admin-sessions",values:{limit:200}});for(const s of r.sessions||[])adminContainer.append(card(s,true));status.textContent=(r.sessions||[]).length+" administrator-visible session(s).";document.querySelector("#revoke-all").disabled=false}catch(e){adminContainer.innerHTML="<p class="error">Administrator access is required for this view.</p>";document.querySelector("#revoke-all").disabled=true}}
+document.querySelector("#refresh").onclick=refresh;document.querySelector("#admin").onclick=async()=>{adminVisible=!adminVisible;adminContainer.hidden=!adminVisible;if(adminVisible)await refreshAdmin()};document.querySelector("#revoke-all").onclick=async()=>{if(!confirm("Revoke every browser session for every user?"))return;try{await pluginRequest("plugin.run-action",{actionId:"revoke-all-admin-sessions",values:{}});await refreshAdmin()}catch(e){status.textContent=e.message}};refresh();

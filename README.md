@@ -4,7 +4,7 @@ This repository contains official demo plugins and reference implementations for
 
 ## Security warning
 
-**Full API access allows plugins to read and modify all user data. Only enable this for plugins you trust.** Prefer scoped capabilities whenever a plugin does not require unrestricted access.
+**Full API access allows plugins to read and modify all user data. Only enable this for plugins you trust.** Scoped capabilities should be preferred whenever possible.
 
 ## For users: getting and installing a plugin
 
