@@ -1,0 +1,27 @@
+{
+  "dompurify": {
+    "version": "3.4.14",
+    "integrity": "sha512-dVoH9z+MY+C9IilgGCk3YfFqjLi3fChm2OiKJMzh6axrJ5qwxqWaZamgmHrpv22CN/KdbZJuGEGgfQoL00LTdg==",
+    "files": {
+      "purify.min.js": "c2f26ea4fc0d88141c9aa430eb515ac86fce59418ceebd85fa475b87a8d6c3e6",
+      "dompurify.LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    }
+  },
+  "pdfjs-dist": {
+    "version": "5.6.205",
+    "integrity": "sha512-tlUj+2IDa7G1SbvBNN74UHRLJybZDWYom+k6p5KIZl7huBvsA4APi6mKL+zCxd3tLjN5hOOEE9Tv7VdzO88pfg==",
+    "files": {
+      "pdf.js": "ec1addddb2183c76b33a0a2005344339dcf65c15b12d7a4ebe94ad63f4424caa",
+      "pdf.worker.js": "17d61066479d646fb5bc7f6f6d67d574be1c94257fa18f137102f46c1356c0bc",
+      "pdfjs.LICENSE": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    }
+  },
+  "js-sha256": {
+    "version": "0.11.1",
+    "integrity": "sha512-o6WSo/LUvY2uC4j7mO50a2ms7E/EAdbP0swigLV+nzHKTTaYnaLIWJ02VdXrsJX0vGedDESQnLsOekr94ryfjg==",
+    "files": {
+      "sha256.min.js": "4b53da9acab6a5d4010107be2025002fe1a22da64804dd5200b46895cb899219",
+      "sha256.LICENSE": "0fea2e0cffe72ee17adc25c42e55daf5c87c6e9cd5b3362ee4213890bda0ee7c"
+    }
+  }
+}

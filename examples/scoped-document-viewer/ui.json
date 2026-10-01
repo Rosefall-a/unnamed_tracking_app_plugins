@@ -8,13 +8,19 @@
       "id": "list-documents",
       "label": "Refresh documents",
       "handler": "plugin:list_documents",
-      "capability": {"name": "documents.read", "version": 1}
+      "capability": {
+        "name": "documents.read",
+        "version": 1
+      }
     },
     {
       "id": "read-document",
       "label": "Open document",
       "handler": "plugin:read_document",
-      "capability": {"name": "documents.read", "version": 1}
+      "capability": {
+        "name": "documents.read",
+        "version": 1
+      }
     }
   ],
   "tables": [],
@@ -24,12 +30,19 @@
     {
       "id": "documents",
       "title": "Documents",
-      "description": "Safe PDF and UTF-8 text documents from your game library.",
+      "description": "Game manuals, UTF-8 notes and sanitized HTML/XHTML, safely scoped to your account.",
       "settings": [],
-      "actions": ["list-documents", "read-document"],
+      "actions": [
+        "list-documents",
+        "read-document"
+      ],
       "tables": [],
       "dialogs": [],
-      "navigation": {"sidebar": true, "label": "Documents", "order": 40}
+      "navigation": {
+        "sidebar": true,
+        "label": "Documents",
+        "order": 40
+      }
     }
   ]
 }

@@ -46,9 +46,9 @@
     {
       "plugin_id": "example.scoped-document-viewer",
       "name": "Scoped Document Viewer",
-      "description": "Lists and safely opens the active user's PDF, UTF-8 text, and sanitized HTML game documents.",
-      "version": "1.3.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.scoped-document-viewer-1.3.0.utp"
+      "description": "Scoped game document viewer implementing PR #241 with sandboxed PDF, UTF-8 text and sanitized HTML rendering.",
+      "version": "1.4.0",
+      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.scoped-document-viewer-1.4.0.utp"
     },
     {
       "plugin_id": "example.self-service-session-manager",

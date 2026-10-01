@@ -36,7 +36,7 @@ Three security-focused reference plugins exercise the scoped Phase 2 domain APIs
 | `example.ui-api` | Reference | Declarative UI and gateway requests |
 | `example.help-button` | Showcase | Labelled native capability cards and first-class host contributions |
 | `example.jellyfin-media-sync` | Integration | Native configuration, secrets, supervised movie sync and progress |
-| `example.scoped-document-viewer` | Reference | User-scoped document DTOs and safe PDF/text rendering |
+| `example.scoped-document-viewer` | Official feature example | PR #241 scoped game document viewer: sandbox PDF, UTF-8 text, sanitized HTML/XHTML ([guide](examples/scoped-document-viewer/README.md), [behavior comparison](docs/scoped-document-viewer.md)) |
 | `example.self-service-session-manager` | High-risk reference | PR #248 parity: native account/admin Settings, rich metadata/maps, scoped revocation, GeoIP configuration |
 | `example.discord-delivery-provider` | Reference | Core-coordinated external delivery and write-only secrets |
 

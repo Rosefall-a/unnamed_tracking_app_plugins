@@ -1,20 +1,60 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Scoped Document Viewer</title>
-  <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-  <main>
-    <header><h1>Documents</h1><p>PDF, UTF-8 text, and sanitized HTML files authorized for your account.</p></header>
-    <div class="toolbar"><button id="refresh" type="button">Refresh</button><span id="status" role="status"></span></div>
-    <section class="layout">
-      <ul id="documents" aria-label="Documents"></ul>
-      <article id="viewer"><p class="empty">Choose a document to open it.</p></article>
-    </section>
-  </main>
-  <script src="./app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Scoped Document Viewer</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">YOUR LIBRARY / DOCUMENTS</p>
+          <h1>Game documents</h1>
+          <p>Manuals, notes and guides, scoped to your account.</p>
+        </div>
+        <button id="refresh" type="button">Refresh library</button>
+      </header>
+      <p id="status" role="status" aria-live="polite"></p>
+      <section class="layout">
+        <aside>
+          <h2 class="list-title">Library files</h2>
+          <ul id="documents" aria-label="Documents"></ul>
+          <button id="more" type="button" hidden>Load more documents</button>
+        </aside>
+        <section class="document-panel" aria-label="Document preview">
+          <header class="document-header">
+            <h2 id="document-title">Your game documents</h2>
+            <p id="document-meta">Choose a document to open it.</p>
+          </header>
+          <div id="pdf-tools" class="toolbar" hidden>
+            <button id="previous" type="button">Previous page</button
+            ><span id="page-label"></span
+            ><button id="next" type="button">Next page</button
+            ><label
+              >Zoom
+              <select id="zoom">
+                <option value="0.75">75%</option>
+                <option value="1" selected>100%</option>
+                <option value="1.5">150%</option>
+                <option value="2">200%</option>
+              </select></label
+            >
+          </div>
+          <button id="source-toggle" type="button" hidden>Show source</button>
+          <article id="viewer" aria-live="polite"></article>
+        </section>
+      </section>
+      <footer>
+        PDF · UTF-8 text · sanitized HTML/XHTML · 5 MiB per document. Add,
+        rename and download files in the game's Docs tab.
+      </footer>
+    </main>
+    <script src="./vendor/purify.min.js"></script>
+    <script src="./vendor/pdf.worker.js"></script>
+    <script src="./vendor/pdf.js"></script>
+    <script src="./vendor/sha256.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
 </html>

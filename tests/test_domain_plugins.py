@@ -23,7 +23,10 @@ def load_plugin(name: str):
 @pytest.mark.parametrize(
     ("name", "expected"),
     [
-        ("scoped-document-viewer", {"documents.read", "backend.routes.plugin"}),
+        (
+            "scoped-document-viewer",
+            {"documents.read", "backend.routes.plugin", "frontend.navigation.main"},
+        ),
         (
             "self-service-session-manager",
             {
@@ -74,16 +77,17 @@ def test_document_viewer_uses_opaque_public_document_methods(monkeypatch) -> Non
     plugin.read_document({"document_id": "opaque-document-id"})
 
     assert calls == [
-        ("documents.list", "documents.read", {"limit": 200}),
+        ("documents.list", "documents.read", {"limit": 32}),
         (
             "documents.read",
             "documents.read",
-            {"document_id": "opaque-document-id"},
+            {"document_id": "opaque-document-id", "chunk_bytes": 24 * 1024},
         ),
     ]
     source = (ROOT / "examples" / "scoped-document-viewer" / "frontend" / "app.js").read_text()
     assert "textContent = text" in source
-    assert "text/html" in source
+    assert "DOMPurify.sanitize" in source
+    assert "text/plain" in source
 
 
 def test_document_viewer_namespaced_routes_keep_gateway_ownership_checks(
@@ -105,8 +109,12 @@ def test_document_viewer_namespaced_routes_keep_gateway_ownership_checks(
     assert listed == {"status_code": 200, "body": {"documents": []}}
     assert opened["status_code"] == 200
     assert calls == [
-        ("documents.list", "documents.read", {"limit": 25}),
-        ("documents.read", "documents.read", {"document_id": "opaque-document-id"}),
+        ("documents.list", "documents.read", {"limit": 25, "offset": 0}),
+        (
+            "documents.read",
+            "documents.read",
+            {"document_id": "opaque-document-id", "chunk_bytes": 24 * 1024},
+        ),
     ]
 
 
