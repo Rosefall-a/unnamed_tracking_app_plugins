@@ -20,8 +20,8 @@ The four **real demo plugins** are intentionally useful, end-to-end examples. De
 - **Recently Played Notifier** reads recent activity, formats a notification, and stores its last run.
 - **Metadata Curator** reads a plugin setting, performs a metadata search, normalizes the result, and stores a snapshot.
 - **Plugin UI Playground** demonstrates a real Vue 3 frontend, lifecycle state, private plugin storage, and Discord page announcements.
-- **Help Button (Totally Not Helpful)** demonstrates global UI injection, Home Hub replacement, plugin routes/navigation, and external navigation actions.
-- **Jellyfin Media Sync** demonstrates secret storage, external API calls, media import, background work, and event polling.
+- **[Help Button capability showcase](examples/help-button/README.md)** demonstrates a global overlay, host dialog, local toast, notification, sidebar, native Settings, Home extension, game action, route, external navigation, settings, storage and events.
+- **[Jellyfin Media Sync](examples/jellyfin-media-sync/README.md)** demonstrates write-only destination-bound tokens, paginated HTTP, supervised queued work, movie imports, event polling, persistent progress and native configuration. Its README identifies the generic HTTP-broker, import-identity/playback and background-identity contracts still needed by the host.
 
 Three security-focused reference plugins exercise the scoped Phase 2 domain APIs without importing host code: a document viewer, a self-service session manager, and an external Discord delivery provider. `example.ui-api` remains the smallest general protocol example. Older lifecycle/events/advanced/notifications/metadata/event-filter examples were removed because they duplicated platform internals rather than demonstrating useful plugin behavior.
 
@@ -34,6 +34,8 @@ Three security-focused reference plugins exercise the scoped Phase 2 domain APIs
 | `example.metadata-curator` | Real demo | Settings + metadata search + result normalization |
 | `example.ui-playground` | Real demo | Vue 3 frontend + private storage + Discord page announcements |
 | `example.ui-api` | Reference | Declarative UI and gateway requests |
+| `example.help-button` | Showcase | Labelled native capability cards and first-class host contributions |
+| `example.jellyfin-media-sync` | Integration | Native configuration, secrets, supervised movie sync and progress |
 | `example.scoped-document-viewer` | Reference | User-scoped document DTOs and safe PDF/text rendering |
 | `example.self-service-session-manager` | Reference | Minimized session DTOs and confirmed self-service revocation |
 | `example.discord-delivery-provider` | Reference | Core-coordinated external delivery and write-only secrets |
@@ -51,6 +53,13 @@ A plugin declares its identity, compatibility range, capabilities, permissions, 
 Plugins may also declare authenticated JSON backend handlers. Normal handlers are mounted below `/api/plugins/<plugin-id>/...` with `backend.routes.plugin`; the host owns authentication, installation-scoped grants, lifecycle gating, conflicts, limits, and auditing. `backend.routes.host` is reserved for exceptional trusted plugins that need a direct `/api/...` route. The document viewer and session manager demonstrate the safe namespaced form while continuing to access user data only through scoped Plugin API methods.
 
 ### Plugin frontends
+
+Help Button and Jellyfin use the explicit `native_frontend` contract with
+`frontend.native`. Their bundled `native/` modules export `activate(context)` and
+use supplied Vue/host APIs. CSS selectors are scoped to plugin classes and polling
+timers have lifecycle cleanup. This privileged mode requires administrator review;
+generated declarative UI remains available without the native grant. The package
+builder includes and validates native entries/styles alongside iframe assets.
 
 Plugins may ship a static `frontend/` bundle. The host serves that bundle inside a sandboxed iframe, so a plugin can ship a complete Vue/Vite application without being able to modify the host Vue application or access its DOM. The frontend communicates with the host through a small `postMessage` bridge for approved operations such as saving settings, storing secrets, and running declared plugin actions. Production plugins should bundle their frontend dependencies; the UI Playground uses a pinned Vue CDN dependency only to keep the example source small.
 

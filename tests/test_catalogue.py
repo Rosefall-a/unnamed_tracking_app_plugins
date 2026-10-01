@@ -16,10 +16,12 @@ def test_catalogue_matches_plugin_manifests() -> None:
         manifests[manifest["plugin_id"]] = manifest
 
     assert len({entry["plugin_id"] for entry in entries}) == len(entries)
+    assert {entry["plugin_id"] for entry in entries} == set(manifests)
     for entry in entries:
         manifest = manifests[entry["plugin_id"]]
         package_name = entry["plugin_id"] + "-" + entry["version"] + ".utp"
         assert set(entry) == {"plugin_id", "name", "description", "version", "url"}
         assert entry["name"] == manifest["name"]
+        assert entry["version"] == manifest["version"]
         assert entry["description"] == manifest["description"]
         assert entry["url"].endswith("/dist/" + package_name)

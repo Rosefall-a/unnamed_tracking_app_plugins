@@ -18,9 +18,9 @@
     {
       "plugin_id": "example.jellyfin-media-sync",
       "name": "Jellyfin Media Sync",
-      "description": "Imports Jellyfin media metadata and playback information into Unnamed Tracking.",
-      "version": "1.1.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.jellyfin-media-sync-1.1.0.utp"
+      "description": "A supervised, paginated Jellyfin movie sync with write-only tokens, native configuration and persistent progress.",
+      "version": "2.0.0",
+      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.jellyfin-media-sync-2.0.0.utp"
     },
     {
       "plugin_id": "example.metadata-curator",

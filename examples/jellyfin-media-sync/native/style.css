@@ -1,0 +1,15 @@
+.jf-sync { max-width: 900px; padding: 1.5rem; border: 1px solid #704eaf; border-radius: 1rem; background: #1d1927; color: #f3eefb; }
+.jf-badge { color: #bf9dff; font-size: .75rem; letter-spacing: .08em; }
+.jf-sync form { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem; margin: 1.5rem 0; }
+.jf-sync label { display: grid; gap: .4rem; }
+.jf-sync input { box-sizing: border-box; width: 100%; padding: .7rem; border: 1px solid #6f618b; border-radius: .5rem; background: #131019; color: #fff; }
+.jf-sync .jf-switch { display: flex; align-items: center; }
+.jf-switch input { width: auto; }
+.jf-sync button { padding: .7rem 1rem; border: 1px solid #ba91ff; border-radius: .5rem; background: #543279; color: #fff; cursor: pointer; }
+.jf-sync button:disabled { opacity: .6; cursor: wait; }
+.jf-sync input:focus-visible, .jf-sync button:focus-visible { outline: 3px solid #d8bdff; outline-offset: 3px; }
+.jf-status { padding: 1rem; border-radius: .7rem; background: #2c233d; }
+.jf-status progress { width: 100%; accent-color: #b592ef; }
+.jf-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
+.jf-error { color: #ffb9b9; }
+.jf-limit { color: #b8aec7; font-size: .85rem; line-height: 1.5; }
