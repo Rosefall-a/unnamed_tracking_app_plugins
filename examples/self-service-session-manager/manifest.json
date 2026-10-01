@@ -2,7 +2,7 @@
   "manifest_version": 1,
   "plugin_id": "example.self-service-session-manager",
   "name": "Self-Service Session Manager",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A full user-facing browser session manager backed by the scoped session API.",
   "entrypoint": "plugin:main",
   "sdk_version_range": "^1.0.0",
@@ -11,13 +11,22 @@
     {"name": "sessions.read", "version": 1},
     {"name": "sessions.revoke", "version": 1},
     {"name": "sessions.admin.read", "version": 1},
-    {"name": "sessions.admin.revoke", "version": 1}
+    {"name": "sessions.admin.revoke", "version": 1},
+    {"name": "backend.routes.plugin", "version": 1}
   ],
   "permissions": [
     {"capability": {"name": "sessions.read", "version": 1}, "rationale": "Display the signed-in user's session location, device, creation, expiry, and activity metadata."},
     {"capability": {"name": "sessions.revoke", "version": 1}, "rationale": "Revoke a browser session owned by the signed-in user after host confirmation."},
     {"capability": {"name": "sessions.admin.read", "version": 1}, "rationale": "Allow an administrator to inspect session metadata for all users through a host-owned admin page."},
-    {"capability": {"name": "sessions.admin.revoke", "version": 1}, "rationale": "Allow an administrator to revoke another user's browser session after host confirmation."}
+    {"capability": {"name": "sessions.admin.revoke", "version": 1}, "rationale": "Allow an administrator to revoke another user's browser session after host confirmation."},
+    {"capability": {"name": "backend.routes.plugin", "version": 1}, "rationale": "Serve user and administrator session operations only below this plugin's authenticated route namespace."}
+  ],
+  "backend_routes": [
+    {"id": "list-sessions-api", "scope": "plugin", "path": "sessions", "methods": ["GET"], "handler": "plugin:list_sessions_route", "authorization": "authenticated"},
+    {"id": "revoke-session-api", "scope": "plugin", "path": "sessions/{session_id}", "methods": ["DELETE"], "handler": "plugin:revoke_session_route", "authorization": "authenticated"},
+    {"id": "list-admin-sessions-api", "scope": "plugin", "path": "admin/sessions", "methods": ["GET"], "handler": "plugin:list_admin_sessions_route", "authorization": "admin"},
+    {"id": "revoke-admin-session-api", "scope": "plugin", "path": "admin/sessions/{session_id}", "methods": ["DELETE"], "handler": "plugin:revoke_admin_session_route", "authorization": "admin"},
+    {"id": "revoke-all-admin-sessions-api", "scope": "plugin", "path": "admin/sessions", "methods": ["DELETE"], "handler": "plugin:revoke_all_admin_sessions_route", "authorization": "admin"}
   ],
   "dependencies": [],
   "ui": {"settings": [], "actions": ["list-sessions", "revoke-session", "list-admin-sessions", "revoke-admin-session", "revoke-all-admin-sessions"], "pages": ["sessions", "admin-sessions"], "menus": ["sessions", "admin-sessions"]},

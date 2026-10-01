@@ -25,8 +25,17 @@ def load_plugin(name: str):
 @pytest.mark.parametrize(
     ("name", "expected"),
     [
-        ("scoped-document-viewer", {"documents.read"}),
-        ("self-service-session-manager", {"sessions.read", "sessions.revoke", "sessions.admin.read", "sessions.admin.revoke"}),
+        ("scoped-document-viewer", {"documents.read", "backend.routes.plugin"}),
+        (
+            "self-service-session-manager",
+            {
+                "sessions.read",
+                "sessions.revoke",
+                "sessions.admin.read",
+                "sessions.admin.revoke",
+                "backend.routes.plugin",
+            },
+        ),
         (
             "discord-delivery-provider",
             {
@@ -77,6 +86,32 @@ def test_document_viewer_uses_opaque_public_document_methods(monkeypatch) -> Non
     assert "text/html" in source
 
 
+def test_document_viewer_namespaced_routes_keep_gateway_ownership_checks(
+    monkeypatch,
+) -> None:
+    plugin = load_plugin("scoped-document-viewer")
+    calls = []
+    monkeypatch.setattr(
+        plugin,
+        "request",
+        lambda method, capability, payload: (
+            calls.append((method, capability, payload)) or {"documents": []}
+        ),
+    )
+
+    listed = plugin.list_documents_route({"query": {"limit": ["25"]}})
+    opened = plugin.read_document_route(
+        {"path_parameters": {"document_id": "opaque-document-id"}}
+    )
+
+    assert listed == {"status_code": 200, "body": {"documents": []}}
+    assert opened["status_code"] == 200
+    assert calls == [
+        ("documents.list", "documents.read", {"limit": 25}),
+        ("documents.read", "documents.read", {"document_id": "opaque-document-id"}),
+    ]
+
+
 def test_session_manager_separates_read_and_revoke_capabilities(monkeypatch) -> None:
     plugin = load_plugin("self-service-session-manager")
     calls = []
@@ -104,6 +139,49 @@ def test_session_manager_separates_read_and_revoke_capabilities(monkeypatch) -> 
         action for action in ui["actions"] if action["id"] == "revoke-session"
     )
     assert revoke["confirmation"]
+
+
+def test_session_manager_routes_preserve_self_service_and_admin_capabilities(
+    monkeypatch,
+) -> None:
+    plugin = load_plugin("self-service-session-manager")
+    calls = []
+    monkeypatch.setattr(
+        plugin,
+        "request",
+        lambda method, capability, payload: (
+            calls.append((method, capability, payload)) or {"ok": True}
+        ),
+    )
+
+    own = plugin.revoke_session_route(
+        {"path_parameters": {"session_id": "own-session"}}
+    )
+    admin = plugin.revoke_admin_session_route(
+        {"path_parameters": {"session_id": "other-session"}}
+    )
+
+    assert own["status_code"] == admin["status_code"] == 200
+    assert calls == [
+        ("sessions.revoke", "sessions.revoke", {"session_id": "own-session"}),
+        (
+            "sessions.admin.revoke",
+            "sessions.admin.revoke",
+            {"session_id": "other-session"},
+        ),
+    ]
+    manifest = json.loads(
+        (
+            ROOT / "examples" / "self-service-session-manager" / "manifest.json"
+        ).read_text()
+    )
+    admin_routes = [
+        route
+        for route in manifest["backend_routes"]
+        if route["path"].startswith("admin/")
+    ]
+    assert admin_routes
+    assert all(route["authorization"] == "admin" for route in admin_routes)
 
 
 def test_delivery_provider_registers_namespaced_provider(monkeypatch) -> None:
