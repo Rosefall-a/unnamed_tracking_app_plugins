@@ -19,7 +19,7 @@
       "plugin_id": "example.jellyfin-media-sync",
       "name": "Jellyfin Media Sync",
       "description": "A supervised, paginated Jellyfin movie sync with write-only tokens, native configuration and persistent progress.",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.jellyfin-media-sync-2.0.0.utp"
     },
     {
