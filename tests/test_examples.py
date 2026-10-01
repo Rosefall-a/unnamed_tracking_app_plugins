@@ -152,10 +152,12 @@ def test_package_validator_rejects_undeclared_permission(tmp_path):
     assert "not declared by capabilities" in result.stderr
 
 
-def test_help_button_declares_global_and_home_extensions() -> None:
+def test_help_button_declares_global_overlay_and_home_extension() -> None:
     data = json.loads((ROOT / "examples" / "help-button" / "ui.json").read_text())
     slots = {item["slot"] for item in data["extensions"]}
-    assert {"app.global", "home.replace"} <= slots
+    assert slots == {"home.after-widgets"}
+    assert data["overlays"] == [{"id": "floating-help", "page_id": "floating", "order": 900}]
+    assert not data.get("page_replacements")
     action = next(item for item in data["actions"] if item["id"] == "rickroll")
     assert action["external_navigation"] is True
 

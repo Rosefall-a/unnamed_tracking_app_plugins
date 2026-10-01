@@ -1,24 +1,184 @@
 {
   "schema_version": "v1",
   "plugin_id": "example.help-button",
-  "title": "Help Button (Totally Not Helpful)",
-  "settings": [],
-  "actions": [{"id": "rickroll", "label": "Press to get help", "handler": "plugin:rickroll", "external_navigation": true, "confirmation": "Are you sure you want to get help?"}],
+  "title": "Help Button \u00b7 Capability Showcase",
+  "settings": [
+    {
+      "id": "showcase",
+      "title": "Showcase configuration",
+      "description": "Ordinary plugin configuration; the showcase Settings contribution is a separate surface.",
+      "fields": [
+        {
+          "id": "greeting",
+          "label": "Demo greeting",
+          "type": "text",
+          "default": "Absolutely no useful advice here.",
+          "validation": {
+            "max_length": 120
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "rickroll",
+      "label": "Open the suspicious help video",
+      "handler": "plugin:rickroll",
+      "external_navigation": true,
+      "confirmation": "Open the demo YouTube video in a new tab?"
+    },
+    {
+      "id": "remember",
+      "label": "Remember this demo visit",
+      "handler": "plugin:remember",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "inspect-state",
+      "label": "Read remembered visit",
+      "handler": "plugin:inspect_state",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "notify",
+      "label": "Send a real notification",
+      "handler": "plugin:notify",
+      "capability": {
+        "name": "notifications.send",
+        "version": 1
+      }
+    },
+    {
+      "id": "activity",
+      "label": "Inspect event types",
+      "handler": "plugin:activity",
+      "capability": {
+        "name": "events.subscribe",
+        "version": 1
+      }
+    }
+  ],
   "tables": [],
-  "dialogs": [],
-  "menus": [{"id": "help", "label": "Totally Not Helpful", "page_id": "help"}],
-  "pages": [{
-    "id": "help",
-    "title": "Help",
-    "description": "This is a completely legitimate help page.",
-    "settings": [],
-    "actions": ["rickroll"],
-    "tables": [],
-    "dialogs": [],
-    "navigation": {"sidebar": true, "label": "Totally Not Helpful", "order": 900}
-  }],
+  "dialogs": [
+    {
+      "id": "demo-dialog",
+      "title": "Host-owned dialog",
+      "body": "This modal is declared by the plugin and rendered by the host. The help video is deliberately unhelpful.",
+      "actions": [
+        "rickroll",
+        "notify"
+      ]
+    }
+  ],
+  "menus": [
+    {
+      "id": "help",
+      "label": "Help showcase",
+      "page_id": "help"
+    }
+  ],
+  "pages": [
+    {
+      "id": "help",
+      "title": "Capability showcase",
+      "description": "Explicitly privileged native frontend. Each card names the platform capability it exercises.",
+      "settings": [
+        "showcase"
+      ],
+      "actions": [
+        "rickroll",
+        "remember",
+        "inspect-state",
+        "notify",
+        "activity"
+      ],
+      "tables": [],
+      "dialogs": [
+        "demo-dialog"
+      ]
+    },
+    {
+      "id": "floating",
+      "title": "Global overlay",
+      "actions": [
+        "notify"
+      ]
+    },
+    {
+      "id": "home-card",
+      "title": "Home extension",
+      "description": "The showcase extends Home without replacing it.",
+      "actions": [
+        "remember"
+      ]
+    }
+  ],
   "extensions": [
-    {"id": "global-help", "slot": "app.global", "page_id": "help", "order": 900},
-    {"id": "home-override", "slot": "home.replace", "page_id": "help", "order": 900}
+    {
+      "id": "home-showcase",
+      "slot": "home.after-widgets",
+      "page_id": "home-card",
+      "order": 900
+    }
+  ],
+  "navigation": [
+    {
+      "id": "showcase-link",
+      "location": "main.sidebar",
+      "label": "Help showcase",
+      "route_id": "showcase-route",
+      "order": 900
+    },
+    {
+      "id": "showcase-settings-link",
+      "location": "settings.sidebar",
+      "label": "Help showcase",
+      "settings_section_id": "help-showcase",
+      "order": 900
+    }
+  ],
+  "settings_sections": [
+    {
+      "id": "help-showcase",
+      "label": "Help showcase",
+      "page_id": "help",
+      "order": 900
+    }
+  ],
+  "overlays": [
+    {
+      "id": "floating-help",
+      "page_id": "floating",
+      "order": 900
+    }
+  ],
+  "dialog_contributions": [
+    {
+      "id": "help-modal",
+      "dialog_id": "demo-dialog"
+    }
+  ],
+  "contextual_actions": [
+    {
+      "id": "game-demo",
+      "location": "game",
+      "label": "Remember demo visit",
+      "action_id": "remember",
+      "order": 900
+    }
+  ],
+  "routes": [
+    {
+      "id": "showcase-route",
+      "path": "showcase",
+      "page_id": "help"
+    }
   ]
 }

@@ -1,0 +1,11 @@
+.help-demo { padding: 1.25rem; border: 1px solid #8872dd; border-radius: 1rem; background: #201b30; color: #f1edff; }
+.help-demo-badge { color: #c7b6ff; font-size: .75rem; letter-spacing: .08em; }
+.help-demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 1rem; }
+.help-demo-card { padding: 1rem; border-radius: .75rem; background: #302741; }
+.help-demo code { color: #d3c2ff; overflow-wrap: anywhere; }
+.help-demo button, .help-demo-floating button { padding: .6rem .9rem; border: 1px solid #ad95fa; border-radius: .5rem; background: #473268; color: #fff; cursor: pointer; }
+.help-demo button:focus-visible, .help-demo-floating button:focus-visible { outline: 3px solid #f9d878; outline-offset: 3px; }
+.help-demo button:disabled { opacity: .6; cursor: wait; }
+.help-demo pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.help-demo-floating { position: absolute; right: 1rem; bottom: 1rem; display: flex; gap: .5rem; flex-wrap: wrap; max-width: calc(100vw - 2rem); }
+.help-demo-toast { position: fixed; bottom: 5rem; right: 1rem; max-width: min(360px, calc(100vw - 2rem)); padding: 1rem; border: 1px solid #b5dca0; border-radius: .5rem; background: #243925; }

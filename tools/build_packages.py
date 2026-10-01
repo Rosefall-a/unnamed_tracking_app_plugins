@@ -138,12 +138,13 @@ for source, source_manifest in plugins:
     if (source / "ui.json").is_file():
         files["ui.json"] = (source / "ui.json").read_bytes()
 
-    frontend_root = source / "frontend"
-    if frontend_root.is_dir():
-        for frontend_file in sorted(p for p in frontend_root.rglob("*") if p.is_file()):
-            files["frontend/" + frontend_file.relative_to(frontend_root).as_posix()] = (
-                frontend_file.read_bytes()
-            )
+    for asset_directory in ("frontend", "native"):
+        asset_root = source / asset_directory
+        if asset_root.is_dir():
+            for asset in sorted(p for p in asset_root.rglob("*") if p.is_file()):
+                files[asset_directory + "/" + asset.relative_to(asset_root).as_posix()] = (
+                    asset.read_bytes()
+                )
 
     manifest = json.loads(json.dumps(source_manifest))
     manifest.setdefault("integrity", {})

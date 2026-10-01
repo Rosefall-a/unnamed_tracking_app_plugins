@@ -116,6 +116,21 @@ def validate_package(path: Path) -> None:
                     raise ValueError(f"{path.name}: backend routes conflict")
             route_owners.append((scope, route_path, method))
 
+    native = manifest.get("native_frontend")
+    if native is not None:
+        if not isinstance(native, dict) or ("frontend.native", 1) not in capabilities:
+            raise ValueError(f"{path.name}: native frontend requires frontend.native v1")
+        assets = [native.get("entry"), *native.get("styles", [])]
+        for asset in assets:
+            if (
+                not isinstance(asset, str)
+                or not asset.startswith("native/")
+                or any(part in {"", ".", ".."} for part in asset.split("/"))
+                or "\\" in asset
+                or asset not in payload_names
+            ):
+                raise ValueError(f"{path.name}: invalid or missing native asset {asset!r}")
+
     frontend = manifest.get("frontend")
     if frontend is None:
         return

@@ -1,16 +1,192 @@
 {
   "manifest_version": 1,
   "plugin_id": "example.help-button",
-  "name": "Help Button (Totally Not Helpful)",
-  "version": "1.0.0",
-  "description": "A deliberately unhelpful global help button and Home Hub override.",
+  "name": "Help Button \u00b7 Capability Showcase",
+  "version": "2.0.0",
+  "description": "An intentionally playful showcase of overlays, dialogs, notifications, Settings, Home extensions, routes, events and privileged native Vue UI.",
   "entrypoint": "plugin:main",
   "sdk_version_range": "^1.0.0",
-  "application_version_range": ">=1.0.0",
-  "capabilities": [],
-  "permissions": [],
+  "application_version_range": "^1.0.0",
+  "capabilities": [
+    {
+      "name": "frontend.navigation.main",
+      "version": 1
+    },
+    {
+      "name": "frontend.navigation.settings",
+      "version": 1
+    },
+    {
+      "name": "frontend.settings",
+      "version": 1
+    },
+    {
+      "name": "frontend.overlay",
+      "version": 1
+    },
+    {
+      "name": "frontend.dialog",
+      "version": 1
+    },
+    {
+      "name": "frontend.context.game",
+      "version": 1
+    },
+    {
+      "name": "frontend.page.extend",
+      "version": 1
+    },
+    {
+      "name": "frontend.routes",
+      "version": 1
+    },
+    {
+      "name": "frontend.native",
+      "version": 1
+    },
+    {
+      "name": "plugin.settings",
+      "version": 1
+    },
+    {
+      "name": "plugin.storage",
+      "version": 1
+    },
+    {
+      "name": "events.subscribe",
+      "version": 1
+    },
+    {
+      "name": "notifications.send",
+      "version": 1
+    }
+  ],
+  "permissions": [
+    {
+      "capability": {
+        "name": "frontend.navigation.main",
+        "version": 1
+      },
+      "rationale": "Add the showcase to the main sidebar."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.settings",
+        "version": 1
+      },
+      "rationale": "Link to the showcase Settings section."
+    },
+    {
+      "capability": {
+        "name": "frontend.settings",
+        "version": 1
+      },
+      "rationale": "Provide a native showcase Settings section."
+    },
+    {
+      "capability": {
+        "name": "frontend.overlay",
+        "version": 1
+      },
+      "rationale": "Mount the floating Help Button on host pages."
+    },
+    {
+      "capability": {
+        "name": "frontend.dialog",
+        "version": 1
+      },
+      "rationale": "Open a host-owned demonstration dialog."
+    },
+    {
+      "capability": {
+        "name": "frontend.context.game",
+        "version": 1
+      },
+      "rationale": "Offer the demo remember action on a game."
+    },
+    {
+      "capability": {
+        "name": "frontend.page.extend",
+        "version": 1
+      },
+      "rationale": "Add a showcase card below Home widgets."
+    },
+    {
+      "capability": {
+        "name": "frontend.routes",
+        "version": 1
+      },
+      "rationale": "Expose the plugin-owned showcase route."
+    },
+    {
+      "capability": {
+        "name": "frontend.native",
+        "version": 1
+      },
+      "rationale": "Run explicitly privileged Vue components and scoped CSS in the host; required for the floating button and local toast."
+    },
+    {
+      "capability": {
+        "name": "plugin.settings",
+        "version": 1
+      },
+      "rationale": "Read the configurable showcase greeting."
+    },
+    {
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      },
+      "rationale": "Remember a demo visit under the authenticated user ID."
+    },
+    {
+      "capability": {
+        "name": "events.subscribe",
+        "version": 1
+      },
+      "rationale": "Display the types of up to five current-user host activity events."
+    },
+    {
+      "capability": {
+        "name": "notifications.send",
+        "version": 1
+      },
+      "rationale": "Send a real current-user host notification on demand."
+    }
+  ],
   "dependencies": [],
-  "ui": {"settings": [], "actions": ["rickroll"], "pages": ["help"], "menus": ["help"]},
-  "storage": {"quota_mb": 1},
-  "integrity": {"sha256": "0000000000000000000000000000000000000000000000000000000000000000", "signature": null, "key_id": null}
+  "ui": {
+    "settings": [
+      "showcase"
+    ],
+    "actions": [
+      "rickroll",
+      "remember",
+      "inspect-state",
+      "notify",
+      "activity"
+    ],
+    "pages": [
+      "help",
+      "floating",
+      "home-card"
+    ],
+    "menus": [
+      "help"
+    ]
+  },
+  "storage": {
+    "quota_mb": 1
+  },
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null,
+    "key_id": null
+  },
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": [
+      "native/style.css"
+    ]
+  }
 }
