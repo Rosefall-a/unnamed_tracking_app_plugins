@@ -199,6 +199,16 @@ def normalize(item: dict[str, Any], server: str) -> dict[str, Any] | None:
         or not title.strip()
     ):
         return None
+    item_type = item.get("Type")
+    if item_type not in {"Movie", "Series"}:
+        return None
+    genres = item.get("Genres")
+    genres = genres if isinstance(genres, list) else []
+    tags = item.get("Tags")
+    tags = tags if isinstance(tags, list) else []
+    anime_markers = {str(x).strip().casefold() for x in (*genres, *tags) if isinstance(x, str)}
+    is_anime = "anime" in anime_markers or any("anime" in x for x in anime_markers)
+    media_type = "anime" if is_anime else ("tv_show" if item_type == "Series" else "movie")
     ticks = item.get("RunTimeTicks")
     ticks = (
         ticks
@@ -209,12 +219,11 @@ def normalize(item: dict[str, Any], server: str) -> dict[str, Any] | None:
     if not isinstance(user_data, dict):
         user_data = {}
     count = user_data.get("PlayCount", 0)
-    genres = item.get("Genres")
-    genres = genres if isinstance(genres, list) else []
     images = item.get("ImageTags")
     images = images if isinstance(images, dict) else {}
     return {
         "external_id": external_id,
+        "media_type": media_type,
         "title": title.strip()[:500],
         "runtime_minutes": round(ticks / 600000000) if ticks else None,
         "release_year": item.get("ProductionYear"),
@@ -299,9 +308,9 @@ def sync_library() -> dict[str, Any]:
             {
                 "UserId": config["user_id"],
                 "Recursive": "true",
-                "IncludeItemTypes": "Movie",
+                "IncludeItemTypes": "Movie,Series",
                 "EnableUserData": "true",
-                "Fields": "Genres,ProviderIds",
+                "Fields": "Genres,ProviderIds,Tags,DateCreated",
                 "SortBy": "SortName",
                 "SortOrder": "Ascending",
                 "StartIndex": offset,
@@ -333,7 +342,10 @@ def sync_library() -> dict[str, Any]:
             else:
                 normalized.append(movie)
         if normalized:
-            # The host currently upserts by title; see README for identity limits.
+            # Send the source type with every item so the host can preserve the
+            # Jellyfin distinction between films, TV shows and anime. Older host
+            # media.import implementations may ignore the extra field, but the
+            # plugin never collapses the Jellyfin catalogue before import.
             request("media.import", "media.write", {"items": normalized})
         offset += len(items)
         state["processed"] = offset
