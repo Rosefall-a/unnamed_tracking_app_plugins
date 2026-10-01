@@ -3,7 +3,7 @@
   "plugin_id": "example.jellyfin-media-sync",
   "name": "Jellyfin Media Sync",
   "version": "2.0.1",
-  "description": "A supervised, paginated Jellyfin movie sync with write-only tokens, native configuration and persistent progress.",
+  "description": "A supervised, paginated Jellyfin media sync for films, TV shows and anime with write-only tokens, native configuration and persistent progress.",
   "entrypoint": "plugin:main",
   "sdk_version_range": "^1.0.0",
   "application_version_range": "^1.0.0",
