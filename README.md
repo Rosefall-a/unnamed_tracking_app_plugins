@@ -48,6 +48,8 @@ That distinction is deliberate: the application provides the plugin platform; pl
 
 A plugin declares its identity, compatibility range, capabilities, permissions, dependencies, UI contributions, storage quota, optional frontend bundle, and package integrity in `manifest.json`. Runtime access goes through the v1 gateway rather than direct database access, host filesystem access, or application internals.
 
+Plugins may also declare authenticated JSON backend handlers. Normal handlers are mounted below `/api/plugins/<plugin-id>/...` with `backend.routes.plugin`; the host owns authentication, installation-scoped grants, lifecycle gating, conflicts, limits, and auditing. `backend.routes.host` is reserved for exceptional trusted plugins that need a direct `/api/...` route. The document viewer and session manager demonstrate the safe namespaced form while continuing to access user data only through scoped Plugin API methods.
+
 ### Plugin frontends
 
 Plugins may ship a static `frontend/` bundle. The host serves that bundle inside a sandboxed iframe, so a plugin can ship a complete Vue/Vite application without being able to modify the host Vue application or access its DOM. The frontend communicates with the host through a small `postMessage` bridge for approved operations such as saving settings, storing secrets, and running declared plugin actions. Production plugins should bundle their frontend dependencies; the UI Playground uses a pinned Vue CDN dependency only to keep the example source small.
