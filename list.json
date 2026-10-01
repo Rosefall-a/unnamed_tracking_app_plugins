@@ -10,10 +10,10 @@
     },
     {
       "plugin_id": "example.help-button",
-      "name": "Help Button (Totally Not Helpful)",
-      "description": "A deliberately unhelpful global help button and Home Hub override.",
-      "version": "1.0.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.help-button-1.0.0.utp"
+      "name": "Help Button \u00b7 Capability Showcase",
+      "description": "An intentionally playful showcase of overlays, dialogs, notifications, Settings, Home extensions, routes, events and privileged native Vue UI.",
+      "version": "2.0.0",
+      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.help-button-2.0.0.utp"
     },
     {
       "plugin_id": "example.jellyfin-media-sync",
