@@ -2,30 +2,179 @@
   "manifest_version": 1,
   "plugin_id": "example.jellyfin-media-sync",
   "name": "Jellyfin Media Sync",
-  "version": "1.1.0",
-  "description": "Imports Jellyfin media metadata and playback information into Unnamed Tracking.",
+  "version": "2.0.0",
+  "description": "A supervised, paginated Jellyfin movie sync with write-only tokens, native configuration and persistent progress.",
   "entrypoint": "plugin:main",
   "sdk_version_range": "^1.0.0",
-  "application_version_range": ">=1.0.0",
+  "application_version_range": "^1.0.0",
   "capabilities": [
-    {"name": "media.read", "version": 1},
-    {"name": "media.write", "version": 1},
-    {"name": "plugin.settings", "version": 1},
-    {"name": "plugin.storage", "version": 1},
-    {"name": "tasks.background", "version": 1},
-    {"name": "events.subscribe", "version": 1}
+    {
+      "name": "media.read",
+      "version": 1
+    },
+    {
+      "name": "media.write",
+      "version": 1
+    },
+    {
+      "name": "plugin.settings",
+      "version": 1
+    },
+    {
+      "name": "plugin.storage",
+      "version": 1
+    },
+    {
+      "name": "tasks.background",
+      "version": 1
+    },
+    {
+      "name": "events.subscribe",
+      "version": 1
+    },
+    {
+      "name": "network.outbound",
+      "version": 1
+    },
+    {
+      "name": "frontend.native",
+      "version": 1
+    },
+    {
+      "name": "frontend.navigation.main",
+      "version": 1
+    },
+    {
+      "name": "frontend.navigation.settings",
+      "version": 1
+    },
+    {
+      "name": "frontend.settings",
+      "version": 1
+    },
+    {
+      "name": "frontend.routes",
+      "version": 1
+    }
   ],
   "permissions": [
-    {"capability": {"name": "media.read", "version": 1}, "rationale": "Read the user's imported media state to avoid duplicate imports."},
-    {"capability": {"name": "media.write", "version": 1}, "rationale": "Create or update normalized Jellyfin movie metadata."},
-    {"capability": {"name": "plugin.settings", "version": 1}, "rationale": "Read the non-secret Jellyfin server URL and user ID."},
-    {"capability": {"name": "plugin.storage", "version": 1}, "rationale": "Store the Jellyfin credential and plugin-owned sync state privately."},
-    {"capability": {"name": "tasks.background", "version": 1}, "rationale": "Run a conservative periodic synchronization loop while enabled."},
-    {"capability": {"name": "events.subscribe", "version": 1}, "rationale": "Poll host-owned activity events without receiving ORM objects."}
+    {
+      "capability": {
+        "name": "media.read",
+        "version": 1
+      },
+      "rationale": "Preview up to 100 movies in the signed-in user media library."
+    },
+    {
+      "capability": {
+        "name": "media.write",
+        "version": 1
+      },
+      "rationale": "Import paginated Jellyfin movie metadata and watched flags into the enabling user media library."
+    },
+    {
+      "capability": {
+        "name": "plugin.settings",
+        "version": 1
+      },
+      "rationale": "Read the Jellyfin server, user ID, interval and background switch."
+    },
+    {
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      },
+      "rationale": "Keep a write-only token bound to its destination, queued work, progress and activity cursor."
+    },
+    {
+      "capability": {
+        "name": "tasks.background",
+        "version": 1
+      },
+      "rationale": "Run synchronization in the supervised plugin worker rather than a long UI action."
+    },
+    {
+      "capability": {
+        "name": "events.subscribe",
+        "version": 1
+      },
+      "rationale": "Poll current-user host activity and persist a cursor after a successful sync."
+    },
+    {
+      "capability": {
+        "name": "network.outbound",
+        "version": 1
+      },
+      "rationale": "Contact only the configured Jellyfin server after a live grant check; redirects are refused."
+    },
+    {
+      "capability": {
+        "name": "frontend.native",
+        "version": 1
+      },
+      "rationale": "Render native Vue configuration, write-only credential entry and progress using the host SDK."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.main",
+        "version": 1
+      },
+      "rationale": "Add Jellyfin Sync to the sidebar."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.settings",
+        "version": 1
+      },
+      "rationale": "Link to the native Jellyfin Settings contribution."
+    },
+    {
+      "capability": {
+        "name": "frontend.settings",
+        "version": 1
+      },
+      "rationale": "Provide native configuration and status within Settings."
+    },
+    {
+      "capability": {
+        "name": "frontend.routes",
+        "version": 1
+      },
+      "rationale": "Expose the plugin-owned Jellyfin sync route."
+    }
   ],
   "dependencies": [],
-  "ui": {"settings": ["jellyfin"], "actions": ["sync-now", "refresh-status"], "pages": ["sync"], "menus": ["sync"]},
-  "storage": {"quota_mb": 32},
-  "integrity": {"sha256": "0000000000000000000000000000000000000000000000000000000000000000", "signature": null, "key_id": null},
-  "frontend": {"entry": "frontend/index.html"}
+  "ui": {
+    "settings": [
+      "jellyfin"
+    ],
+    "actions": [
+      "save-token",
+      "get-config",
+      "sync-now",
+      "status",
+      "refresh-status",
+      "list-media"
+    ],
+    "pages": [
+      "sync"
+    ],
+    "menus": [
+      "sync"
+    ]
+  },
+  "storage": {
+    "quota_mb": 32
+  },
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null,
+    "key_id": null
+  },
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": [
+      "native/style.css"
+    ]
+  }
 }
