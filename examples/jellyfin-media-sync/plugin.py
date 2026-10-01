@@ -199,7 +199,9 @@ def normalize(item: dict[str, Any], server: str) -> dict[str, Any] | None:
         or not title.strip()
     ):
         return None
-    # Older Jellyfin-compatible fixtures may omit Type; GetItems Movie payloads\n    # are treated as movies for backwards compatibility.\n    item_type = item.get("Type", "Movie")
+    # Older Jellyfin-compatible fixtures may omit Type; GetItems Movie payloads
+    # are treated as movies for backwards compatibility.
+    item_type = item.get("Type", "Movie")
     if item_type not in {"Movie", "Series"}:
         return None
     genres = item.get("Genres")
