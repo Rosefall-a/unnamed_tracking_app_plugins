@@ -49,7 +49,8 @@ def test_native_assets_manifest_and_integrity_in_real_packages(packages):
                 for name in archive.namelist()
                 if name.startswith("payload/")
             }
-        assert manifest["version"] == "2.0.0"
+        expected_version = "2.0.1" if "jellyfin-media-sync" in path.name else "2.0.0"
+        assert manifest["version"] == expected_version
         assert manifest["integrity"]["signature"] is None
         assert manifest["integrity"]["sha256"] == canonical_payload_digest(
             files.items()
