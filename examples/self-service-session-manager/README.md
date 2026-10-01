@@ -1,15 +1,99 @@
 # Self-Service Session Manager
 
-This reference plugin contributes an Account sessions sidebar page. It uses only opaque IDs and the minimized `created_at`, `expires_at`, and `active` fields returned by Plugin API v1.
+Version 2.0.0 ports application [PR #248](https://github.com/Rosefall-a/unnamed_tracking_app/pull/248), inspected at head `5bf43f22bd4991999cd278c5b201817aae439e85`. The stable ID remains `example.self-service-session-manager`. This replaces the minimized metadata/Refresh example.
 
-Permissions requested:
+## Experience and source parity
 
-- `sessions.read`: list the signed-in user's minimized session records.
-- `sessions.revoke`: revoke only a selected session owned by that same user.
-- `sessions.admin.read`: list cross-user session metadata only for a host-authenticated administrator.
-- `sessions.admin.revoke`: revoke cross-user sessions only for a host-authenticated administrator.
-- `backend.routes.plugin`: expose these operations under `/api/plugins/example.self-service-session-manager/`; administrator route declarations additionally require the host's `admin` authorization policy.
+The primary experience is **Settings → Sessions** (`/settings?section=sessions`) and administrator-only **Settings → Session Manager** (`/settings?section=admin-sessions`). Generic Settings contributions register native Vue components using the host runtime. No host code selects this plugin by ID.
 
-The host performs authentication and capability enforcement before dispatch, applies the current route caller's user scope again at the gateway, and protects administrator handlers before plugin execution. The plugin never receives cookies, tokens, hashes, API keys, or host database objects. Self-service revocation remains ownership-filtered at the backend domain boundary; knowing another session ID is insufficient.
+| PR #248 behavior | Plugin 2.0.0 |
+| --- | --- |
+| Current session; active/expired/revoked records | Reproduced with backend state filtering |
+| IP, user agent, country/region/city, timestamps | Reproduced, including creation, activity, expiry, revocation |
+| Network type/label, ASN/network number, organization | Reproduced with the source credential-free serializer |
+| Session search and admin user filters | Reproduced; country/anomaly filters also expose source metadata |
+| GIS map, pan/zoom, clustered selectable pins, admin user colors | Reproduced for loaded pages when City GeoIP is usable |
+| Own one/all; admin one/user/server revocation | Reproduced with separate destructive grants and explicit confirmation |
+| Admin compact table, City/Country/Network MMDB status/uploads | Reproduced with scoped grants, confirmation, and existing host validation |
+| Geographic anomaly and provider notifications | Source session metadata and core notification coordinator reused |
 
-Build all packages with `python tools/build_packages.py`. Local builds are intentionally unsigned and require the host's untrusted-package confirmation; release CI supplies the reviewed signing identity. Requires the host Plugin API v1 domain capabilities and mediated action support introduced by the Phase 2 plugin-manager work.
+The current account session has no individual revoke button, matching the source. Revoke all includes it and returns the browser to sign-in. Bulk actions affect all unrevoked records in scope, including expired ones, regardless of displayed filters, matching the source SQL. API keys are separate and are not revoked.
+
+Anomalies show the reason and previous location. Shared password/OIDC session creation queues `session_anomaly` notifications through the existing core coordinator, deduplication, provider registry, delivery state, and preferences. This plugin does not resend or invent alerts; notification providers/preferences stay in their normal host Settings surfaces.
+
+The map requests visible OpenStreetMap tiles with browser caching, visible attribution, and an origin-only referrer following the [tile usage policy](https://operations.osmfoundation.org/policies/tiles/). OSM receives the viewing browser's IP, application origin, and tile coordinates. Session identifiers, usernames, IP metadata, and user agents are never sent in tile requests. Locations are approximate; private/local addresses are not plotted.
+
+## Permission review: intentionally high risk
+
+| Permission | Why requested | Risk / destructive behavior |
+| --- | --- | --- |
+| `sessions.read` | Rich records owned by the caller | Sensitive device, IP, approximate location, and network metadata; never tokens/hashes |
+| `sessions.revoke` | Own single/bulk revocation | **Destructive:** signs out browsers, including the current browser during bulk revocation |
+| `sessions.admin.read` | Cross-user admin records | **High:** sensitive metadata across users; host admin role independently required |
+| `sessions.admin.revoke` | Admin single/user/server revocation | **Destructive, High:** can sign out every browser; admin required |
+| `sessions.geoip.read` | Database availability | Admin-only status without filesystem paths |
+| `sessions.geoip.configure` | Replace optional MMDB databases | **Destructive, High:** changes shared enrichment data; admin and confirmation required |
+| `frontend.settings` | Account/admin Settings sections | Generic contribution registration and visibility |
+| `frontend.native` | Native cards, table, map, file controls | **Critical:** reviewed code executes in the host browser realm, with DOM/browser authority; scoped backend grants remain enforced |
+| `backend.routes.plugin` | Optional namespaced JSON handlers | Host authentication, admin policies, lifecycle, limits, and installation grants |
+
+No `api.full`, `backend.routes.host`, arbitrary filesystem/network, broad user-read, or notification-send permission is requested. Read and revoke grants are independent. Declining a grant denies its operation; no broader fallback API is used. Without `frontend.native`, the legacy plugin-owned account page supplies a sandboxed own-session fallback with metadata and confirmed revocation. Full map/admin/configuration parity requires the reviewed native grant.
+
+## Backend security and revocation
+
+All destructive actions declare host-owned confirmation text. Both UI modes ask for confirmation; the backend action endpoint requires strict boolean `confirmed: true` before dispatch. The plugin and gateway also require explicit confirmation. JSON route clients must expressly confirm. Confirmation prevents accidents; it does not replace authorization.
+
+The host authenticates the caller, checks live installation grants and health, and creates current-session context from the authenticated cookie. Caller-supplied `_plugin_context` is overwritten. The domain constrains self-service SQL to the caller and independently checks active admin status for cross-user operations. Knowing a foreign UUID cannot change ownership. Malformed UUIDs are rejected. Disabled/unhealthy plugins cannot dispatch actions, routes, or gateway methods. Plugin Python imports only the standard library and public SDK, and receives no cookies, tokens, hashes, ORM objects, or database connections.
+
+Revocation sets `revoked_at`, preserving audit metadata. Subsequent cookie authentication fails immediately. A generic host auth refresh returns remotely revoked browsers to login; current-browser bulk revocation navigates immediately.
+
+Optional routes relative to `/api/plugins/example.self-service-session-manager/`:
+
+| Method/path | Grant | Caller |
+| --- | --- | --- |
+| GET `sessions` | `sessions.read` | Owner |
+| DELETE `sessions/{session_id}` / `sessions` | `sessions.revoke` | Owner |
+| GET `admin/sessions` | `sessions.admin.read` | Administrator |
+| DELETE `admin/sessions/{session_id}` / `admin/users/{user_id}/sessions` / `admin/sessions` | `sessions.admin.revoke` | Administrator |
+
+DELETE bodies require `{ "confirmed": true }`. Lists accept `q`, `state`, `country`, `anomaly=true|false`, `limit` (up to 200), `cursor`, and admin-only `user_id`.
+
+MMDB upload uses the generic host capability endpoint `POST /api/plugins/<plugin-id>/capabilities/sessions/geoip?kind=city|country|network&confirmed=true` with multipart `file`. The host validates and atomically replaces the database. Reads are bounded to 256 MiB; proxy limits can be lower. There is no automatic database download, license acquisition, or arbitrary server filesystem access.
+
+## Platform stages 1–4 demonstrated
+
+1. Versioned contracts, risk rationales, installation identity, ownership, separate read/write grants.
+2. Normal package inspection, development trust consent, update permission review, health/lifecycle gating; the entrypoint stays alive under the supervisor.
+3. Native Settings, admin visibility, host Vue integration/cleanup, host action confirmation, sandbox fallback.
+4. Namespaced backend routes with authenticated/admin policies, normalized request envelopes, scoped gateway methods.
+
+## Remaining differences from PR #248
+
+- Lists, map pins, and the admin user selector reflect loaded cursor pages rather than one unbounded response. **Load more** exposes the remainder; search can find users beyond loaded pages.
+- GeoIP configuration does not disclose host filesystem paths.
+- Every single-session destructive action is confirmed; the source account's individual revoke button was immediate.
+- Native integration requires reviewing Critical browser authority plus narrow domain grants. The sandbox fallback lacks map/admin/configuration UI.
+- Historical sessions without metadata cannot be retroactively enriched. New sessions use the shared source metadata/anomaly path.
+- External map tiles, optional MMDB availability, and configured notification delivery remain deployment dependencies, as in the source.
+
+No source user/admin workflow is omitted from the full native experience.
+
+## Build and verification
+
+Requires the coordinated host changes on `plugin-manager`; the older minimized host lacks rich DTOs, bulk own/user operations, and GeoIP leaves. Capability version 1 retains its ownership scopes with additive DTO fields/new operations. Strict destructive confirmation is an intentional security tightening; older clients must send confirmation.
+
+```sh
+pytest
+node --test tests/session_manager_ui.test.mjs
+python tools/build_packages.py
+python tools/verify_packages.py dist/*.utp
+python tools/validate_packages.py dist/*.utp
+```
+
+Plugin tests exercise permissions, filters, identifier validation, confirmations, routing, packaging, actual UI controller pagination/cancellation/sign-out/errors/cleanup, and map math. Host HTTP tests execute real SQL/grants for cross-user reads/writes, unauthorized revocation, strict confirmation, disabled plugins, malformed IDs, admin checks, pagination, revoked-cookie rejection, GeoIP uploads, and password metadata/anomaly creation. Existing CI checks remain, with Node UI tests added.
+
+Local packages are **unsigned**, requiring normal untrusted-package consent. Release CI supplies its configured reviewed signing identity. The checked-in 2.0.0 artifact is a development build, not a signed production release. Historical packages and signing identities are preserved.
+
+![Native admin component with fixture data](admin-preview.png)
+
+Screenshot uses the actual native module with disposable fixture data in a local Vue harness, not a deployed authenticated host.

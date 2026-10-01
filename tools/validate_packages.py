@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import re
 import sys
 import zipfile
-
+from pathlib import Path
 
 ROUTE_ID = re.compile(r"^[a-z0-9][a-z0-9._-]{0,127}$")
 ROUTE_HANDLER = re.compile(r"^[A-Za-z_][A-Za-z0-9_.-]*(?::[A-Za-z_][A-Za-z0-9_]*)?$")
@@ -16,6 +15,7 @@ ROUTE_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE"}
 RESERVED_PLUGIN_ROUTE_ROOTS = {
     "actions",
     "changelog",
+    "capabilities",
     "disable",
     "enable",
     "frontend",
@@ -76,8 +76,13 @@ def validate_package(path: Path) -> None:
             raise ValueError(f"{path.name}: backend route scope or path is invalid")
         if scope == "plugin" and route_path.startswith("/"):
             raise ValueError(f"{path.name}: plugin backend route path must be relative")
-        if scope == "plugin" and route_path.split("/", 1)[0] in RESERVED_PLUGIN_ROUTE_ROOTS:
-            raise ValueError(f"{path.name}: backend route conflicts with plugin management")
+        if (
+            scope == "plugin"
+            and route_path.split("/", 1)[0] in RESERVED_PLUGIN_ROUTE_ROOTS
+        ):
+            raise ValueError(
+                f"{path.name}: backend route conflicts with plugin management"
+            )
         if scope == "host" and not route_path.startswith("/api/"):
             raise ValueError(
                 f"{path.name}: host backend route path must start with /api/"
@@ -85,7 +90,9 @@ def validate_package(path: Path) -> None:
         if scope == "host" and route_path.startswith("/api/plugins/"):
             raise ValueError(f"{path.name}: host route cannot claim plugin management")
         route_parts = route_path.removeprefix("/api/").split("/")
-        if not route_parts or any(not ROUTE_SEGMENT.fullmatch(part) for part in route_parts):
+        if not route_parts or any(
+            not ROUTE_SEGMENT.fullmatch(part) for part in route_parts
+        ):
             raise ValueError(f"{path.name}: backend route path is invalid")
         parameters = [part for part in route_parts if part.startswith("{")]
         if len(parameters) != len(set(parameters)):
@@ -115,6 +122,24 @@ def validate_package(path: Path) -> None:
                 if scope == owner_scope and method == owner_method and overlaps:
                     raise ValueError(f"{path.name}: backend routes conflict")
             route_owners.append((scope, route_path, method))
+
+    native = manifest.get("native_frontend")
+    if native is not None:
+        if not isinstance(native, dict) or ("frontend.native", 1) not in capabilities:
+            raise ValueError(f"{path.name}: native frontend requires frontend.native")
+        entry = native.get("entry")
+        styles = native.get("styles", [])
+        if not isinstance(entry, str) or not isinstance(styles, list):
+            raise ValueError(f"{path.name}: invalid native frontend declaration")
+        for asset in [entry, *styles]:
+            if (
+                not isinstance(asset, str)
+                or not asset.startswith("native/")
+                or "\\" in asset
+                or any(part in {"", ".", ".."} for part in asset.split("/"))
+                or asset not in payload_names
+            ):
+                raise ValueError(f"{path.name}: native asset is unsafe or missing")
 
     frontend = manifest.get("frontend")
     if frontend is None:

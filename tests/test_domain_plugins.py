@@ -13,9 +13,7 @@ sys.path.insert(0, str(ROOT))
 
 def load_plugin(name: str):
     source = ROOT / "examples" / name / "plugin.py"
-    spec = importlib.util.spec_from_file_location(
-        f"domain_{name.replace('-', '_')}", source
-    )
+    spec = importlib.util.spec_from_file_location(f"domain_{name.replace('-', '_')}", source)
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -34,6 +32,10 @@ def load_plugin(name: str):
                 "sessions.admin.read",
                 "sessions.admin.revoke",
                 "backend.routes.plugin",
+                "frontend.settings",
+                "frontend.native",
+                "sessions.geoip.read",
+                "sessions.geoip.configure",
             },
         ),
         (
@@ -79,9 +81,7 @@ def test_document_viewer_uses_opaque_public_document_methods(monkeypatch) -> Non
             {"document_id": "opaque-document-id"},
         ),
     ]
-    source = (
-        ROOT / "examples" / "scoped-document-viewer" / "frontend" / "app.js"
-    ).read_text()
+    source = (ROOT / "examples" / "scoped-document-viewer" / "frontend" / "app.js").read_text()
     assert "textContent = text" in source
     assert "text/html" in source
 
@@ -100,9 +100,7 @@ def test_document_viewer_namespaced_routes_keep_gateway_ownership_checks(
     )
 
     listed = plugin.list_documents_route({"query": {"limit": ["25"]}})
-    opened = plugin.read_document_route(
-        {"path_parameters": {"document_id": "opaque-document-id"}}
-    )
+    opened = plugin.read_document_route({"path_parameters": {"document_id": "opaque-document-id"}})
 
     assert listed == {"status_code": 200, "body": {"documents": []}}
     assert opened["status_code"] == 200
@@ -124,20 +122,21 @@ def test_session_manager_separates_read_and_revoke_capabilities(monkeypatch) -> 
     )
 
     plugin.list_sessions({})
-    plugin.revoke_session({"session_id": "opaque-session-id"})
+    plugin.revoke_session(
+        {
+            "session_id": "00000000-0000-0000-0000-000000000001",
+            "_plugin_context": {"confirmed": True},
+        }
+    )
 
     assert calls[0][:2] == ("sessions.list", "sessions.read")
     assert calls[1] == (
         "sessions.revoke",
         "sessions.revoke",
-        {"session_id": "opaque-session-id"},
+        {"session_id": "00000000-0000-0000-0000-000000000001", "confirmed": True},
     )
-    ui = json.loads(
-        (ROOT / "examples" / "self-service-session-manager" / "ui.json").read_text()
-    )
-    revoke = next(
-        action for action in ui["actions"] if action["id"] == "revoke-session"
-    )
+    ui = json.loads((ROOT / "examples" / "self-service-session-manager" / "ui.json").read_text())
+    revoke = next(action for action in ui["actions"] if action["id"] == "revoke-session")
     assert revoke["confirmation"]
 
 
@@ -155,30 +154,36 @@ def test_session_manager_routes_preserve_self_service_and_admin_capabilities(
     )
 
     own = plugin.revoke_session_route(
-        {"path_parameters": {"session_id": "own-session"}}
+        {
+            "path_parameters": {"session_id": "00000000-0000-0000-0000-000000000001"},
+            "body": {"confirmed": True},
+        }
     )
     admin = plugin.revoke_admin_session_route(
-        {"path_parameters": {"session_id": "other-session"}}
+        {
+            "path_parameters": {"session_id": "00000000-0000-0000-0000-000000000002"},
+            "body": {"confirmed": True},
+        }
     )
 
     assert own["status_code"] == admin["status_code"] == 200
     assert calls == [
-        ("sessions.revoke", "sessions.revoke", {"session_id": "own-session"}),
+        (
+            "sessions.revoke",
+            "sessions.revoke",
+            {"session_id": "00000000-0000-0000-0000-000000000001", "confirmed": True},
+        ),
         (
             "sessions.admin.revoke",
             "sessions.admin.revoke",
-            {"session_id": "other-session"},
+            {"session_id": "00000000-0000-0000-0000-000000000002", "confirmed": True},
         ),
     ]
     manifest = json.loads(
-        (
-            ROOT / "examples" / "self-service-session-manager" / "manifest.json"
-        ).read_text()
+        (ROOT / "examples" / "self-service-session-manager" / "manifest.json").read_text()
     )
     admin_routes = [
-        route
-        for route in manifest["backend_routes"]
-        if route["path"].startswith("admin/")
+        route for route in manifest["backend_routes"] if route["path"].startswith("admin/")
     ]
     assert admin_routes
     assert all(route["authorization"] == "admin" for route in admin_routes)

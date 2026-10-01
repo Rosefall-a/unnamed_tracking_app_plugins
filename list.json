@@ -53,9 +53,9 @@
     {
       "plugin_id": "example.self-service-session-manager",
       "name": "Self-Service Session Manager",
-      "description": "A full user-facing browser session manager backed by the scoped session API.",
-      "version": "1.2.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.self-service-session-manager-1.2.0.utp"
+      "description": "Manage account and administrator browser sessions inside Settings, with GeoIP, anomaly context, filters, and confirmed revocation.",
+      "version": "2.0.0",
+      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.self-service-session-manager-2.0.0.utp"
     },
     {
       "plugin_id": "example.ui-api",

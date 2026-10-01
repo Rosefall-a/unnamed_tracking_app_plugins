@@ -4,17 +4,132 @@
   "title": "Session Manager",
   "settings": [],
   "actions": [
-    {"id": "list-sessions", "label": "Refresh sessions", "handler": "plugin:list_sessions", "capability": {"name": "sessions.read", "version": 1}},
-    {"id": "revoke-session", "label": "Revoke session", "handler": "plugin:revoke_session", "capability": {"name": "sessions.revoke", "version": 1}, "confirmation": "Revoke this session? That device will need to sign in again."},
-    {"id": "list-admin-sessions", "label": "Refresh admin sessions", "handler": "plugin:list_admin_sessions", "capability": {"name": "sessions.admin.read", "version": 1}},
-    {"id": "revoke-admin-session", "label": "Revoke session", "handler": "plugin:revoke_admin_session", "capability": {"name": "sessions.admin.revoke", "version": 1}, "confirmation": "Revoke this user's session? That device will need to sign in again."},
-    {"id": "revoke-all-admin-sessions", "label": "Revoke all sessions", "handler": "plugin:revoke_all_admin_sessions", "capability": {"name": "sessions.admin.revoke", "version": 1}, "confirmation": "Revoke every active browser session for every user?"}
+    {
+      "id": "list-sessions",
+      "label": "Refresh sessions",
+      "handler": "plugin:list_sessions",
+      "capability": {
+        "name": "sessions.read",
+        "version": 1
+      }
+    },
+    {
+      "id": "revoke-session",
+      "label": "Revoke session",
+      "handler": "plugin:revoke_session",
+      "capability": {
+        "name": "sessions.revoke",
+        "version": 1
+      },
+      "confirmation": "Revoke this session? That device will need to sign in again. This cannot be undone."
+    },
+    {
+      "id": "list-admin-sessions",
+      "label": "Refresh admin sessions",
+      "handler": "plugin:list_admin_sessions",
+      "capability": {
+        "name": "sessions.admin.read",
+        "version": 1
+      }
+    },
+    {
+      "id": "revoke-admin-session",
+      "label": "Revoke session",
+      "handler": "plugin:revoke_admin_session",
+      "capability": {
+        "name": "sessions.admin.revoke",
+        "version": 1
+      },
+      "confirmation": "Revoke this user's session? That device will need to sign in again. This cannot be undone."
+    },
+    {
+      "id": "revoke-all-admin-sessions",
+      "label": "Revoke all sessions",
+      "handler": "plugin:revoke_all_admin_sessions",
+      "capability": {
+        "name": "sessions.admin.revoke",
+        "version": 1
+      },
+      "confirmation": "Revoke every unrevoked browser session for every user, including your current session? This cannot be undone."
+    },
+    {
+      "id": "revoke-all-sessions",
+      "label": "Revoke all my sessions",
+      "handler": "plugin:revoke_all_sessions",
+      "capability": {
+        "name": "sessions.revoke",
+        "version": 1
+      },
+      "confirmation": "Revoke every browser session on this account, including this current session? You will need to sign in again."
+    },
+    {
+      "id": "revoke-user-sessions",
+      "label": "Revoke all for user",
+      "handler": "plugin:revoke_user_sessions",
+      "capability": {
+        "name": "sessions.admin.revoke",
+        "version": 1
+      },
+      "confirmation": "Revoke every browser session for the selected user? This cannot be undone."
+    },
+    {
+      "id": "geoip-status",
+      "label": "GeoIP database status",
+      "handler": "plugin:geoip_status",
+      "capability": {
+        "name": "sessions.geoip.read",
+        "version": 1
+      }
+    }
   ],
   "tables": [],
   "dialogs": [],
-  "menus": [{"id": "sessions", "label": "Account sessions", "page_id": "sessions"}, {"id": "admin-sessions", "label": "Admin sessions", "page_id": "admin-sessions"}],
+  "menus": [],
   "pages": [
-    {"id": "sessions", "title": "Account sessions", "description": "Review and revoke your own browser sessions.", "settings": [], "actions": ["list-sessions", "revoke-session"], "tables": [], "dialogs": [], "navigation": {"sidebar": true, "label": "Account sessions", "order": 50}},
-    {"id": "admin-sessions", "title": "Admin sessions", "description": "Administrator session inspection and revocation.", "settings": [], "actions": ["list-admin-sessions", "revoke-admin-session", "revoke-all-admin-sessions"], "tables": [], "dialogs": [], "navigation": {"sidebar": true, "label": "Admin sessions", "order": 51}}
+    {
+      "id": "sessions",
+      "title": "Account sessions",
+      "description": "Review and revoke your own browser sessions. The full interface requires the separately approved critical frontend.native permission.",
+      "settings": [],
+      "actions": [
+        "list-sessions",
+        "revoke-session",
+        "revoke-all-sessions"
+      ],
+      "tables": [],
+      "dialogs": []
+    },
+    {
+      "id": "admin-sessions",
+      "title": "Admin sessions",
+      "description": "Administrator session inspection and revocation. The full interface requires the separately approved critical frontend.native permission.",
+      "settings": [],
+      "actions": [
+        "list-admin-sessions",
+        "revoke-admin-session",
+        "revoke-all-admin-sessions",
+        "revoke-user-sessions",
+        "geoip-status"
+      ],
+      "tables": [],
+      "dialogs": []
+    }
+  ],
+  "settings_sections": [
+    {
+      "id": "sessions",
+      "label": "Sessions",
+      "page_id": "sessions",
+      "order": 50
+    },
+    {
+      "id": "admin-sessions",
+      "label": "Session Manager",
+      "page_id": "admin-sessions",
+      "order": 51,
+      "visibility": {
+        "admin_only": true
+      }
+    }
   ]
 }

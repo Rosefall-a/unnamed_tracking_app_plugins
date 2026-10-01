@@ -1,17 +1,28 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Self-Service Session Manager</title>
-  <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-  <main>
-    <header><h1>Account sessions</h1><p>Only minimized session metadata is available to this plugin.</p></header>
-    <div class="toolbar"><button id="refresh" type="button">Refresh</button><span id="status" role="status"></span></div>
-    <div id="sessions" class="sessions"></div>
-  </main>
-  <script src="./app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Self-Service Session Manager</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Account sessions</h1>
+        <p>
+          Review browser sessions. The full native interface, administrator
+          tools and map appear in Settings &gt; Sessions after frontend.native
+          approval.
+        </p>
+      </header>
+      <div class="toolbar">
+        <button id="refresh" type="button">Refresh</button
+        ><button id="revoke-all" type="button">Revoke all my sessions</button
+        ><span id="status" role="status"></span>
+      </div>
+      <div id="sessions" class="sessions"></div>
+    </main>
+    <script src="./app.js"></script>
+  </body>
 </html>
