@@ -10,7 +10,7 @@
     },
     {
       "plugin_id": "example.help-button",
-      "name": "Help Button · Capability Showcase",
+      "name": "Help Button \u00b7 Capability Showcase",
       "description": "An intentionally playful showcase of overlays, dialogs, notifications, Settings, Home extensions, routes, events and privileged native Vue UI.",
       "version": "2.0.0",
       "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.help-button-2.0.0.utp"
