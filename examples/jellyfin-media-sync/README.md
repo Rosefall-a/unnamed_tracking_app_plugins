@@ -2,13 +2,14 @@
 
 Version 2.0.0 is the serious integration example for Plugin API v1 on the completed
 `plugin-manager` platform. It bundles a privileged native Vue interface without
-CDN dependencies. It synchronizes **movies** for the host user that enabled the
-installation. It has no plugin dependencies.
+CDN dependencies. It synchronizes **films, TV shows, and anime** for the host user that enabled the
+installation. Jellyfin movies and series are paginated together, and anime is
+identified from Jellyfin genre/tag metadata without requiring a separate library. It has no plugin dependencies.
 
 ## Configuration
 
 1. Install the `.utp` in Settings → Plugins and review the narrow permissions below.
-2. Enable it from the host account whose movie library should receive imports.
+2. Enable it from the host account whose media library should receive imports.
 3. Use the **same account** to configure it in the Jellyfin Sync sidebar page or
    native Settings section. Save the HTTP(S) server URL (including a proxy base
    path if applicable), Jellyfin user ID (32 hex characters), interval (5–1440
@@ -36,7 +37,7 @@ and enable consistently; multi-user account linking is not claimed.
 
 | Permission | Why it is needed |
 | --- | --- |
-| `media.read` | Preview 100 movies in the current user's host library |
+| `media.read` | Preview 100 media items in the current user's host library |
 | `media.write` | Import paginated normalized movies for the enabling user |
 | `plugin.settings` | Read non-secret integration configuration |
 | `plugin.storage` | Reserved secret token, queued requests, progress and event cursor |
@@ -55,7 +56,7 @@ same fields/actions also remain available in generated Plugins configuration
 when native mode is denied. Save ordinary fields first, then press Save token
 separately. Runtime grants remain authoritative for all gateway calls.
 
-The worker uses bounded 100-item Jellyfin pages, a 4 MiB response limit, 15-second
+The worker uses bounded 100-item Jellyfin pages containing both Movie and Series items, a 4 MiB response limit, 15-second
 HTTP timeout, JSON validation, and a live outbound grant check for **each** request.
 It uses the standard Authorization header, refuses all redirects, and uses default
 TLS verification. Server URLs cannot carry credentials/query/fragment. Progress
@@ -87,7 +88,7 @@ These limits are in the platform, not solved with plugin-specific host paths:
   permission-enforced HTTP broker with server allowlisting, bounded responses,
   redirect policy and secret references is the required generic contract.
 * **Provider-neutral import identity and playback:** `media.import` currently
-  hard-codes source `jellyfin` and upserts movies by title. It accepts external IDs
+  hard-codes source `jellyfin` and upserts Jellyfin media by title. It accepts external IDs
   but does not persist/use them for deduplication. Different movies sharing a title
   can merge; renamed items can duplicate. Runtime, genres, poster URL and a true
   watched flag are applied; release year, play count, last-played date and watched
@@ -131,7 +132,7 @@ Publisher keys/signing rules and package validation are unchanged. Installation
 of an unsigned native package requires the normal elevated-consent/password flow.
 
 Manual integration: install the actual package on `plugin-manager`, configure a
-test Jellyfin library with more than 200 movies, sync in an egress-enabled runtime,
+test Jellyfin library with more than 200 mixed films and TV shows, including anime, sync in an egress-enabled runtime,
 verify progress and host imports, change watched state and repeat. Try invalid
 credentials, a renamed movie, equal titles, an unreachable URL, a revoked outbound
 grant, disabled periodic sync, restart during a queued sync and plugin disable.
