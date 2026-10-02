@@ -27,7 +27,7 @@ def get_settings(values: dict[str, Any]) -> dict[str, Any]:
     value = result.get("value", 0)
     if type(value) is not int or value < 0:
         value = 0
-    return {"max_preview_mb": value}
+    return {"value": value}
 
 
 def list_documents(values: dict[str, Any]) -> dict[str, Any]:
