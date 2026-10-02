@@ -6,6 +6,20 @@ from typing import Any
 from sdk.plugin_protocol import request, route_query_value, route_response
 
 
+def _max_preview_bytes() -> int:
+    """Return the configured preview ceiling; zero means unlimited."""
+    try:
+        result = request("settings.get", "plugin.settings", {"key": "max_preview_mb"})
+        value = result.get("value", 0)
+        if type(value) is int and value >= 0:
+            return value * 1024 * 1024
+        if isinstance(value, float) and value.is_integer() and value >= 0:
+            return int(value) * 1024 * 1024
+    except (RuntimeError, ValueError, TypeError):
+        pass
+    return 0
+
+
 def list_documents(values: dict[str, Any]) -> dict[str, Any]:
     """Return minimized document DTOs for the active user."""
     limit = values.get("limit", 32)
@@ -31,7 +45,7 @@ def read_document(values: dict[str, Any]) -> dict[str, Any]:
     document_id = values.get("document_id")
     if not isinstance(document_id, str) or not document_id:
         raise ValueError("document_id is required")
-    payload: dict[str, Any] = {"document_id": document_id, "chunk_bytes": 24 * 1024}
+    payload: dict[str, Any] = {"document_id": document_id, "chunk_bytes": 24 * 1024, "max_bytes": _max_preview_bytes()}
     if any(key in values for key in ("chunk_bytes", "offset", "content_sha256")):
         payload.update(
             {
@@ -66,7 +80,7 @@ def read_document_route(route_request: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(document_id, str) or not document_id:
         return route_response({"error": "document_id is required"}, 422)
     try:
-        values = {"document_id": document_id, "chunk_bytes": 24 * 1024}
+        values = {"document_id": document_id, "chunk_bytes": 24 * 1024, "max_bytes": _max_preview_bytes()}
         raw_offset = route_query_value(route_request, "offset")
         if raw_offset is not None:
             values["offset"] = int(raw_offset)
