@@ -7,8 +7,6 @@
     odp: "application/vnd.oasis.opendocument.presentation",
   };
   function unpack(bytes) {
-    if (bytes.length > 5 * 1024 * 1024)
-      throw new Error("Office preview exceeds 5 MiB.");
     const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     let end = bytes.length - 22;
     while (
