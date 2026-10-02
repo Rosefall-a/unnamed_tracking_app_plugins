@@ -2,7 +2,7 @@ site_name: Unnamed Tracking Plugins
 site_description: Plugin API v1 developer manual, examples and publishing guide
 repo_url: https://github.com/Rosefall-a/unnamed_tracking_app_plugins
 docs_dir: docs
-site_dir: .validation/wiki
+site_dir: ../.validation/wiki
 strict: true
 theme:
   name: material

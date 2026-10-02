@@ -10,13 +10,32 @@ from tools.check_docs import check
 
 def documentation(root: Path, body: str):
     (root / "docs").mkdir()
-    (root / "mkdocs.yml").write_text("docs_dir: docs\nnav:\n  - Home: index.md\n", encoding="utf-8")
+    (root / "mkdocs.yml").write_text(
+        "site_name: Documentation fixture\ndocs_dir: docs\nnav:\n  - Home: index.md\n",
+        encoding="utf-8",
+    )
     (root / "README.md").write_text("[Wiki](docs/index.md)", encoding="utf-8")
     (root / "docs/index.md").write_text(body, encoding="utf-8")
 
 
 def test_current_documentation_references_exist():
     check()
+
+
+def test_relocated_wiki_config_resolves_from_its_directory(tmp_path):
+    documentation(tmp_path, "# Home")
+    wiki = tmp_path / "wiki"
+    wiki.mkdir()
+    (tmp_path / "docs").rename(wiki / "docs")
+    (tmp_path / "mkdocs.yml").rename(wiki / "mkdocs.yml")
+    (tmp_path / "mkdocs.yml").write_text(
+        "INHERIT: wiki/mkdocs.yml\ndocs_dir: wiki/docs\n", encoding="utf-8"
+    )
+    (tmp_path / "README.md").write_text("[Wiki](wiki/docs/index.md)", encoding="utf-8")
+    check(tmp_path)
+    (wiki / "docs/index.md").write_text("[Missing](missing.md)", encoding="utf-8")
+    with pytest.raises(ValueError, match="missing"):
+        check(tmp_path)
 
 
 @pytest.mark.parametrize("body", [

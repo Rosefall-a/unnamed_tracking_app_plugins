@@ -14,7 +14,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 import markdown
-import yaml
+from mkdocs.config import load_config
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -43,8 +43,8 @@ def navigation_paths(value):
 
 def check(root: Path = ROOT) -> None:
     root = root.resolve()
-    config = yaml.safe_load((root / "mkdocs.yml").read_text(encoding="utf-8"))
-    docs = root / config.get("docs_dir", "docs")
+    config = load_config(config_file=str(root / "mkdocs.yml"))
+    docs = Path(config["docs_dir"])
     errors = []
     for target in navigation_paths(config["nav"]):
         if not (docs / target).is_file():
