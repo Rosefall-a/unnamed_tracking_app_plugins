@@ -80,7 +80,7 @@ def build(root: Path, output: Path, *, publish: bool = False, catalogue_only: bo
                     ), "build": {"source_digest": fingerprint, "source_commit": commit,
                         "source_committed_at": git(root, "show", "-s", "--format=%cI", commit) if commit else None,
                         "source_path": source.relative_to(root).as_posix(), "builder": "tools/build_packages.py",
-                        "contract_revision": "17a184c176af846b23bc67e3d5d5324c26415cbe", "version_bump": bump}}
+                        "contract_revision": "f1165fcc805e57ee428e7bc42fa6b83f4a6caf25", "version_bump": bump}}
                     files["distribution.json"] = canonical_json(metadata)
                     digest = canonical_payload_digest(files.items())
                     manifest["integrity"] = {

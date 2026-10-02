@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: Rosefall-a/unnamed_tracking_app
-          ref: 17a184c176af846b23bc67e3d5d5324c26415cbe
+          ref: f1165fcc805e57ee428e7bc42fa6b83f4a6caf25
           path: .validation/host
       - run: python tools/check_host_contract.py --host-root .validation/host
       - uses: actions/setup-node@v4

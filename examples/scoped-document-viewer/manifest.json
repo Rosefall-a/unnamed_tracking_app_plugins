@@ -2,8 +2,8 @@
   "manifest_version": 1,
   "plugin_id": "example.scoped-document-viewer",
   "name": "Scoped Document Viewer",
-  "version": "1.4.0",
-  "description": "Scoped game document viewer implementing PR #241 with sandboxed PDF, UTF-8 text and sanitized HTML rendering.",
+  "version": "1.5.0",
+  "description": "Game Docs reader with new-tab previews, original downloads, PDF, text, safe HTML and Office/OpenDocument reading views.",
   "entrypoint": "plugin:main",
   "sdk_version_range": "^1.0.0",
   "application_version_range": ">=1.0.0",
@@ -17,7 +17,7 @@
       "version": 1
     },
     {
-      "name": "frontend.navigation.main",
+      "name": "frontend.context.documents",
       "version": 1
     }
   ],
@@ -38,10 +38,10 @@
     },
     {
       "capability": {
-        "name": "frontend.navigation.main",
+        "name": "frontend.context.documents",
         "version": 1
       },
-      "rationale": "Show the plugin-owned Documents page in the main navigation."
+      "rationale": "Open game document rows in this sandboxed reader in a new tab; retain the optional library page."
     }
   ],
   "backend_routes": [
@@ -87,6 +87,7 @@
     "key_id": null
   },
   "frontend": {
-    "entry": "frontend/index.html"
+    "entry": "frontend/index.html",
+    "inline_assets": true
   }
 }

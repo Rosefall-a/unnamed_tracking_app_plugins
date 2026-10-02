@@ -3,6 +3,7 @@
 import argparse
 import importlib.util
 import mimetypes
+import sys
 import tempfile
 from pathlib import Path
 
@@ -23,6 +24,9 @@ def main():
         "--host", type=Path, required=True, help="Updated plugin-manager checkout"
     )
     args = parser.parse_args()
+    # Verification tooling only: the host policy now reuses its ownership query.
+    # Packaged plugin source never imports host modules.
+    sys.path.insert(0, str(args.host / "src/backend"))
     reference = load(
         "pr241_documents", args.reference / "src/backend/src/helpers/document_viewer.py"
     )

@@ -108,6 +108,11 @@
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_./-]*$",
           "title": "Entry",
           "type": "string"
+        },
+        "inline_assets": {
+          "default": false,
+          "title": "Inline Assets",
+          "type": "boolean"
         }
       },
       "required": [
@@ -341,6 +346,58 @@
         "dialog_id"
       ],
       "title": "UiDialogContribution",
+      "type": "object"
+    },
+    "UiDocumentReader": {
+      "additionalProperties": false,
+      "description": "A scoped reader offered for game document rows, never arbitrary URLs.",
+      "properties": {
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "page_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "extensions": {
+          "default": [
+            "*"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Extensions",
+          "type": "array"
+        },
+        "order": {
+          "default": 0,
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "Order",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "page_id",
+        "label"
+      ],
+      "title": "UiDocumentReader",
       "type": "object"
     },
     "UiExtension": {
@@ -1308,6 +1365,14 @@
         "$ref": "#/$defs/UiPageReplacement"
       },
       "title": "Page Replacements",
+      "type": "array"
+    },
+    "document_readers": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/UiDocumentReader"
+      },
+      "title": "Document Readers",
       "type": "array"
     }
   },

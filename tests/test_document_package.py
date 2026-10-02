@@ -7,7 +7,10 @@ import sys
 import zipfile
 from pathlib import Path
 
+import pytest
 from test_domain_plugins import load_plugin
+
+from tools.validate_packages import validate_package
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "examples/scoped-document-viewer"
@@ -26,7 +29,7 @@ def test_document_package_contains_current_source_and_pinned_libraries(current_p
         assert {item["name"] for item in manifest["capabilities"]} == {
             "documents.read",
             "backend.routes.plugin",
-            "frontend.navigation.main",
+            "frontend.context.documents",
         }
         for path in (SOURCE / "frontend").rglob("*"):
             if path.is_file():
@@ -88,6 +91,20 @@ def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path, cur
     assert response["status_code"] == 404
     assert response["body"]["error"]["kind"] == "missing"
     assert "user_id" not in wire["payload"]
+
+
+def test_package_validator_rejects_a_non_boolean_inline_asset_flag(tmp_path, current_packages):
+    destination = tmp_path / "invalid-inline.utp"
+    with zipfile.ZipFile(current_packages["example.scoped-document-viewer"]) as source, zipfile.ZipFile(destination, "w") as output:
+        for name in source.namelist():
+            data = source.read(name)
+            if name == "manifest.json":
+                manifest = json.loads(data)
+                manifest["frontend"]["inline_assets"] = "true"
+                data = json.dumps(manifest).encode()
+            output.writestr(name, data)
+    with pytest.raises(ValueError, match="inline_assets must be a boolean"):
+        validate_package(destination)
 
 
 def test_document_routes_preserve_explicit_failures_and_pagination(monkeypatch):

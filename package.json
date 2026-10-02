@@ -1,6 +1,6 @@
 {
   "name": "unnamed-tracking-plugin-browser-tests",
   "private": true,
-  "scripts": {"test": "node --test tests/document_viewer.browser.test.cjs", "check": "node --check examples/scoped-document-viewer/frontend/app.js"},
+  "scripts": {"test": "node --test tests/document_viewer.browser.test.cjs", "check": "node --check examples/scoped-document-viewer/frontend/app.js && node --check examples/scoped-document-viewer/frontend/office.js"},
   "devDependencies": {"playwright": "1.62.1", "pdf-lib": "1.17.1"}
 }

@@ -2,7 +2,7 @@
 
 These JSON Schemas were exported with Pydantic `model_json_schema()` from
 `PluginManifest` and `PluginUiDocument` on host `plugin-manager` revision
-`17a184c176af846b23bc67e3d5d5324c26415cbe` (2 October 2026).
+`f1165fcc805e57ee428e7bc42fa6b83f4a6caf25` (2 October 2026).
 
 They are validation contracts, not a second runtime or SDK. The local validator
 also checks semantic versions, declaration uniqueness, executable handlers,

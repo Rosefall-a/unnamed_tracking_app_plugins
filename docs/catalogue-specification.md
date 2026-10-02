@@ -9,7 +9,7 @@ runtime, manifest, package and signing details.
 ## Current host consumption
 
 Verified against host `plugin-manager` commit
-`17a184c176af846b23bc67e3d5d5324c26415cbe`, 2 October 2026:
+`f1165fcc805e57ee428e7bc42fa6b83f4a6caf25`, 2 October 2026:
 
 * Administrators configure catalogue endpoints; catalogues are independent of
   publisher signing trust. The official endpoint is one source among configured

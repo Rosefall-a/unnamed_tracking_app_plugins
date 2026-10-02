@@ -153,6 +153,8 @@ def validate_package(path: Path, *, full: bool = False) -> None:
 
     frontend = manifest.get("frontend")
     if frontend is not None:
+        if isinstance(frontend, dict) and type(frontend.get("inline_assets", False)) is not bool:
+            raise ValueError(f"{path.name}: frontend.inline_assets must be a boolean")
         entry = frontend.get("entry") if isinstance(frontend, dict) else None
         if not isinstance(entry, str) or not entry:
             raise ValueError(f"{path.name}: frontend.entry must be a non-empty string")
@@ -238,6 +240,11 @@ def validate_current_contract(manifest: dict, files: dict[str, bytes]) -> None:
     required = set()
     if any(p.get("navigation", {}).get("sidebar") for p in document.get("pages", [])):
         required.add("frontend.navigation.main")
+    if document.get("document_readers"):
+        required.add("frontend.context.documents")
+        page_ids = {p["id"] for p in document.get("pages", [])}
+        if any(reader["page_id"] not in page_ids for reader in document["document_readers"]):
+            raise ValueError("document reader refers to a missing page")
     if any(not field.get("secret") for section in document.get("settings", []) for field in section.get("fields", [])):
         required.add("plugin.settings")
     if not required <= declared & granted:

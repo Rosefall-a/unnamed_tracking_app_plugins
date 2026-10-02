@@ -23,5 +23,13 @@
       "sha256.min.js": "4b53da9acab6a5d4010107be2025002fe1a22da64804dd5200b46895cb899219",
       "sha256.LICENSE": "0fea2e0cffe72ee17adc25c42e55daf5c87c6e9cd5b3362ee4213890bda0ee7c"
     }
+  },
+  "fflate": {
+    "version": "0.8.3",
+    "integrity": "sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==",
+    "files": {
+      "fflate.min.js": "462ef8041fc970e3615a20a9dd2b2e3047a073b2da729ef4f02b634bba8b7b83",
+      "fflate.LICENSE": "0a1df3a083d0c010560aa342e87959c8c1070e6fd54545741f083f22d0c8b551"
+    }
   }
 }

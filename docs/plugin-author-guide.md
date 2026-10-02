@@ -8,7 +8,7 @@ if you maintain a list of other authors' packages.
 ## Host compatibility
 
 The public manifest/UI schemas are checked against host `plugin-manager` revision
-`17a184c176af846b23bc67e3d5d5324c26415cbe`. The host's `main` branch does not yet
+`f1165fcc805e57ee428e7bc42fa6b83f4a6caf25`. The host's `main` branch does not yet
 contain Plugin Manager. Install and test against the Plugin Manager build.
 
 The current host accepts `list.json` version 1 and `.utp` v1. It consumes the
@@ -218,6 +218,13 @@ DOM, cookies or database. `native_frontend` instead declares an entry under
 `activate(context)` with the supplied Vue/host APIs. It runs in the privileged
 host context and requires the host's appropriate administrator approval.
 
+The current document example declares `document_readers` in `ui.json` with a
+page ID and supported extensions and requests `frontend.context.documents`.
+That lets the host attach its reader to game-document actions without forcing a
+sidebar page. Its `frontend.inline_assets: true` is a boolean declaring the host's
+supported asset-inlining path for a sandboxed reader; it does not grant host DOM
+access or bypass the iframe bridge.
+
 Optional `backend_routes` declare an ID, relative path, methods, handler,
 `scope: "plugin"` and `authorization: "authenticated"` or `"admin"`. A route such
 as `documents/{document_id}` is mounted at `/api/plugins/<plugin-id>/...`.
@@ -354,8 +361,8 @@ Each new release records source digest/commit/path/time, version-bump reason,
 package format/size, manifest, hashes, signing, README, tags, policy and release
 notes. `source_committed_at` is the source commit time, **not** an invented
 publication timestamp. New preview records are `built`; signed publication
-snapshots are `published`. Recorded stages describe source → validated → built →
-catalogued → published → downloadable; actual remote publication occurs when CI
+snapshots are `published`. Recorded stages describe source â†’ validated â†’ built â†’
+catalogued â†’ published â†’ downloadable; actual remote publication occurs when CI
 commits/pushes that complete snapshot or uploads its release assets.
 
 Automatic-update permission belongs to one release. `automatic_update: null`
