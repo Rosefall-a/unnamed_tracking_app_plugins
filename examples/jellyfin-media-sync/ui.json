@@ -2,53 +2,20 @@
   "schema_version": "v1",
   "plugin_id": "example.jellyfin-media-sync",
   "title": "Jellyfin Media Sync",
-  "settings": [
-    {
-      "id": "jellyfin",
-      "title": "Jellyfin configuration",
-      "description": "Use the same host account to enable and configure this installation. Save ordinary settings before submitting a token. Blank token entry keeps the stored token.",
-      "fields": [
-        {
-          "id": "server_url",
-          "label": "Jellyfin server URL",
-          "type": "text",
-          "required": true
-        },
-        {
-          "id": "user_id",
-          "label": "Jellyfin user ID (32 hexadecimal characters)",
-          "type": "text",
-          "required": true
-        },
-        {
-          "id": "background_sync",
-          "label": "Enable periodic sync for the enabling user",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "id": "sync_interval_minutes",
-          "label": "Sync interval in minutes",
-          "type": "number",
-          "default": 15,
-          "validation": {
-            "minimum": 5,
-            "maximum": 1440
-          }
-        },
-        {
-          "id": "api_key",
-          "label": "API key or access token (write-only)",
-          "type": "password",
-          "secret": true
-        }
-      ]
-    }
-  ],
+  "settings": [],
   "actions": [
     {
+      "id": "save-master",
+      "label": "Save installation server",
+      "handler": "plugin:save_master",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
       "id": "save-token",
-      "label": "Save token separately",
+      "label": "Save server credential",
       "handler": "plugin:save_token",
       "capability": {
         "name": "plugin.storage",
@@ -56,17 +23,62 @@
       }
     },
     {
+      "id": "test-connection",
+      "label": "Test and discover",
+      "handler": "plugin:test_connection",
+      "capability": {
+        "name": "network.outbound",
+        "version": 1
+      }
+    },
+    {
+      "id": "save-mappings",
+      "label": "Save library mappings",
+      "handler": "plugin:save_mappings",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "authorize-identity",
+      "label": "Approve user identity",
+      "handler": "plugin:authorize_identity",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
       "id": "get-config",
-      "label": "Read non-secret configuration",
+      "label": "Read configuration",
       "handler": "plugin:get_config",
       "capability": {
-        "name": "plugin.settings",
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "save-user",
+      "label": "Link my Jellyfin identity",
+      "handler": "plugin:save_user",
+      "capability": {
+        "name": "tasks.background",
+        "version": 1
+      }
+    },
+    {
+      "id": "unlink-user",
+      "label": "Unlink my identity",
+      "handler": "plugin:unlink_user",
+      "capability": {
+        "name": "tasks.background",
         "version": 1
       }
     },
     {
       "id": "sync-now",
-      "label": "Queue sync for enabling user",
+      "label": "Sync now",
       "handler": "plugin:sync_now",
       "capability": {
         "name": "tasks.background",
@@ -75,7 +87,7 @@
     },
     {
       "id": "status",
-      "label": "Refresh sync progress",
+      "label": "Sync status",
       "handler": "plugin:status",
       "capability": {
         "name": "plugin.storage",
@@ -83,22 +95,24 @@
       }
     },
     {
-      "id": "refresh-status",
-      "label": "Poll host activity",
-      "handler": "plugin:refresh_status",
+      "id": "watch-now",
+      "label": "Watch Now",
+      "handler": "plugin:watch_now",
       "capability": {
-        "name": "events.subscribe",
+        "name": "plugin.storage",
         "version": 1
-      }
+      },
+      "external_navigation": true
     },
     {
-      "id": "list-media",
-      "label": "Preview your imported movies",
-      "handler": "plugin:list_media",
+      "id": "resolve-conflict",
+      "label": "Use Jellyfin watched state",
+      "handler": "plugin:resolve_conflict",
       "capability": {
-        "name": "media.read",
+        "name": "tasks.background",
         "version": 1
-      }
+      },
+      "confirmation": "Replace local watched state for this item with Jellyfin state? Local ratings and notes are preserved."
     }
   ],
   "tables": [],
@@ -114,23 +128,43 @@
     {
       "id": "sync",
       "title": "Jellyfin Media Sync",
-      "description": "Syncs the enabling host user library. Host media.import currently supports movies and watched flags; full playback and provider identity require a generic API extension.",
-      "settings": [
-        "jellyfin"
-      ],
+      "description": "One installation server. Your own Jellyfin identity and completion.",
+      "settings": [],
       "actions": [
+        "save-master",
         "save-token",
+        "test-connection",
+        "save-mappings",
+        "authorize-identity",
         "get-config",
+        "save-user",
+        "unlink-user",
         "sync-now",
         "status",
-        "refresh-status",
-        "list-media"
+        "resolve-conflict"
       ],
+      "tables": [],
+      "dialogs": []
+    },
+    {
+      "id": "watch",
+      "title": "Watch in Jellyfin",
+      "actions": [
+        "watch-now"
+      ],
+      "settings": [],
       "tables": [],
       "dialogs": []
     }
   ],
-  "extensions": [],
+  "extensions": [
+    {
+      "id": "watch-media",
+      "slot": "media.detail.after-header",
+      "page_id": "watch",
+      "order": 30
+    }
+  ],
   "navigation": [
     {
       "id": "sync-sidebar",
@@ -160,6 +194,15 @@
       "id": "sync-route",
       "path": "sync",
       "page_id": "sync"
+    }
+  ],
+  "contextual_actions": [
+    {
+      "id": "watch-now-media",
+      "location": "media",
+      "label": "Watch Now",
+      "action_id": "watch-now",
+      "order": 30
     }
   ]
 }

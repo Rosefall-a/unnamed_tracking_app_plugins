@@ -13,3 +13,9 @@
 .jf-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
 .jf-error { color: #ffb9b9; }
 .jf-limit { color: #b8aec7; font-size: .85rem; line-height: 1.5; }
+.jf-panel { padding: 20px; border: 1px solid #ffffff20; border-radius: 14px; display: grid; gap: 12px; }
+.jf-panel h3 { margin: 6px 0; }
+.jf-panel select { width: 100%; padding: 10px; border-radius: 8px; color: inherit; background: #202838; border: 1px solid #ffffff30; }
+.jf-watch { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.jf-watch-link { background: #914cec; color: white; border-radius: 8px; padding: 10px 20px; text-decoration: none; font-weight: 650; }
+.jf-sync code { overflow-wrap: anywhere; }
