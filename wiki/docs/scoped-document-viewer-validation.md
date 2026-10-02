@@ -104,3 +104,13 @@ Full host Prettier reports 181 files on this Windows checkout. After read-only n
 The 1.5.0 artifact was built with the standard builder in isolation, then copied individually so existing signed releases remain intact. It is an unsigned local artifact pending the repository's normal signing workflow. The host and plugin updates must be deployed together, and existing installations must approve `frontend.context.documents` to register the game reader. PR restrictions remain explicit in the README: PDF previews retain the platform 5 MiB cap, native PDF/password controls remain unavailable in the sandbox, and upload/rename stay host management operations. Large/unsupported originals can now be downloaded.
 
 Before pushing, the host fix was rebased onto concurrent native-page remount fix `17a184c1`. The combined Vue TypeScript check and all 71 frontend tests passed; focused ESLint passed. Both fixes are preserved.
+
+
+## Configurable preview ceiling
+
+Scoped Document Viewer 1.7.0 adds a persisted maximum preview size in MiB.
+Zero requests unlimited size through the existing host document API; omitted
+limits from older callers retain the host's legacy 5 MiB default. Finite values
+are passed on every chunk request. Browser sandbox, active-content restrictions,
+malformed-document checks and Office archive expansion bounds remain enforced.
+The historical 1.6.0 package is preserved unchanged.
