@@ -7,20 +7,24 @@ if you maintain a list of other authors' packages.
 
 ## Host compatibility
 
-The public manifest/UI schemas are checked against host `plugin-manager` revision
-`f1165fcc805e57ee428e7bc42fa6b83f4a6caf25`. The host's `main` branch does not yet
-contain Plugin Manager. Install and test against the Plugin Manager build.
+The public manifest/UI schemas originated from host `plugin-manager` revision
+`f1165fcc805e57ee428e7bc42fa6b83f4a6caf25`. CI checks conformance against the current
+`plugin-manager` branch. Install and test against that Plugin Manager build;
+the frozen schemas describe the v1 authoring contract, not current host behavior.
 
 The current host accepts `list.json` version 1 and `.utp` v1. It consumes the
 current identity, name, description, version, package URL, dependencies, release
 notes and optional changelog URL. The generated list retains those fields and
 adds release history, documentation, tags, scopes, hashes and release policies.
-At the audited revision the host catalogue API discards those additional fields;
-it does **not** yet implement catalogue tag filtering, embedded README display,
-release-history selection or per-release policy-based automatic updating. Those
-fields are distribution data ready for a host consumer, not a claim that an old
-host already uses them. No second runtime, package format or permission system
-is introduced here.
+The current Plugin Manager consumes tags, packaged README, permission declarations,
+publisher/build information, payload and archive hashes, and per-release update
+policy. It checks catalogue identity/version and hashes during preview,
+installation and updates. The signed `distribution.json` payload supplies tags,
+release notes and resolved automatic-update policy even when the manifest uses
+the older optional-field defaults. Permission risk always comes from the host.
+Catalogue release history remains distribution metadata; manual rollback selects
+a package retained by the host. No second runtime, package format or permission
+system is introduced here.
 
 ## Project structure
 
@@ -147,6 +151,25 @@ runtime's plugin-owned data directory; existing credential examples use its
 write-only `secrets/` files. Do not expose those files through action results,
 catalogue metadata or ordinary settings. Uninstallation/retention and rollback
 of persistent data are host policy, not package-build operations.
+
+The current Plugin Manager applies these data rules to configuration, secrets and
+plugin-owned storage. Packages contain code and defaults, never the installation's
+saved data.
+
+| Operation | Plugin-owned data |
+| --- | --- |
+| Host/runtime restart, disable/enable, normal update | Preserved |
+| Manual rollback or failed-update restoration | Preserved; your data format must remain compatible with the previous code |
+| Reinstall retaining data | Preserved |
+| Explicitly confirmed reinstall with purge | Removed; configuration and permission approval are reset |
+| Uninstall | Removed along with plugin-owned host records and retained packages |
+
+Both repository CI workflows now run the host's real-worker/browser lifecycle
+acceptance against the current `plugin-manager` branch. It uses a disposable
+database and publisher, verifies live official downloads, and tests a signed
+Jellyfin release sequence. See the host's
+[integration validation instructions](https://github.com/Rosefall-a/unnamed_tracking_app/blob/plugin-manager/wiki/docs/development/plugin-validation.md)
+for local prerequisites, commands and environment limits.
 
 ## Runtime and SDK
 
@@ -401,5 +424,7 @@ data. The host's update manager stages verified versions, checks dependencies,
 switches an active pointer, health-checks activation and can restore the prior
 known-good version. Data/schema migrations must remain compatible with your
 rollback plan; never promise that changing executable versions undoes all stored
-data changes. The audited user-facing host does not yet offer catalogue-history
-selection/automatic-update behavior; see the compatibility note above.
+data changes. The host stages new scopes for explicit approval while the old
+release remains active, applies release-specific automatic-update policy and
+restores the previous package after failed startup. Catalogue history does not
+replace locally retained rollback packages. See the compatibility note above.

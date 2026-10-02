@@ -1,5 +1,9 @@
 # Plugin API v1 cross-repository audit
 
+This dated snapshot describes the commits below. For the current lifecycle and
+Plugin Manager contract, use [the author guide](plugin-author-guide.md) and
+[catalogue specification](catalogue-specification.md).
+
 Audited on 1 October 2026 (Australia/Perth):
 
 - Plugin repository `main`: [`ed7d1d0299a9fc891fb90dfef7e35f84fcd86320`](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/commit/ed7d1d0299a9fc891fb90dfef7e35f84fcd86320).

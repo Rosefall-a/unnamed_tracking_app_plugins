@@ -8,24 +8,31 @@ runtime, manifest, package and signing details.
 
 ## Current host consumption
 
-Verified against host `plugin-manager` commit
-`f1165fcc805e57ee428e7bc42fa6b83f4a6caf25`, 2 October 2026:
+The current host `plugin-manager` consumes the following contract. The frozen
+manifest/UI schema revision is `f1165fcc805e57ee428e7bc42fa6b83f4a6caf25`; CI
+also checks the latest host branch rather than treating that older snapshot as
+the current implementation.
 
 * Administrators configure catalogue endpoints; catalogues are independent of
   publisher signing trust. The official endpoint is one source among configured
   lists. Adding an endpoint does not grant code execution or approve scopes.
 * The host downloads a version-1 JSON object and reads current plugin entries.
   Its public model uses `plugin_id`, `name`, `description`, `version`, `url`,
-  `release_notes`, optional `changelog_url`, and `dependencies`.
+  `release_notes`, optional `changelog_url`, dependencies, tags, README, publisher,
+  permission declarations, hashes, release policy and build/package metadata.
 * Install/preview downloads the package, validates its manifest/digest/signature,
   assesses compatibility, dependencies and host-defined permission risks, and
-  requires the appropriate approval. `expected_digest` on the current install URL
+  checks the catalogue's identity/version and payload/archive hashes, and requires
+  the appropriate approval. `expected_digest` on the current install URL
   API refers to the canonical **payload** SHA-256, not the complete ZIP hash.
-* Additional generated fields below are currently ignored by that catalogue API.
-  That revision does not yet implement automatic release discovery/selection from
-  `releases`, per-release automatic-update eligibility, catalogue tags or README
-  display. Consumers must add those capabilities on the host side; a repository
-  cannot safely implement them by shipping its own updater/installer plugin.
+* The manager filters tags, renders sanitized packaged README, discovers newer
+  catalogue versions and stages updates. Automatic activation requires host policy,
+  trusted signatures, satisfied dependencies, no newly requested scopes and release
+  policy permitting it. A false policy in the signed `distribution.json` payload
+  also blocks automatic activation. Later releases can opt in independently.
+* `releases` describes published distribution history. The host's rollback UI uses
+  its retained local packages; the catalogue does not grant execution, permissions
+  or automatic selection of historical versions.
 
 ## Authoritative fields
 
@@ -132,12 +139,10 @@ dependency planning and health checks. `automatic_update: true` does not require
 the host to install anything, and does not imply approval to cross any major
 version boundary.
 
-This describes the supplied distribution data and requirements for consumers,
-not an invented implementation of automatic updating in the audited host. The
-current host consumes the current URL/version through its existing install flow;
-its new update selector needs to consume the release fields above. If a consumer
-does not understand per-release policy, it must not infer automatic-install
-approval from missing data. Catalogue history also does not replace the host's
+The current Plugin Manager consumes the current URL/version and release-specific
+policy through its canonical installer and scheduled updater. Older consumers
+may ignore these additive fields and must not infer automatic-install approval
+from missing policy data. Catalogue history does not replace the host's
 locally retained known-good rollback version or restore persistent plugin data.
 
 ## Maintaining your own catalogue

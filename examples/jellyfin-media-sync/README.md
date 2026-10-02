@@ -1,6 +1,6 @@
 # Jellyfin Media Sync
 
-Version 2.0.1 is the serious integration example for Plugin API v1 on the completed
+This is the persistent integration example for Plugin API v1 on the completed
 `plugin-manager` platform. It bundles a privileged native Vue interface without
 CDN dependencies. It synchronizes **films, TV shows, and anime** for the host user that enabled the
 installation. Jellyfin movies and series are paginated together, and anime is
@@ -126,7 +126,8 @@ rejection. Native tests exercise loading, saving, secret clearing, progress and
 cleanup. Package tests check assets, deterministic digests, invalid native assets
 and corruption rejection.
 
-Development builds `dist/example.jellyfin-media-sync-2.0.1.utp` unsigned. The
+Development builds `example.jellyfin-media-sync-<version>.utp` under `.validation/dist`
+unsigned. The resolved version comes from the builder and release history. The
 existing release workflow signs with the configured reviewed publisher key.
 Publisher keys/signing rules and package validation are unchanged. Installation
 of an unsigned native package requires the normal elevated-consent/password flow.
