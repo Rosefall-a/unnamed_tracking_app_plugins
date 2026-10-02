@@ -1,0 +1,96 @@
+{
+  "plugin_id": "example.playtime-report",
+  "releases": [
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "3591d068d6a404290ef495d6ba90b76977375c31",
+        "source_committed_at": "2026-09-30T04:58:01Z",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": "*",
+        "capabilities": [
+          {
+            "name": "games.read",
+            "version": 1
+          },
+          {
+            "name": "plugin.storage",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Builds a persistent playtime report from the user's game library.",
+        "entrypoint": "plugin:main",
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "6c23abcd86110858e42e870f9c99239ba5b45d5315ac2cd39175d8df1651f1d5",
+          "signature": "fQeI29HEK4XCjchrOpNooUWidcNHGdZHX15/V95HO67LG4pqAdqVoTIu5SRTbtp5yldbdSw7liyDa+DhjvLNBg=="
+        },
+        "manifest_version": 1,
+        "name": "Playtime Report",
+        "permissions": [
+          {
+            "capability": {
+              "name": "games.read",
+              "version": 1
+            },
+            "rationale": "Read the game library to calculate playtime statistics."
+          },
+          {
+            "capability": {
+              "name": "plugin.storage",
+              "version": 1
+            },
+            "rationale": "Store the latest generated report in the plugin namespace."
+          }
+        ],
+        "plugin_id": "example.playtime-report",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 2
+        },
+        "ui": {
+          "actions": [
+            "refresh"
+          ],
+          "pages": [
+            "report"
+          ],
+          "settings": []
+        },
+        "version": "1.0.0"
+      },
+      "package": {
+        "filename": "example.playtime-report-1.0.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 2511
+      },
+      "package_sha256": "6e4203b78c47a7a958087f8ce1875176cbd53fd26dd987823d9335fa015ffe60",
+      "plugin_id": "example.playtime-report",
+      "publisher": "Unnamed Tracking Official",
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "6c23abcd86110858e42e870f9c99239ba5b45d5315ac2cd39175d8df1651f1d5",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "6c23abcd86110858e42e870f9c99239ba5b45d5315ac2cd39175d8df1651f1d5",
+        "signature": "fQeI29HEK4XCjchrOpNooUWidcNHGdZHX15/V95HO67LG4pqAdqVoTIu5SRTbtp5yldbdSw7liyDa+DhjvLNBg=="
+      },
+      "tags": [],
+      "version": "1.0.0"
+    }
+  ],
+  "version": 1
+}

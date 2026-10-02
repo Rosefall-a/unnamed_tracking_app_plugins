@@ -1,0 +1,98 @@
+{
+  "plugin_id": "example.lifecycle",
+  "releases": [
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "9bac2bd4be91d2b5d721859db9a5c813981e4d31",
+        "source_committed_at": "2026-09-29T16:52:57+08:00",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": "*",
+        "capabilities": [
+          {
+            "name": "plugin.storage",
+            "version": 1
+          },
+          {
+            "name": "plugin.settings",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Reference lifecycle and persistent-state plugin.",
+        "entrypoint": "plugin:main",
+        "integrity": {
+          "key_id": "official-example-2026",
+          "sha256": "8ca5e5b6bb98b8e7d1b73cf83e27c5ca3dc8c8b8b11725274f109a1f42b4dd17",
+          "signature": "MxcyTn9/YIWgx84rvpcIaJhWCD4IrbL4xUWe3vLwWzuPDcxhUcsVeFnOSznUf8M8wCkJ0NqxKBgbinNDXLjqBw=="
+        },
+        "manifest_version": 1,
+        "name": "Lifecycle Example",
+        "permissions": [
+          {
+            "capability": {
+              "name": "plugin.storage",
+              "version": 1
+            },
+            "rationale": "Persist plugin-owned state."
+          },
+          {
+            "capability": {
+              "name": "plugin.settings",
+              "version": 1
+            },
+            "rationale": "Use plugin configuration."
+          }
+        ],
+        "plugin_id": "example.lifecycle",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "reset"
+          ],
+          "pages": [
+            "main"
+          ],
+          "settings": [
+            "configuration"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "package": {
+        "filename": "example.lifecycle-1.0.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 1404
+      },
+      "package_sha256": "de33720df61f822a5d87bef7bd80a8e6e6de37de00ab7cf8cf4aff9d3e2b7a97",
+      "plugin_id": "example.lifecycle",
+      "publisher": "Unnamed Tracking Official",
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "8ca5e5b6bb98b8e7d1b73cf83e27c5ca3dc8c8b8b11725274f109a1f42b4dd17",
+      "signing": {
+        "key_id": "official-example-2026",
+        "sha256": "8ca5e5b6bb98b8e7d1b73cf83e27c5ca3dc8c8b8b11725274f109a1f42b4dd17",
+        "signature": "MxcyTn9/YIWgx84rvpcIaJhWCD4IrbL4xUWe3vLwWzuPDcxhUcsVeFnOSznUf8M8wCkJ0NqxKBgbinNDXLjqBw=="
+      },
+      "tags": [],
+      "version": "1.0.0"
+    }
+  ],
+  "version": 1
+}

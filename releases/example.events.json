@@ -1,0 +1,77 @@
+{
+  "plugin_id": "example.events",
+  "releases": [
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "9bac2bd4be91d2b5d721859db9a5c813981e4d31",
+        "source_committed_at": "2026-09-29T16:52:57+08:00",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": "*",
+        "capabilities": [
+          {
+            "name": "events.subscribe",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Reference user-scoped event subscriber.",
+        "entrypoint": "plugin:main",
+        "integrity": {
+          "key_id": "official-example-2026",
+          "sha256": "e5ae730510d63f421fd882df4c14cbd0bd5aec26085be238fa4af134498bb283",
+          "signature": "MlFlxTgKdBxCpmYynCf1DIMUBZiBdLTRxfcZnhI/P2rAUcZ6xlXPRE8Pb9DK8AbvtzLbJUa6Pw/4sdhurfrfBw=="
+        },
+        "manifest_version": 1,
+        "name": "Events Example",
+        "permissions": [
+          {
+            "capability": {
+              "name": "events.subscribe",
+              "version": 1
+            },
+            "rationale": "Receive game updates for the linked user."
+          }
+        ],
+        "plugin_id": "example.events",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {},
+        "version": "1.0.0"
+      },
+      "package": {
+        "filename": "example.events-1.0.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 1347
+      },
+      "package_sha256": "3068fc9368d08550188034379405404a0e32e03db266127ba79d12adda4d6b7a",
+      "plugin_id": "example.events",
+      "publisher": "Unnamed Tracking Official",
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "e5ae730510d63f421fd882df4c14cbd0bd5aec26085be238fa4af134498bb283",
+      "signing": {
+        "key_id": "official-example-2026",
+        "sha256": "e5ae730510d63f421fd882df4c14cbd0bd5aec26085be238fa4af134498bb283",
+        "signature": "MlFlxTgKdBxCpmYynCf1DIMUBZiBdLTRxfcZnhI/P2rAUcZ6xlXPRE8Pb9DK8AbvtzLbJUa6Pw/4sdhurfrfBw=="
+      },
+      "tags": [],
+      "version": "1.0.0"
+    }
+  ],
+  "version": 1
+}

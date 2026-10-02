@@ -1,0 +1,419 @@
+{
+  "plugin_id": "example.scoped-document-viewer",
+  "releases": [
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "1203dd488158e2a774e27679121d7079a8315528",
+        "source_committed_at": "2026-09-30T08:54:56+08:00",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": ">=1.0.0",
+        "capabilities": [
+          {
+            "name": "documents.read",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Lists and safely opens the active user's PDF and UTF-8 text game documents.",
+        "entrypoint": "plugin:main",
+        "frontend": {
+          "entry": "frontend/index.html"
+        },
+        "integrity": {
+          "key_id": null,
+          "sha256": "5850f31d35589593d629107f539daedd6f21c6632265c8d14bfbc15e81708b1e",
+          "signature": null
+        },
+        "manifest_version": 1,
+        "name": "Scoped Document Viewer",
+        "permissions": [
+          {
+            "capability": {
+              "name": "documents.read",
+              "version": 1
+            },
+            "rationale": "List and open only documents belonging to the signed-in user's games. Host paths and unsupported active content are never exposed."
+          }
+        ],
+        "plugin_id": "example.scoped-document-viewer",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "list-documents",
+            "read-document"
+          ],
+          "menus": [],
+          "pages": [
+            "documents"
+          ],
+          "settings": []
+        },
+        "version": "1.0.0"
+      },
+      "package": {
+        "filename": "example.scoped-document-viewer-1.0.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 4637
+      },
+      "package_sha256": "e82824bba5ed297072427664933fd9638415cdbb400fef00065732233a664a34",
+      "plugin_id": "example.scoped-document-viewer",
+      "publisher": null,
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "5850f31d35589593d629107f539daedd6f21c6632265c8d14bfbc15e81708b1e",
+      "signing": {
+        "key_id": null,
+        "sha256": "5850f31d35589593d629107f539daedd6f21c6632265c8d14bfbc15e81708b1e",
+        "signature": null
+      },
+      "tags": [],
+      "version": "1.0.0"
+    },
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "3591d068d6a404290ef495d6ba90b76977375c31",
+        "source_committed_at": "2026-09-30T04:58:01Z",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": ">=1.0.0",
+        "capabilities": [
+          {
+            "name": "documents.read",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Lists and safely opens the active user's PDF, UTF-8 text, and sanitized HTML game documents.",
+        "entrypoint": "plugin:main",
+        "frontend": {
+          "entry": "frontend/index.html"
+        },
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "82ee25772d655220a5eb5fab688a8616fd8509a1dc2c5a3dfeff7a31eebcca42",
+          "signature": "lD/nCFIgqSpK6mx1ykGE6iSxmo9GObxPPODTKYzxgRR14hRlg29MXl7XtUwqDXQ6Gt4UeNaVxQ9fCvfeW/nWBQ=="
+        },
+        "manifest_version": 1,
+        "name": "Scoped Document Viewer",
+        "permissions": [
+          {
+            "capability": {
+              "name": "documents.read",
+              "version": 1
+            },
+            "rationale": "List and open only documents belonging to the signed-in user's games. Host paths and unsupported active content are never exposed."
+          }
+        ],
+        "plugin_id": "example.scoped-document-viewer",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "list-documents",
+            "read-document"
+          ],
+          "menus": [],
+          "pages": [
+            "documents"
+          ],
+          "settings": []
+        },
+        "version": "1.2.0"
+      },
+      "package": {
+        "filename": "example.scoped-document-viewer-1.2.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 5054
+      },
+      "package_sha256": "ac9135096a205a49d1ddbb7d21ec87466d58a278a938e5a8d431e6873c8b94fb",
+      "plugin_id": "example.scoped-document-viewer",
+      "publisher": "Unnamed Tracking Official",
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "82ee25772d655220a5eb5fab688a8616fd8509a1dc2c5a3dfeff7a31eebcca42",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "82ee25772d655220a5eb5fab688a8616fd8509a1dc2c5a3dfeff7a31eebcca42",
+        "signature": "lD/nCFIgqSpK6mx1ykGE6iSxmo9GObxPPODTKYzxgRR14hRlg29MXl7XtUwqDXQ6Gt4UeNaVxQ9fCvfeW/nWBQ=="
+      },
+      "tags": [],
+      "version": "1.2.0"
+    },
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "7f459a7062ca6bf7ad9e73e3875f4e60b27dc0cd",
+        "source_committed_at": "2026-10-01T11:04:28+08:00",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": ">=1.0.0",
+        "backend_routes": [
+          {
+            "authorization": "authenticated",
+            "handler": "plugin:list_documents_route",
+            "id": "list-documents-api",
+            "methods": [
+              "GET"
+            ],
+            "path": "documents",
+            "scope": "plugin"
+          },
+          {
+            "authorization": "authenticated",
+            "handler": "plugin:read_document_route",
+            "id": "read-document-api",
+            "methods": [
+              "GET"
+            ],
+            "path": "documents/{document_id}",
+            "scope": "plugin"
+          }
+        ],
+        "capabilities": [
+          {
+            "name": "documents.read",
+            "version": 1
+          },
+          {
+            "name": "backend.routes.plugin",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Lists and safely opens the active user's PDF, UTF-8 text, and sanitized HTML game documents.",
+        "entrypoint": "plugin:main",
+        "frontend": {
+          "entry": "frontend/index.html"
+        },
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "33f6bd35a2416d76e538372c05ca4116bf34809b82e9c65be44634e30afb564b",
+          "signature": "FKdZOB5qPrH4+VPcWnp9Pipo3X7pBlSfjp/yN1gpEP39KKYhf4Hji6fyr4U83GX3SIRXXftkeZRgfspr47Z1BA=="
+        },
+        "manifest_version": 1,
+        "name": "Scoped Document Viewer",
+        "permissions": [
+          {
+            "capability": {
+              "name": "documents.read",
+              "version": 1
+            },
+            "rationale": "List and open only documents belonging to the signed-in user's games. Host paths and unsupported active content are never exposed."
+          },
+          {
+            "capability": {
+              "name": "backend.routes.plugin",
+              "version": 1
+            },
+            "rationale": "Serve the document viewer API only below this plugin's authenticated route namespace."
+          }
+        ],
+        "plugin_id": "example.scoped-document-viewer",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "list-documents",
+            "read-document"
+          ],
+          "menus": [],
+          "pages": [
+            "documents"
+          ],
+          "settings": []
+        },
+        "version": "1.3.0"
+      },
+      "package": {
+        "filename": "example.scoped-document-viewer-1.3.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 5839
+      },
+      "package_sha256": "192987671766589da6ced65973b65962eb6c3e3f1c9fc0bd8bf93f327b923f1d",
+      "plugin_id": "example.scoped-document-viewer",
+      "publisher": "Unnamed Tracking Official",
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "33f6bd35a2416d76e538372c05ca4116bf34809b82e9c65be44634e30afb564b",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "33f6bd35a2416d76e538372c05ca4116bf34809b82e9c65be44634e30afb564b",
+        "signature": "FKdZOB5qPrH4+VPcWnp9Pipo3X7pBlSfjp/yN1gpEP39KKYhf4Hji6fyr4U83GX3SIRXXftkeZRgfspr47Z1BA=="
+      },
+      "tags": [],
+      "version": "1.3.0"
+    },
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "4fbc6a0056023406da8e4dcbf005b7f526f2434d",
+        "source_committed_at": "2026-10-01T21:26:38+08:00",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": ">=1.0.0",
+        "backend_routes": [
+          {
+            "authorization": "authenticated",
+            "handler": "plugin:list_documents_route",
+            "id": "list-documents-api",
+            "methods": [
+              "GET"
+            ],
+            "path": "documents",
+            "scope": "plugin"
+          },
+          {
+            "authorization": "authenticated",
+            "handler": "plugin:read_document_route",
+            "id": "read-document-api",
+            "methods": [
+              "GET"
+            ],
+            "path": "documents/{document_id}",
+            "scope": "plugin"
+          }
+        ],
+        "capabilities": [
+          {
+            "name": "documents.read",
+            "version": 1
+          },
+          {
+            "name": "backend.routes.plugin",
+            "version": 1
+          },
+          {
+            "name": "frontend.navigation.main",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Scoped game document viewer implementing PR #241 with sandboxed PDF, UTF-8 text and sanitized HTML rendering.",
+        "entrypoint": "plugin:main",
+        "frontend": {
+          "entry": "frontend/index.html"
+        },
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "1ad38eeb675df132079f530b5597587472d950f2693084d5c85ad656c5debffb",
+          "signature": "Uzei7OVPzgIqGPa5xTkiu1ZWy7o6wKjI7mZN5Vj4cuOe71glg2qi2UYnybiUofdNOZlVcHV3Nxiy2K5xD4DwDQ=="
+        },
+        "manifest_version": 1,
+        "name": "Scoped Document Viewer",
+        "permissions": [
+          {
+            "capability": {
+              "name": "documents.read",
+              "version": 1
+            },
+            "rationale": "List and open only documents belonging to the signed-in user's games. Host paths and unsupported active content are never exposed."
+          },
+          {
+            "capability": {
+              "name": "backend.routes.plugin",
+              "version": 1
+            },
+            "rationale": "Serve the document viewer API only below this plugin's authenticated route namespace."
+          },
+          {
+            "capability": {
+              "name": "frontend.navigation.main",
+              "version": 1
+            },
+            "rationale": "Show the plugin-owned Documents page in the main navigation."
+          }
+        ],
+        "plugin_id": "example.scoped-document-viewer",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "list-documents",
+            "read-document"
+          ],
+          "menus": [],
+          "pages": [
+            "documents"
+          ],
+          "settings": []
+        },
+        "version": "1.4.0"
+      },
+      "package": {
+        "filename": "example.scoped-document-viewer-1.4.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 667555
+      },
+      "package_sha256": "f2b888c7d515a13cfdc0116ea619486cefd1441011bda582efd262f92eff053b",
+      "plugin_id": "example.scoped-document-viewer",
+      "publisher": "Unnamed Tracking Official",
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "1ad38eeb675df132079f530b5597587472d950f2693084d5c85ad656c5debffb",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "1ad38eeb675df132079f530b5597587472d950f2693084d5c85ad656c5debffb",
+        "signature": "Uzei7OVPzgIqGPa5xTkiu1ZWy7o6wKjI7mZN5Vj4cuOe71glg2qi2UYnybiUofdNOZlVcHV3Nxiy2K5xD4DwDQ=="
+      },
+      "tags": [],
+      "version": "1.4.0"
+    }
+  ],
+  "version": 1
+}

@@ -11,14 +11,14 @@ from test_domain_plugins import load_plugin
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "examples/scoped-document-viewer"
-PACKAGE = ROOT / "dist/example.scoped-document-viewer-1.4.0.utp"
 
 
-def test_document_package_contains_current_source_and_pinned_libraries():
+def test_document_package_contains_current_source_and_pinned_libraries(current_packages):
+    package = current_packages["example.scoped-document-viewer"]
     lock = json.loads((SOURCE / "vendor-lock.json").read_text())
-    with zipfile.ZipFile(PACKAGE) as archive:
+    with zipfile.ZipFile(package) as archive:
         manifest = json.loads(archive.read("manifest.json"))
-        assert manifest["version"] == "1.4.0"
+        assert package.name == f"{manifest['plugin_id']}-{manifest['version']}.utp"
         assert (
             manifest["integrity"]["signature"] is None
             or manifest["integrity"]["key_id"]
@@ -43,8 +43,8 @@ def test_document_package_contains_current_source_and_pinned_libraries():
                 assert hashlib.sha256(content).hexdigest() == expected_hash
 
 
-def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path):
-    with zipfile.ZipFile(PACKAGE) as archive:
+def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path, current_packages):
+    with zipfile.ZipFile(current_packages["example.scoped-document-viewer"]) as archive:
         for name in archive.namelist():
             if name.startswith("payload/") and not name.endswith("/"):
                 path = tmp_path / name.removeprefix("payload/")

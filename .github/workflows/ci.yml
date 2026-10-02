@@ -10,22 +10,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - run: python -m pip install --upgrade pip pytest cryptography
+      - run: python -m pip install --upgrade pip pytest cryptography jsonschema pydantic
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
       - run: node --test tests/session_manager_ui.test.mjs
+      - run: node --test tests/native_frontends.test.mjs
       - run: node --check examples/self-service-session-manager/frontend/app.js
       - run: pytest
       - run: python tools/build_packages.py
       - run: python tools/verify_packages.py dist/*.utp
       - run: python tools/validate_packages.py dist/*.utp
+      - run: python tools/distribution.py
+      - name: Preserve published packages and release history
+        env:
+          BASELINE_REF: ${{ github.event.pull_request.base.sha || 'origin/main' }}
+        run: python tools/distribution.py --baseline-ref "$BASELINE_REF"
+      - run: python tools/distribution.py --root .validation --check-source
+      - run: python tools/verify_packages.py .validation/dist/*.utp
+      - run: python tools/validate_packages.py .validation/dist/*.utp
+      - uses: actions/checkout@v4
+        with:
+          repository: Rosefall-a/unnamed_tracking_app
+          ref: 17a184c176af846b23bc67e3d5d5324c26415cbe
+          path: .validation/host
+      - run: python tools/check_host_contract.py --host-root .validation/host
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -33,3 +50,12 @@ jobs:
       - run: npx playwright install --with-deps chromium --only-shell
       - run: npm run check
       - run: npm test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: validated-plugin-distribution
+          path: |
+            .validation/dist/*.utp
+            .validation/list.json
+            .validation/releases/*.json
+          include-hidden-files: true
+          if-no-files-found: error

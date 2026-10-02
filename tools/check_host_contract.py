@@ -8,6 +8,8 @@ and the installation registry, not host test fixtures. It does not enable code.
 from __future__ import annotations
 
 import argparse
+import ast
+import json
 import sys
 import tempfile
 from pathlib import Path
@@ -18,23 +20,39 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--host-root", required=True, type=Path)
     parser.add_argument("--temporary-root", type=Path)
+    parser.add_argument("--distribution-root", type=Path, default=Path(__file__).parents[1] / ".validation")
     args = parser.parse_args()
     sys.path.insert(0, str(args.host_root / "src/backend"))
     sys.path.insert(0, str(args.host_root / "src/plugin-runtime"))
     from runtime import PluginRegistry, PluginSupervisor, RuntimePolicyError
     from src.plugin_api.capabilities import capability_definition
-    from src.plugin_api.contracts import Capability, PluginManifest, PluginUiDocument
-    from src.plugin_api.updates import PackageVerificationError, PluginPackageVerifier
+    from src.plugin_api.contracts import Capability, PluginDependency, PluginManifest, PluginUiDocument
+    from src.plugin_api.updates import PackageVerificationError, PluginPackageVerifier, TrustedPublisher
+    from pydantic import BaseModel, Field
+    from publisher_registry import load_registry
 
     root = Path(__file__).parents[1]
+    catalogue = json.loads((args.distribution_root / "list.json").read_text(encoding="utf-8"))
+    # Evaluate the actual public catalogue entry model without loading database
+    # configuration or the API server. Additional distribution fields remain
+    # additive to its v1 contract; this does not imply old hosts consume them.
+    api_source = args.host_root / "src/backend/src/api/routes/plugins.py"
+    tree = ast.parse(api_source.read_text(encoding="utf-8"))
+    model = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "PluginCatalogEntry")
+    namespace = {"BaseModel": BaseModel, "Field": Field, "PluginDependency": PluginDependency}
+    exec(compile(ast.Module(body=[model], type_ignores=[]), str(api_source), "exec"), namespace)
+    for entry in catalogue["plugins"]:
+        namespace["PluginCatalogEntry"].model_validate(entry)
+    publishers = {key: TrustedPublisher(key_id=key, public_key=record.public_key, publisher=record.publisher,
+                    status=record.status, plugin_id_prefixes=record.plugin_id_prefixes) for key, record in load_registry().items()}
     with tempfile.TemporaryDirectory(dir=args.temporary_root) as temporary:
         work = Path(temporary)
         supervisor = PluginSupervisor(
             root=work / "workers", storage_root=work / "storage"
         )
         registry = PluginRegistry(work / "installed", supervisor)
-        for name in ("help-button", "jellyfin-media-sync"):
-            source = root / "examples" / name
+        for manifest_path in sorted((root / "examples").glob("*/manifest.json")):
+            source = manifest_path.parent
             manifest = PluginManifest.model_validate_json(
                 (source / "manifest.json").read_bytes()
             )
@@ -42,23 +60,25 @@ def main() -> None:
                 (source / "ui.json").read_bytes()
             )
             assert manifest.plugin_id == document.plugin_id
-            assert manifest.native_frontend is not None
             assert all(capability_definition(ref.name) for ref in manifest.capabilities)
             assert capability_definition(Capability.FRONTEND_NATIVE).highly_privileged
             for key in ("settings", "actions", "pages", "menus"):
                 assert set(getattr(manifest.ui, key)) == {
                     x.id for x in getattr(document, key)
                 }
-            path = root / "dist" / f"{manifest.plugin_id}-{manifest.version}.utp"
-            PluginPackageVerifier(require_signature=False).inspect(path)
-            try:
-                PluginPackageVerifier().inspect(path)
-            except PackageVerificationError:
-                pass
+            entry = next(e for e in catalogue["plugins"] if e["plugin_id"] == manifest.plugin_id)
+            path = args.distribution_root / "dist" / entry["package"]["filename"]
+            manifest = PluginManifest.model_validate(entry["manifest"])
+            PluginPackageVerifier(publishers, require_signature=False).inspect(path)
+            if manifest.integrity.signature is None:
+                try:
+                    PluginPackageVerifier(publishers).inspect(path)
+                except PackageVerificationError:
+                    pass
+                else:
+                    raise AssertionError("Strict verifier accepted an unsigned development package")
             else:
-                raise AssertionError(
-                    "Strict verifier accepted an unsigned development package"
-                )
+                PluginPackageVerifier(publishers).inspect(path)
             installed = registry.install_package(
                 path.read_bytes(), path.name, installation_id=str(uuid4())
             )
@@ -72,10 +92,10 @@ def main() -> None:
             assert item["enabled"] is False
             runtime_document = registry.ui(manifest.plugin_id)
             PluginUiDocument.model_validate(runtime_document)
-            assert (
-                runtime_document["native_frontend"]["entry"]
-                == manifest.native_frontend.entry
-            )
+            if manifest.native_frontend is None:
+                print(f"{manifest.plugin_id}: host manifest/UI, payload digest, installation and disabled lifecycle passed")
+                continue
+            assert runtime_document["native_frontend"]["entry"] == manifest.native_frontend.entry
             try:
                 registry.frontend(
                     manifest.plugin_id, manifest.native_frontend.entry, native=True

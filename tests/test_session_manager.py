@@ -99,7 +99,8 @@ def test_native_settings_and_all_destructive_actions_are_declared():
     root = ROOT / "examples" / "self-service-session-manager"
     manifest = json.loads((root / "manifest.json").read_text())
     ui = json.loads((root / "ui.json").read_text())
-    assert manifest["version"] == "2.0.0"
+    from tools.distribution import version_key
+    assert version_key(manifest["version"]) >= (2, 0, 0)
     assert manifest["native_frontend"]["entry"] == "native/index.js"
     assert {section["id"] for section in ui["settings_sections"]} == {
         "sessions",
