@@ -6,8 +6,11 @@ or worker is mocked; the host owns deployment and disposable package generation.
 from __future__ import annotations
 
 import argparse
+import json
 import runpy
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -51,6 +54,20 @@ def main() -> None:
         assert "games.read" not in after["effective_capabilities"]
         denials.append(plugin_id)
         print(f"{plugin_id}: authenticated permission denial retained the healthy predecessor and its grants/history", flush=True)
+        if "--browser" in host_arguments:
+            work = Path(host_arguments[host_arguments.index("--work-root") + 1]).resolve()
+            plugins = Path(host_arguments[host_arguments.index("--plugins-root") + 1]).resolve()
+            # The disposable session is handed to Chromium through a private
+            # temporary file, never stdout, an artifact, or repository content.
+            with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", suffix=".json", delete=False) as stream:
+                json.dump([{"name": cookie.name, "value": cookie.value} for cookie in client.cookies.jar], stream)
+                cookie_file = Path(stream.name)
+            try:
+                subprocess.run(["node", str(Path(__file__).with_name("capture_host_workflow.mjs")),
+                                str(args.host_root.resolve()), str(plugins), str(work),
+                                str(client.base_url), str(cookie_file)], check=True)
+            finally:
+                cookie_file.unlink(missing_ok=True)
         return response
 
     previous_arguments = sys.argv

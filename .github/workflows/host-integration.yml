@@ -80,4 +80,5 @@ jobs:
           path: |
             ${{ runner.temp }}/plugin-acceptance/*.log
             ${{ runner.temp }}/plugin-acceptance/*.png
+            ${{ runner.temp }}/plugin-acceptance/workflow-captures.json
           if-no-files-found: warn
