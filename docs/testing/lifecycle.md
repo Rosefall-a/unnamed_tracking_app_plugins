@@ -8,7 +8,7 @@ neither requires plugins to import application internals.
 | Data survives restart and disable/enable | UI/API, Playtime Report, Notifier, Curator through real registry/workers |
 | Ordinary update preserves configuration/storage | Same reference packages, plus authenticated Jellyfin HTTP acceptance |
 | New permission requires approval | Jellyfin candidate gains `games.read`; automatic checks stage it |
-| Denial keeps old release active | Authenticated host acceptance leaves candidate pending; reference suite aborts a real runtime permission transaction and checks restored digest/health |
+| Denial keeps old release active | Host acceptance adapter explicitly denies the staged scope through authenticated HTTP and checks predecessor/grants/history unchanged; reference suite also aborts a runtime transaction |
 | Rollback preserves data | Host-retained predecessor, same identity/configuration/sentinel |
 | Reinstall preserves data | Real retained package installed again |
 | Failed update restores package | Signed reference candidate has a failing entrypoint; previous manifest and every payload byte restored; Jellyfin acceptance also tests automatic failure |
@@ -34,7 +34,7 @@ On Linux with the [host prerequisites](index.md) available:
 
 ```sh
 python tools/check_reference_lifecycle.py --host-root .validation/host
-python .validation/host/tools/check_plugin_repository_lifecycle.py --plugins-root . --work-root /tmp/plugin-acceptance-new --browser
+python tools/check_host_lifecycle.py --host-root .validation/host --plugins-root . --work-root /tmp/plugin-acceptance-new --browser
 ```
 
 Use an empty work directory and disposable migrated PostgreSQL database for the
@@ -47,6 +47,11 @@ The reference suite separately generates ordinary, permission-changing and
 failing signed packages in a temporary independent checkout. It calls the actual
 runtime transactions and asserts byte/data restoration. Runtime rejection does
 not by itself prove the HTTP consent UI; that is the purpose of the second suite.
+
+The adapter runs the unchanged host suite and adds explicit denial at its staged
+review HTTP boundary. It sends real authenticated requests and restores its
+instrumentation afterward; no response or existing assertion is replaced. The
+original suite continues with approval and failed activation/recovery.
 
 Windows can run unit/package/docs tests and disabled host contract inspection.
 Real POSIX worker acceptance is the required Linux CI job. Keep failures visible;

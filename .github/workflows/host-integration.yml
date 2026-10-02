@@ -64,7 +64,7 @@ jobs:
           npx playwright install --with-deps chromium --only-shell
       - name: Verify official distribution and real-worker lifecycle
         run: |
-          python .validation/host/tools/check_plugin_repository_lifecycle.py \
+          python tools/check_host_lifecycle.py --host-root .validation/host \
             --plugins-root . \
             --work-root "${{ runner.temp }}/plugin-acceptance" --browser
       - name: Exercise real reference packages through runtime transactions
