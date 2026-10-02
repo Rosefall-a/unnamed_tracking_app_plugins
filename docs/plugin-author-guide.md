@@ -1,0 +1,398 @@
+# Authoring and distributing Unnamed Tracking App plugins
+
+This guide describes Plugin API v1, the existing `.utp` package format and this
+repository's generated distribution. You can develop and publish independently
+of the official catalogue. Start with the [catalogue specification](catalogue-specification.md)
+if you maintain a list of other authors' packages.
+
+## Host compatibility
+
+The public manifest/UI schemas are checked against host `plugin-manager` revision
+`17a184c176af846b23bc67e3d5d5324c26415cbe`. The host's `main` branch does not yet
+contain Plugin Manager. Install and test against the Plugin Manager build.
+
+The current host accepts `list.json` version 1 and `.utp` v1. It consumes the
+current identity, name, description, version, package URL, dependencies, release
+notes and optional changelog URL. The generated list retains those fields and
+adds release history, documentation, tags, scopes, hashes and release policies.
+At the audited revision the host catalogue API discards those additional fields;
+it does **not** yet implement catalogue tag filtering, embedded README display,
+release-history selection or per-release policy-based automatic updating. Those
+fields are distribution data ready for a host consumer, not a claim that an old
+host already uses them. No second runtime, package format or permission system
+is introduced here.
+
+## Project structure
+
+For this builder, place plugins below `examples/`; the directory name need not
+equal the globally unique plugin ID:
+
+```text
+my-plugin-repository/
+  catalogue.json
+  examples/my-plugin/
+    manifest.json
+    release.json
+    README.md
+    icon.svg                 # optional, declared by release.json
+    plugin.py
+    helpers.py               # optional plugin-owned Python modules
+    ui.json                  # required when UI IDs are declared
+    frontend/                # optional sandboxed browser bundle
+    native/                  # optional privileged host Vue modules
+  sdk/plugin_protocol.py
+  tools/                     # this repository's build/validation tools + schemas
+  publishers/registry.json
+  publishers/my-key.public-key.b64
+  tests/
+  dist/                      # immutable generated packages, including old versions
+  releases/                  # generated append-only release records
+  list.json                  # generated catalogue, never edited by hand
+```
+
+Keep private signing keys outside the checkout. Generated metadata and packages
+are distribution outputs, not separate authoring inputs. Do not synchronize
+versions by manually editing `list.json`, history records or ZIPs.
+
+## Manifest
+
+`manifest.json` is the public runtime/security contract. For a minimal read-only
+game plugin, use:
+
+```json
+{
+  "manifest_version": 1,
+  "plugin_id": "org.example.library-summary",
+  "name": "Library Summary",
+  "version": "1.0.0",
+  "description": "Summarizes the signed-in user's game library.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": "^1.0.0",
+  "application_version_range": "^1.0.0",
+  "capabilities": [{"name": "games.read", "version": 1}],
+  "permissions": [{
+    "capability": {"name": "games.read", "version": 1},
+    "rationale": "Count games requested by the signed-in user."
+  }],
+  "dependencies": [],
+  "ui": {"settings": [], "actions": ["summarize"], "pages": ["summary"], "menus": []},
+  "storage": {"quota_mb": 1},
+  "integrity": {"sha256": "0000000000000000000000000000000000000000000000000000000000000000", "signature": null, "key_id": null}
+}
+```
+
+Add `frontend.navigation.main` to capabilities and matching permissions if you
+choose sidebar navigation. The example below deliberately uses the plugin's
+detail page instead. Add `plugin.settings` before using ordinary settings fields
+or `settings.get`. `storage.quota_mb` is a quota declaration, not permission to
+access host files. A `null` quota leaves quota selection to the host.
+
+`plugin_id` is stable across updates. Use a domain/publisher namespace you own;
+do not reuse an official `example.*` identity. Versions are strict stable SemVer
+`MAJOR.MINOR.PATCH`; prerelease/build suffixes are not supported by this host.
+Compatibility ranges accept exact versions, `^1.0.0`, `~1.0.0`, `1.x`, `*`, and
+comma-separated AND constraints such as `>=1.0.0,<2.0.0`. They do not use npm's
+space-separated AND or `||` syntax. Declare the range actually tested. Dependencies
+use `{ "plugin_id": "org.example.helper", "version_range": "^1.0.0", "optional": false }`.
+The host owns dependency resolution, compatibility decisions and activation.
+
+The package builder generates the final manifest version and integrity. Source
+manifests retain a placeholder digest and no signature. A signed source manifest
+is not a replacement for building and verifying the package.
+
+## Capabilities, permissions and ownership
+
+Each capability reference has a stable name and semantic version. Each requested
+permission includes that exact reference and a human-readable rationale. The
+host grants/revokes permissions per installation and authenticated context;
+declaring a permission does not grant it. The host classifies risk from its own
+capability definitions. Do not add `risk`, risk levels or approval decisions to
+manifests or `release.json`. The schemas reject such extra fields.
+
+Common capabilities and the existing examples are:
+
+| Capability | Use / example |
+| --- | --- |
+| `games.read` | `games.list`, `games.metadata.search`; reports and curator |
+| `media.read`, `media.write` | `media.list`, `media.import`; Jellyfin |
+| `documents.read` | `documents.list`, `documents.read`; Scoped Document Viewer |
+| `sessions.read`, `sessions.revoke` | Current-user session inspection and revocation |
+| `sessions.admin.read`, `sessions.admin.revoke` | Explicit administrator session operations |
+| `sessions.geoip.read`, `sessions.geoip.configure` | GeoIP status/configuration |
+| `notifications.send` | Host notification side effects |
+| `notification_providers.register`, `notification_providers.deliver` | Core-coordinated delivery provider |
+| `plugin.settings`, `plugin.storage` | Plugin configuration and owned persistent data |
+| `events.subscribe`, `tasks.background` | Event polling and supervised background work |
+| `backend.routes.plugin` | Namespaced, authenticated JSON handlers |
+| `frontend.navigation.*`, `frontend.settings`, `frontend.routes` | Declared host contributions |
+| `frontend.native` | Privileged code in the host Vue context |
+| `network.outbound` | Permission to contact external destinations under runtime policy |
+
+The full list and object fields are available in the checked-in public schemas
+under `tools/schemas/`. Availability of a capability does not imply every
+conceivable operation exists. Use documented operations demonstrated by the
+examples. `api.full` is an exceptional explicit permission: it allows plugins to
+read and modify all user data, and must be reviewed by the host administrator.
+
+Host user data stays host-owned. Plugins must not import database models, access
+host filesystem paths or carry their own host credentials. The gateway supplies
+authoritative user and installation identities. Do not take a user ID from an
+untrusted browser field to choose which user's library to read.
+
+`storage.get`/`storage.put` operate on installation-owned storage. If stored
+results contain user data, additionally namespace keys using the host-injected
+action context, for example `users/<_plugin_context.user_id>/latest-report`.
+Do not assume a plugin-global key is user-private. `PLUGIN_DATA_DIR` is the
+runtime's plugin-owned data directory; existing credential examples use its
+write-only `secrets/` files. Do not expose those files through action results,
+catalogue metadata or ordinary settings. Uninstallation/retention and rollback
+of persistent data are host policy, not package-build operations.
+
+## Runtime and SDK
+
+Use the bundled SDK for newline-delimited JSON requests over standard I/O:
+
+```python
+from __future__ import annotations
+import time
+from sdk.plugin_protocol import request
+
+def summarize(values: dict) -> dict:
+    del values
+    result = request("games.list", "games.read", {"limit": 50})
+    return {"game_count": len(result.get("games", []))}
+
+def main() -> None:
+    request("lifecycle.ready", "lifecycle.ready", {})
+    while True:
+        time.sleep(3600)
+```
+
+`request()` sends `{api_version: "v1", method, capability, payload}` and receives
+an object `payload` or error. `lifecycle.ready` is runtime-local; it is not a new
+permission to invent in the manifest. The host imports `plugin:main` directly,
+so an `if __name__ == "__main__"` block alone cannot initialize the plugin.
+Keep the entrypoint alive while enabled. Reporting ready and immediately exiting
+does not establish lasting worker health. Put user-triggered work in action
+handlers accepting one dictionary and returning a JSON-compatible dictionary.
+The host starts a separate handler subprocess and injects `_plugin_context`.
+Keep protocol output on stdout; use stderr for diagnostics. Do not log secrets.
+
+The runtime supervises processes, enforces execution/permission policy and stops
+disabled/unhealthy workers. Native frontend activation must return cleanup that
+removes polling timers, listeners and mounted components. Test denied permissions,
+failed gateway responses and disable/unmount behavior. Do not copy host runtime
+infrastructure into a plugin.
+
+## Pages, configuration and routes
+
+A minimal `ui.json` corresponding to the manifest above is:
+
+```json
+{
+  "schema_version": "v1",
+  "plugin_id": "org.example.library-summary",
+  "title": "Library Summary",
+  "settings": [],
+  "actions": [{"id": "summarize", "label": "Summarize", "handler": "plugin:summarize", "capability": {"name": "games.read", "version": 1}}],
+  "pages": [{"id": "summary", "title": "Library Summary", "description": "Count up to 50 games.", "actions": ["summarize"]}],
+  "menus": []
+}
+```
+
+Pages refer to declared settings sections, actions, tables and dialogs by ID;
+`pages[].components` is not a v1 field. Settings are sections with `id`, `title`
+and `fields`, not individual fields placed directly in `settings[]`. Action
+handlers must actually exist. Manifest UI IDs and `ui.json` IDs must agree.
+For field types, validation and contribution slots, use the public UI schema and
+the working examples. Request the matching frontend capability for sidebar,
+Settings, overlays, routes and other host contributions. The host filters
+contributions using effective grants and enabled lifecycle state.
+
+Use `frontend: {"entry": "frontend/index.html"}` for a static sandboxed iframe
+bundle. Bundle dependencies and use the host's approved `postMessage` bridge
+(`plugin.run-action`, `plugin.save-settings`, `plugin.store-secret` as demonstrated
+by the current frontends); the iframe does not get arbitrary access to the host
+DOM, cookies or database. `native_frontend` instead declares an entry under
+`native/` and optional styles, requires `frontend.native`, and exports
+`activate(context)` with the supplied Vue/host APIs. It runs in the privileged
+host context and requires the host's appropriate administrator approval.
+
+Optional `backend_routes` declare an ID, relative path, methods, handler,
+`scope: "plugin"` and `authorization: "authenticated"` or `"admin"`. A route such
+as `documents/{document_id}` is mounted at `/api/plugins/<plugin-id>/...`.
+Handlers receive normalized path/query/context dictionaries and return
+`{status_code, body}`; SDK `route_response` and `route_query_value` helpers are
+available. Namespaced routes require `backend.routes.plugin`. Reserved management
+paths cannot be claimed. Exceptional host-level `/api/...` routes require
+`backend.routes.host`; the plugin cannot supply its own authentication middleware
+or replace the management namespace. See the document/session plugins for complete
+working declarations and bounded error handling.
+
+## Release metadata, tags, README and icon
+
+The host manifest forbids unknown distribution-only fields. Author them in
+`release.json`; the builder places a generated snapshot in the existing package
+payload as `distribution.json`, covered by the payload digest/signature:
+
+```json
+{
+  "schema_version": 1,
+  "publisher": "Example Publisher",
+  "tags": ["games", "statistics"],
+  "icon": "icon.svg",
+  "automatic_update": null,
+  "release_notes": "Adds the library summary action."
+}
+```
+
+All keys shown except `icon`'s non-null value are expected by the validator when
+the file is supplied. With no `release.json`, the builder uses an independent
+developer label, empty tags/notes, no icon and the default policy. Tags are supplied
+by the plugin author: unique lowercase slugs matching `[a-z0-9][a-z0-9-]{0,47}`,
+at most 32. There is no fixed official category list. Icons are optional safe
+package-relative paths and are bundled with a recorded digest. Catalogue clients
+must sanitize/render documentation and icons safely.
+
+Every new package needs a non-empty UTF-8 `README.md`. Explain purpose,
+configuration, requested permissions, ownership of stored data, runtime needs,
+limitations and release changes. The exact packaged README is embedded as
+`readme` text in each generated release and current catalogue entry, so a capable
+Plugin Manager does not need to fetch GitHub HTML. Documentation stays attached
+to its release even when a later README changes. Legacy packages that never
+contained README/icon/tags retain `null`/empty metadata and are marked legacy;
+the migration does not attach today's documentation to old code as if it were
+originally packaged.
+
+## Building, validation and signing
+
+Use Python 3.11+ with `pytest`, `cryptography` and `jsonschema`; host conformance
+checks additionally use `pydantic`. Install the pinned frontend test dependencies
+with `npm ci` when working on browser bundles. A normal build is isolated:
+
+```bash
+python tools/build_packages.py
+python tools/distribution.py --root .validation --check-source
+python tools/verify_packages.py .validation/dist/*.utp
+python tools/validate_packages.py .validation/dist/*.utp
+pytest
+```
+
+The preview is under `.validation/dist`, `.validation/releases` and
+`.validation/list.json`; it includes unchanged historical packages. New preview
+packages are deliberately unsigned unless signing environment variables are
+provided. A preview never rewrites the published distribution or source versions.
+An unchanged already-published signed package is reused with its original signature.
+Use `--output-root /path/to/preview` for another isolated output location.
+
+`.utp` is ZIP with `manifest.json` and `payload/<relative files>`. The builder
+includes plugin Python modules, SDK helper, UI, README, release metadata, declared
+icon and frontend/native assets. It excludes caches/hidden directories and uses
+LF for text, sorted members, fixed timestamps/modes and deterministic JSON. There
+is no compilation of Python to a platform-specific executable; the built plugin
+is a validated, packaged Python/static-asset distribution.
+
+`integrity.sha256` is SHA-256 over sorted payload paths and bytes, with a NUL after
+each path and file. The manifest is excluded by the unchanged v1 contract.
+`package_sha256` separately hashes the entire final ZIP, including the manifest.
+Signatures are Ed25519 over ASCII `plugin-package-v1:<payload-sha256>`. They cover
+the payload (including README and release policy); they do not sign arbitrary
+catalogue fields or the manifest itself. Catalogue HTTPS plus the archive hash
+provides the full-package correspondence check. Never mutate a signed package.
+
+Register your publisher's public Ed25519 key in your repository's `publishers/`
+registry with its reviewed identity, key ID, base64 public bytes, SHA-256 of the
+public bytes, status and allowed plugin-ID prefixes. The builder requires the
+private key to match an **active** registered public key covering every built
+plugin, and the packaged publisher label must match the registered identity.
+The private key is supplied only through `PLUGIN_SIGNING_KEY_B64` (base64 of the
+32-byte private seed) and `PLUGIN_SIGNING_KEY_ID`, normally CI secrets:
+
+```bash
+python tools/build_packages.py --require-signing
+python tools/distribution.py --check-source
+```
+
+`--require-signing` retains the existing release CLI and aliases `--publish`.
+Commit source/tooling/publisher changes before using it; signed publication
+rejects a dirty authoring tree so recorded source provenance is meaningful.
+The host has its own trust registry: publishing a catalogue/public key does not
+grant trust or permissions. Administrators must review/register the key in their
+deployment. Unsigned packages require the host's explicit untrusted-install flow;
+they are never presented as publisher-verified. Key rotation requires reviewed
+host trust updates; it does not authorize rewriting old ZIPs. Publish a new
+version to use a successor signer. Retain historical key information and let host
+trust policy decide which packages may execute.
+
+## Versions, release history and automatic updates
+
+The source manifest's version seeds a new plugin. For changes to an existing
+published plugin the builder calculates a fingerprint of the authoring manifest
+(excluding generated integrity/version), plugin payload, README, release metadata
+and SDK. If the fingerprint is unchanged it reuses the immutable release. Otherwise
+it examines Conventional Commits affecting that source directory or SDK since the
+previous release's source commit:
+
+| Change | Next version |
+| --- | --- |
+| `fix:`, other changes, or no available Git history | Patch |
+| `feat:` / `feat(scope):` | Minor |
+| `type!:` or `BREAKING CHANGE:` / `BREAKING-CHANGE:` footer | Major |
+
+Use full Git history in publication CI. Shared SDK changes can release every
+plugin that bundles it. An explicitly higher source-manifest version remains
+supported for existing author workflows; edit only that version, not generated
+outputs. Signed publication writes the resolved source version back along with
+the package/list/history. No-change or distribution-only commits do not create
+new releases. Keep meaningful Conventional Commit messages when squashing PRs.
+
+Each `releases/<plugin-id>.json` retains complete versioned records; `list.json`
+contains the same history for each currently maintained plugin. Old packages are
+never deleted or overwritten. Histories also retain packages for retired plugins
+that no longer have source manifests, without advertising them as current plugins.
+Each new release records source digest/commit/path/time, version-bump reason,
+package format/size, manifest, hashes, signing, README, tags, policy and release
+notes. `source_committed_at` is the source commit time, **not** an invented
+publication timestamp. New preview records are `built`; signed publication
+snapshots are `published`. Recorded stages describe source → validated → built →
+catalogued → published → downloadable; actual remote publication occurs when CI
+commits/pushes that complete snapshot or uploads its release assets.
+
+Automatic-update permission belongs to one release. `automatic_update: null`
+uses this builder's default: major bumps are false; other releases are true.
+Set `false` to opt the next generated release out, or `true` to explicitly permit
+it. The resolved boolean is packaged and saved permanently for that version.
+For example, publish `2.0.0` with false, then change the source `release.json` to
+true (or restore null for a patch) and publish `2.0.1`. The history retains false
+for `2.0.0` and true for `2.0.1`; the plugin has no permanent opt-out flag.
+Do not edit a historical policy in place: policy changes are package changes and
+receive a new version. Automatic permission is eligibility data, never a grant to
+bypass host compatibility, trust, consent, dependency or health checks.
+
+## Publishing and rollback
+
+The official `main` workflow tests all plugins and browser bundles, builds signed
+packages in `/dist`, verifies packages and generated metadata, and commits the
+packages, history, list and source version updates together. It serializes jobs
+and handles no-change builds. The existing GitHub release event uploads packages,
+`list.json` and release records as release assets. Tag a source snapshot **after**
+main publication has completed; release events require already-published matching
+sources and valid signatures. An early/unpublished tag fails rather than uploading
+a catalogue pointing to absent main-branch packages. No signing secret means no
+release, never a fallback unsigned official publication.
+
+For your own catalogue, configure `catalogue.json` and publish the same generated
+files to stable HTTPS paths; see the catalogue guide for GitHub/static hosting.
+Keep old package URLs downloadable and verify uploads before exposing the new
+list. The Plugin Manager can install from configured catalogue URLs or `.utp`
+uploads through its existing preview/consent/verification flow.
+
+Catalogue release history describes available distributions. Host rollback
+describes locally retained known-good installations. One does not substitute for
+the other: publishing history does not install old versions or restore plugin
+data. The host's update manager stages verified versions, checks dependencies,
+switches an active pointer, health-checks activation and can restore the prior
+known-good version. Data/schema migrations must remain compatible with your
+rollback plan; never promise that changing executable versions undoes all stored
+data changes. The audited user-facing host does not yet offer catalogue-history
+selection/automatic-update behavior; see the compatibility note above.

@@ -282,7 +282,12 @@ def validate_distribution(output: Path, *, source_root: Path = ROOT, check_sourc
             filenames.add(name)
     if filenames != {p.name for p in (output / "dist").glob("*.utp")}:
         raise ValueError("dist contains untracked packages")
-    catalogue = json.loads((output / "list.json").read_text(encoding="utf-8"))
+    catalogue_path = output / "list.json"
+    # The targeted host bounds decoded catalogue downloads to 1 MiB. Fail before
+    # publication instead of producing an endpoint it cannot consume.
+    if catalogue_path.stat().st_size > 1024 * 1024:
+        raise ValueError("catalogue exceeds the current Plugin Manager's 1 MiB download limit")
+    catalogue = json.loads(catalogue_path.read_text(encoding="utf-8"))
     if catalogue != catalogue_document(source_root, discover_plugins(source_root), histories):
         raise ValueError("catalogue differs from authoritative package/release metadata")
     if catalogue["version"] != 1:

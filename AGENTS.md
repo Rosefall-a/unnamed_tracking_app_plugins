@@ -404,13 +404,18 @@ Packages are built with:
 python tools/build_packages.py
 ```
 
-The output is:
+The development output is an isolated preview:
 
 ```text
-dist/*.utp
+.validation/dist/*.utp
 ```
 
-The package builder currently includes plugin source and the SDK protocol helper in the package payload.
+The package builder includes plugin source, the SDK, UI/assets, README, declared
+icon and generated release metadata in the existing package payload. Signed main
+publication uses `--require-signing`, writes `dist/`, `list.json`, `releases/` and
+resolved source versions together, and preserves immutable historical packages.
+Read `docs/plugin-author-guide.md` and `docs/catalogue-specification.md` before
+changing distribution or release behavior.
 
 The package digest is calculated from canonical sorted payload paths and bytes.
 
@@ -744,7 +749,9 @@ When changing package generation:
 * preserve signature verification;
 * preserve trusted publisher checks;
 * ensure all expected packages are handled;
-* ensure stale artifacts do not silently survive an intentional rebuild.
+* ensure every retained historical artifact is indexed and byte-identical;
+* reject untracked packages and catalogue/package/hash inconsistencies;
+* validate the complete generated preview and current manifest/UI/handler contract.
 
 If CI exposes an invalid checked-in package, fix the artifact or source/signing process rather than weakening verification.
 
@@ -896,7 +903,7 @@ Use this workflow:
 For an existing plugin:
 
 * preserve its `plugin_id`;
-* increment its semantic version appropriately;
+* use Conventional Commits so publication generates the appropriate semantic version;
 * update the manifest;
 * update documentation;
 * update tests;

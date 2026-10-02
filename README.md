@@ -15,7 +15,7 @@ This repository contains official demo plugins and reference implementations for
 5. Review its permissions, dependencies, publisher, and version.
 6. Confirm installation and enable it.
 
-The four **real demo plugins** are intentionally useful, end-to-end examples. Demo packages are buildable as explicitly **untrusted** `.utp` files for local testing; release builds can sign them with the configured publisher key:
+The six **real demo plugins** provide useful application behavior. New development packages are explicitly **untrusted** `.utp` files for local testing; release builds require the configured publisher key:
 - **Playtime Report** reads the game library, calculates statistics, and stores a report.
 - **Recently Played Notifier** reads recent activity, formats a notification, and stores its last run.
 - **Metadata Curator** reads a plugin setting, performs a metadata search, normalizes the result, and stores a snapshot.
@@ -23,7 +23,7 @@ The four **real demo plugins** are intentionally useful, end-to-end examples. De
 - **[Help Button capability showcase](examples/help-button/README.md)** demonstrates a global overlay, host dialog, local toast, notification, sidebar, native Settings, Home extension, game action, route, external navigation, settings, storage and events.
 - **[Jellyfin Media Sync](examples/jellyfin-media-sync/README.md)** demonstrates write-only destination-bound tokens, paginated HTTP, supervised queued work, movie imports, event polling, persistent progress and native configuration. Its README identifies the generic HTTP-broker, import-identity/playback and background-identity contracts still needed by the host.
 
-Three security-focused reference plugins exercise the scoped Phase 2 domain APIs without importing host code: a document viewer, a self-service session manager, and an external Discord delivery provider. `example.ui-api` remains the smallest general protocol example. Older lifecycle/events/advanced/notifications/metadata/event-filter examples were removed because they duplicated platform internals rather than demonstrating useful plugin behavior.
+Three security-focused reference plugins exercise scoped domain APIs without importing host code: a document viewer, a self-service session manager, and an external Discord delivery provider. `example.ui-api` remains the smallest declarative UI/gateway example. Historical packages, including older lifecycle/events/advanced examples, remain immutable in `dist/` and their generated release histories. The catalogue advertises the ten currently maintained source plugins.
 
 ## Official examples
 
@@ -47,6 +47,22 @@ A real demo performs application-level work after receiving data from the host. 
 That distinction is deliberate: the application provides the plugin platform; plugins provide behavior on top of it.
 
 ## For developers
+
+Read the complete [plugin author guide](docs/plugin-author-guide.md) and
+[third-party catalogue specification](docs/catalogue-specification.md). They cover
+independent repositories/catalogues, API v1, manifests, runtime, scoped data,
+pages, signing, builds, SemVer, hashes, release history and release-specific
+automatic-update policy.
+
+Distribution is generated from real packages. Author runtime declarations in
+`manifest.json`, and publisher/tags/icon/notes/update policy in `release.json`.
+Every new package includes its README and generated `distribution.json`. Do not
+hand-edit `list.json` or `releases/*.json`. Each catalogue release retains its own
+manifest, docs, scopes, hashes and policy. Major version bumps default to
+`automatic_update: false`; a later patch may permit updates again. The current
+host `plugin-manager` accepts this additive v1 list, but does not yet expose its
+extra history/README/tags or consume automatic-update policy; the guides document
+that compatibility boundary explicitly.
 
 A plugin declares its identity, compatibility range, capabilities, permissions, dependencies, UI contributions, storage quota, optional frontend bundle, and package integrity in `manifest.json`. Runtime access goes through the v1 gateway rather than direct database access, host filesystem access, or application internals.
 
@@ -72,7 +88,23 @@ Use the real demos as templates:
 - Use **[Self-Service Session Manager](examples/self-service-session-manager/README.md)** for full native Settings integration, separate read/destructive grants, scoped admin APIs, maps, and GeoIP configuration. Its native browser permission is Critical and requires appropriate review.
 - Use **External Discord Delivery Provider** for provider registration, write-only secrets, and core-owned delivery state.
 
-For development/testing, run `pytest`, `python tools/build_packages.py`, `python tools/verify_packages.py dist/*.utp`, and `python tools/validate_packages.py dist/*.utp`. A normal development build deliberately produces fresh unsigned packages for every example plugin, including the reference UI/API example and the UI Playground frontend, so the complete shipped example set is exercised by CI. Release builds use `PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for an active key in `publishers/registry.json`; they rebuild every example package and fail closed if the signer is missing, inactive, unregistered or outside scope. Never commit the private key.
+For development/testing, run `pytest`, `python tools/build_packages.py`,
+`python tools/distribution.py --root .validation --check-source`,
+`python tools/verify_packages.py .validation/dist/*.utp`, and
+`python tools/validate_packages.py .validation/dist/*.utp`. A development build
+generates an isolated preview under `.validation/`, exercises all ten current
+plugins and retains historical packages. New preview releases are unsigned by
+default; unchanged published packages are reused byte for byte.
+
+Main publication uses the existing `--require-signing` command with
+`PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for an active scoped key in
+`publishers/registry.json`. Changed source/docs/SDK/metadata receive an automatic
+SemVer increment using Conventional Commits; unchanged packages are reused.
+Publication writes `/dist`, release histories, `list.json` and resolved source
+versions together, and fails if signing or validation fails. GitHub release
+events retain the existing asset upload mechanism and include catalogue/history
+metadata. Tag the generated main snapshot after publication succeeds. Never
+commit a private key or overwrite an old release to correct it.
 
 For key rotation, add and review the successor public key before it signs releases, retain the predecessor as `retiring` only for the approved overlap, then mark it `revoked`. A revoked key must not be used to produce a release. Publish the matching reviewed registry to the host deployment before switching release signing, and never alter historical release artifacts to simulate a rotation.
 
@@ -84,8 +116,16 @@ For key rotation, add and review the successor public key before it signs releas
 - `tools/build_packages.py` — package builder
 - `tests/` — plugin validation tests
 - `dist/` — generated installable packages
+- `releases/` — generated historical release snapshots
+- `catalogue.json` — author-maintained display name and hosting base URL
+- `list.json` — generated current catalogue and complete per-plugin histories
+- `tools/schemas/` — exported public manifest/UI contracts
 
 
 ### Currently installable packages
 
-All eight example plugins are rebuilt as unsigned local-test packages during normal development CI; signed release artifacts are produced by the release workflow with the reviewed publisher key.
+All ten maintained plugins are built and validated in development CI. Download
+the current package linked by `list.json` or from a published GitHub release.
+Legacy distributions retain their original signatures/unsigned status; newly
+published releases require a reviewed signer. Catalogue membership itself does
+not establish host publisher trust or approve the requested permissions.
