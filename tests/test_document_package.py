@@ -14,14 +14,15 @@ from tools.validate_packages import validate_package
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "examples/scoped-document-viewer"
-PACKAGE = ROOT / "dist/example.scoped-document-viewer-1.5.0.utp"
+PACKAGE = ROOT / "dist/example.scoped-document-viewer-1.6.0.utp"
 
 
 def test_document_package_contains_current_source_and_pinned_libraries():
+    subprocess.run([sys.executable, "tools/build_packages.py"], cwd=ROOT, check=True)
     lock = json.loads((SOURCE / "vendor-lock.json").read_text())
     with zipfile.ZipFile(PACKAGE) as archive:
         manifest = json.loads(archive.read("manifest.json"))
-        assert manifest["version"] == "1.5.0"
+        assert manifest["version"] == "1.6.0"
         assert (
             manifest["integrity"]["signature"] is None
             or manifest["integrity"]["key_id"]
@@ -30,6 +31,7 @@ def test_document_package_contains_current_source_and_pinned_libraries():
             "documents.read",
             "backend.routes.plugin",
             "frontend.context.documents",
+            "plugin.settings",
         }
         for path in (SOURCE / "frontend").rglob("*"):
             if path.is_file():
@@ -60,23 +62,12 @@ def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path):
             "import json, plugin; print(json.dumps(plugin.read_document_route({'path_parameters': {'document_id': 'opaque-id'}, 'query': {'offset': ['24576'], 'content_sha256': ['digest']}})))",
         ],
         cwd=tmp_path,
-        input=json.dumps(
-            {
-                "payload": {
-                    "error": {
-                        "kind": "missing",
-                        "message": "Document not found.",
-                        "status_code": 404,
-                    }
-                }
-            }
-        )
-        + "\n",
+        input="\n".join([json.dumps({"payload": {"value": 0}}), json.dumps({"payload": {"error": {"kind": "missing", "message": "Document not found.", "status_code": 404}}})])\n        + "\n",
         text=True,
         capture_output=True,
         check=True,
     )
-    wire, response = map(json.loads, result.stdout.splitlines())
+    settings_wire, settings_response, wire, response = map(json.loads, result.stdout.splitlines())
     assert wire == {
         "api_version": "v1",
         "method": "documents.read",
@@ -84,6 +75,7 @@ def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path):
         "payload": {
             "document_id": "opaque-id",
             "chunk_bytes": 24576,
+            "max_bytes": 0,
             "offset": 24576,
             "content_sha256": "digest",
         },
