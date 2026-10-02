@@ -11,7 +11,7 @@
         "source_commit": "6b4fb8a5412e5a8138312efc4da4a1ea1dd0d0c4",
         "source_committed_at": "2026-10-02T12:32:33+08:00",
         "source_digest": "7d4f6400875958950e2f4e70ee5fa2e30fbd16cbe3d8e621331249eaf015e6b0",
-        "source_path": "old-examples-toberemoved/discord-delivery-provider",
+        "source_path": "examples/discord-delivery-provider",
         "version_bump": "minor"
       },
       "capabilities": [
@@ -295,7 +295,7 @@
             "source_commit": "6b4fb8a5412e5a8138312efc4da4a1ea1dd0d0c4",
             "source_committed_at": "2026-10-02T12:32:33+08:00",
             "source_digest": "7d4f6400875958950e2f4e70ee5fa2e30fbd16cbe3d8e621331249eaf015e6b0",
-            "source_path": "old-examples-toberemoved/discord-delivery-provider/discord-delivery-provider",
+            "source_path": "examples/discord-delivery-provider",
             "version_bump": "minor"
           },
           "icon": {
