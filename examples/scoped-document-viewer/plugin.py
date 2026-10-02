@@ -20,6 +20,16 @@ def _max_preview_bytes() -> int:
     return 0
 
 
+def get_settings(values: dict[str, Any]) -> dict[str, Any]:
+    """Return the persisted non-secret viewer settings."""
+    del values
+    result = request("settings.get", "plugin.settings", {"key": "max_preview_mb"})
+    value = result.get("value", 0)
+    if type(value) is not int or value < 0:
+        value = 0
+    return {"max_preview_mb": value}
+
+
 def list_documents(values: dict[str, Any]) -> dict[str, Any]:
     """Return minimized document DTOs for the active user."""
     limit = values.get("limit", 32)
