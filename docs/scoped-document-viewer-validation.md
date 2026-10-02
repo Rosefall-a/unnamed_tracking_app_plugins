@@ -66,7 +66,7 @@ The direct comparison loads the reference helper from the supplied PR checkout. 
 
 ## Delivery restrictions
 
-See the [feature comparison](scoped-document-viewer.md) and [plugin README](../examples/scoped-document-viewer/README.md) for the explicit PR behavior differences: the platform's 5 MiB PDF cap, sandbox PDF controls, disabled HTML navigation, indexed-document requirement, and unavailable read-only upload/rename operations. The host contract update must accompany the plugin.
+See the [feature comparison](scoped-document-viewer.md) and [plugin README](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/main/examples/scoped-document-viewer/README.md) for the explicit PR behavior differences: the platform's 5 MiB PDF cap, sandbox PDF controls, disabled HTML navigation, indexed-document requirement, and unavailable read-only upload/rename operations. The host contract update must accompany the plugin.
 
 The 1.4.0 artifact is an **unsigned local build**, not a trusted signed release. Trusted release signing requires the existing publisher workflow and its private credentials. No signatures or keys were fabricated. The independent plugin GitHub wiki was unavailable (`Repository not found`); a wiki-ready guide is committed in this repository instead.
 
@@ -77,7 +77,7 @@ Before pushing, both commits were rebased onto concurrent session-management upd
 
 Host baseline: `e1a208cc`; plugin baseline: `5b5babf`. The original authenticated sandbox defect was reproduced: SameSite=Lax login cookies do not accompany opaque iframe CSS/script subrequests. The browser fixture now requires the login cookie instead of serving assets publicly. Authenticated entry responses inline verified package CSS/classic scripts with a fresh nonce; the sandbox keeps `allow-scripts` alone. Actual host HTTP tests verify authorization, nonce CSP, MIME handling and bounded package delivery.
 
-Game Docs now provides indexed document IDs and opens a declared reader in a new tab. The optional library has no mandatory sidebar contribution. The reader opens its contextual ID without listing all documents and downloads the original through the scoped attachment bridge; HEAD and GET repeat ownership and live grant checks. Unsupported/oversized previews retain downloads. DOCX/PPTX/ODT/ODP previews add local inert reading views with bounded ZIP/XML validation; they do not reproduce full Office layout. A [direct-reader screenshot](screenshots/scoped-document-reader-office.png) records the styled result.
+Game Docs now provides indexed document IDs and opens a declared reader in a new tab. The optional library has no mandatory sidebar contribution. The reader opens its contextual ID without listing all documents and downloads the original through the scoped attachment bridge; HEAD and GET repeat ownership and live grant checks. Unsupported/oversized previews retain downloads. DOCX/PPTX/ODT/ODP previews add local inert reading views with bounded ZIP/XML validation; they do not reproduce full Office layout. A [direct-reader screenshot](assets/screenshots/scoped-document-reader-office.png) records the styled result.
 
 | Check | Result |
 | --- | --- |

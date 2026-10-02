@@ -7,8 +7,8 @@ from test_domain_plugins import ROOT, load_plugin
 
 def test_help_contributions_and_minimal_permissions():
     root = ROOT / "examples/help-button"
-    manifest = json.loads((root / "manifest.json").read_text())
-    ui = json.loads((root / "ui.json").read_text())
+    manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    ui = json.loads((root / "ui.json").read_text(encoding="utf-8"))
     capabilities = {item["name"] for item in manifest["capabilities"]}
     assert capabilities == {
         "frontend.navigation.main",

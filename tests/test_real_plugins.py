@@ -14,7 +14,7 @@ PLUGINS = {
 
 def test_real_plugins_contain_application_logic():
     for name, methods in PLUGINS.items():
-        source = (ROOT / "examples" / name / "plugin.py").read_text()
+        source = (ROOT / "examples" / name / "plugin.py").read_text(encoding="utf-8")
         assert len(source.splitlines()) >= 30
         if name != "ui-playground":
             assert "from sdk.plugin_protocol import request" in source
@@ -24,7 +24,7 @@ def test_real_plugins_contain_application_logic():
 
 def test_real_plugin_manifests_match_source():
     for name in PLUGINS:
-        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
         assert manifest["plugin_id"].startswith("example.")
         assert manifest["entrypoint"] == "plugin:main"
         assert len(manifest["integrity"]["sha256"]) == 64

@@ -129,7 +129,7 @@ def test_ui_playground_frontend_entry_is_complete() -> None:
 
 def test_every_example_package_source_has_safe_paths_and_valid_frontend() -> None:
     for name in ("ui-api", *PLUGINS):
-        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
         frontend = manifest.get("frontend")
         if frontend:
             entry = frontend["entry"]

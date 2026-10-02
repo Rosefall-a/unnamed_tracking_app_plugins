@@ -13,7 +13,7 @@ def test_catalogue_matches_plugin_manifests(built_distribution):
     catalogue = json.loads((built_distribution / "list.json").read_text(encoding="utf-8"))
     assert catalogue["version"] == 1
     entries = catalogue["plugins"]
-    manifests = {m["plugin_id"]: m for p in (ROOT / "examples").glob("*/manifest.json") for m in [json.loads(p.read_text())]}
+    manifests = {m["plugin_id"]: m for p in (ROOT / "examples").glob("*/manifest.json") for m in [json.loads(p.read_text(encoding="utf-8"))]}
     assert entries
     assert len({e["plugin_id"] for e in entries}) == len(entries)
     assert {e["plugin_id"] for e in entries} == set(manifests)

@@ -81,6 +81,6 @@ The new checked-in `.utp` is a valid **unsigned local build**, requiring the hos
 
 Digest verification and secure request correlation also work on HTTP deployments: Web Crypto is used when available, with bundled SHA-256 and `getRandomValues` fallbacks otherwise. Browser tests verify this path. See the [Web Crypto context rules](https://developer.mozilla.org/en-US/docs/Web/API/Window/crypto), [PDF.js API](https://mozilla.github.io/pdf.js/api/) and [native PDF sandbox restriction](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe).
 
-![Sandboxed PDF preview](../../docs/screenshots/scoped-document-viewer.png)
+![Sandboxed PDF preview](../../docs/assets/screenshots/scoped-document-viewer.png)
 
-![Direct game document reading preview](../../docs/screenshots/scoped-document-reader-office.png)
+![Direct game document reading preview](../../docs/assets/screenshots/scoped-document-reader-office.png)

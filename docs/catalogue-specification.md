@@ -147,6 +147,10 @@ locally retained known-good rollback version or restore persistent plugin data.
 
 ## Maintaining your own catalogue
 
+Follow the [complete community catalogue tutorial](publishing/community-catalogue.md)
+for a step-by-step independent source set, reviewed publisher registry, signed
+build, immutable HTTPS hosting and separate host catalogue/trust registration.
+
 You can fork/reuse the builder, SDK helper and schemas with your own source set,
 keys and repository. Configure a single `catalogue.json`, for example:
 

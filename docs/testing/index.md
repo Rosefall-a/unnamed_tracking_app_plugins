@@ -1,0 +1,73 @@
+# Test and run conformance
+
+The normal repository suite is host-independent. Cross-repository acceptance
+explicitly uses the actual host; plugins never import it at runtime.
+
+| Layer | What it establishes |
+| --- | --- |
+| Unit/action tests | Calculations, bounded inputs, scoped keys, errors and no secret echoes |
+| Manifest/UI tests | v1 schema, unique IDs, exact grants, real handler and contribution references |
+| Package tests | Deterministic ZIP, canonical payload/complete archive hashes, bundled assets and SDK |
+| Publisher tests | Scoped identity, signature verification, active/retiring/revoked policy |
+| Release tests | Conventional bumps, explicit overrides, change selection, policies, history, corruption rejection |
+| Tutorial/community tests | Exact documented example builds and independent catalogue generation |
+| Browser tests | Actual UI assets, sanitizer/PDF/Office content, bridge failures and cleanup |
+| Host contract check | Real host manifest/UI/catalogue/verifier and disabled installation |
+| Real reference lifecycle | Four real packages, worker restarts, runtime transactions, persistence and rollback |
+| Full host acceptance | PostgreSQL, authenticated HTTP, consent/grants, Jellyfin sync/secrets, automatic/manual updates, failed activation, purge/uninstall |
+
+## Run the local suite
+
+```sh
+python -m pip install -r requirements-dev.txt
+python -m pytest
+node --test tests/session_manager_ui.test.mjs tests/native_frontends.test.mjs
+npm ci
+npx playwright install --with-deps chromium --only-shell
+npm run check
+npm test
+python tools/check_source_layout.py
+python tools/build_packages.py
+python tools/distribution.py --root .validation --check-source
+python tools/distribution.py --baseline-ref origin/main
+python tools/verify_packages.py dist/*.utp
+python tools/validate_packages.py dist/*.utp
+python -m mkdocs build --strict
+```
+
+Use the [PowerShell wildcard form](../publishing/packages.md) for package paths.
+An isolated `--output-root` avoids altering published artifacts. A second preview
+build must produce identical bytes for the same source/commit/signer.
+
+## Exercise the real host contract
+
+Clone `Rosefall-a/unnamed_tracking_app` at `plugin-manager` into `.validation/host`
+and run `python tools/check_host_contract.py --host-root .validation/host` after
+building the preview. It uses actual validators/verifier/registry; it never
+enables code during inspection.
+
+On Linux, `python tools/check_reference_lifecycle.py --host-root .validation/host`
+builds signed disposable release sequences for UI/API, report, notifier and
+curator, then uses the actual registry and supervisor. It checks pending grant
+transactions cannot execute, real start/restart/disable, ordinary and changed-
+permission packages, retained rollback, configuration/storage preservation,
+reinstall, purge and uninstall. It does not substitute for authenticated host
+permission approval. Windows cannot run the real POSIX worker acceptance.
+
+The required `host-integration.yml` job provisions PostgreSQL and runs the host's
+`tools/check_plugin_repository_lifecycle.py --plugins-root . --work-root <empty-dir> --browser`.
+It builds the actual Plugin Manager frontend and verifies consent, effective
+grants, new-scope staging, release policy, rollback and failed worker restoration.
+Then it runs the additional reference lifecycle check. Use the host's
+[validation instructions](https://github.com/Rosefall-a/unnamed_tracking_app/blob/plugin-manager/wiki/docs/development/plugin-validation.md)
+for database, Linux, environment and frontend prerequisites. Never replace this
+with a pretend gateway or fake host to get a green lifecycle claim.
+
+## Add tests for a new plugin
+
+Write one meaningful action test with successful and denied/malformed responses;
+build its real package; run handlers through the packaged SDK; test every UI
+contribution and cleanup. Include stored-format compatibility across update and
+rollback. Extend real-host acceptance when behavior depends on ownership,
+permissions or persistent host records. Keep fixtures disposable and never
+commit private test seeds into production publisher configuration.

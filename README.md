@@ -1,132 +1,104 @@
-# Unnamed Tracking official plugins
+# Unnamed Tracking plugins
 
-This repository contains official demo plugins and reference implementations for the Unnamed Tracking App Plugin API v1.
+Official reference plugins, useful demos and developer tooling for **Plugin API v1**.
+Build and publish independently using the same SDK, `.utp` format, signing model
+and catalogue specification as the official repository.
 
-## Security warning
+**The host owns runtime, lifecycle, gateway and permissions; plugins provide
+application behavior.** Plugin code uses the public gateway, never application
+database models or private host modules.
 
-**Full API access allows plugins to read and modify all user data. Only enable this for plugins you trust.** Scoped capabilities should be preferred whenever possible.
+## Install a plugin
 
-## For users: getting and installing a plugin
+Download the versioned `.utp` linked by [the generated catalogue](list.json) or
+[GitHub Releases](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/releases).
+A `.utp` is a validated ZIP containing a manifest and payload, not a renamed Python file.
+In Unnamed Tracking open **Settings → Plugins → Install plugin**, select the
+package/source, review identity, publisher/signature, compatibility and permissions,
+then complete approval/configuration and enable it as required by the host flow.
 
-1. Browse the plugins below and choose one that provides behavior you want to try.
-2. Download its `.utp` package from Releases. Do not rename a source `.py` file into a `.utp`.
-3. In Unnamed Tracking, open **Settings → Plugins → Install plugin**.
-4. Select the `.utp` file.
-5. Review its permissions, dependencies, publisher, and version.
-6. Confirm installation and enable it.
+Catalogue membership does not establish trust. Publisher signing and host
+permission approval are separate. Unsigned preview packages remain untrusted.
+Full API/native frontend authority needs particular review; request narrow scopes.
 
-The six **real demo plugins** provide useful application behavior. New development packages are explicitly **untrusted** `.utp` files for local testing; release builds require the configured publisher key:
-- **Playtime Report** reads the game library, calculates statistics, and stores a report.
-- **Recently Played Notifier** reads recent activity, formats a notification, and stores its last run.
-- **Metadata Curator** reads a plugin setting, performs a metadata search, normalizes the result, and stores a snapshot.
-- **Plugin UI Playground** demonstrates a real Vue 3 frontend, lifecycle state, private plugin storage, and Discord page announcements.
-- **[Help Button capability showcase](examples/help-button/README.md)** demonstrates a global overlay, host dialog, local toast, notification, sidebar, native Settings, Home extension, game action, route, external navigation, settings, storage and events.
-- **[Jellyfin Media Sync](examples/jellyfin-media-sync/README.md)** demonstrates write-only destination-bound tokens, paginated HTTP, supervised queued work, movie imports, event polling, persistent progress and native configuration. Its README identifies the generic HTTP-broker, import-identity/playback and background-identity contracts still needed by the host.
+## Create your first plugin
 
-Three security-focused reference plugins exercise scoped domain APIs without importing host code: a document viewer, a self-service session manager, and an external Discord delivery provider. `example.ui-api` remains the smallest declarative UI/gateway example. Historical packages, including older lifecycle/events/advanced examples, remain immutable in `dist/` and their generated release histories. The catalogue advertises the ten currently maintained source plugins.
+Start with the executable [first-plugin tutorial](docs/getting-started/first-plugin.md),
+then use the [developer manual](docs/index.md) and [complete API reference](docs/plugin-author-guide.md).
+The tutorial creates a minimal manifest, Python entrypoint/action and page,
+builds a real `.utp`, validates it and explains install/consent.
 
-## Official examples
+```sh
+python -m venv .venv
+# Activate .venv for your shell, then:
+python -m pip install -r requirements-dev.txt
+python tools/check_source_layout.py
+python -m pytest
+python tools/build_packages.py
+python tools/distribution.py --root .validation --check-source
+python -m mkdocs build --strict
+python -m mkdocs serve
+```
 
-| Plugin | Type | What it demonstrates |
-| --- | --- | --- |
-| `example.playtime-report` | Real demo | Game-library statistics, persistent storage, native UI |
-| `example.recently-played-notifier` | Real demo | Game data + notifications + persistent state |
-| `example.metadata-curator` | Real demo | Settings + metadata search + result normalization |
-| `example.ui-playground` | Real demo | Vue 3 frontend + private storage + Discord page announcements |
-| `example.ui-api` | Reference | Declarative UI and gateway requests |
-| `example.help-button` | Showcase | Labelled native capability cards and first-class host contributions |
-| `example.jellyfin-media-sync` | Integration | Native configuration, secrets, supervised movie sync and progress |
-| `example.scoped-document-viewer` | Official feature example | PR #241 scoped game document viewer: game Docs links, original download, sandbox PDF, UTF-8 text, sanitized HTML/XHTML and Office/OpenDocument reading previews ([guide](examples/scoped-document-viewer/README.md), [behavior comparison](docs/scoped-document-viewer.md)) |
-| `example.self-service-session-manager` | High-risk reference | PR #248 parity: native account/admin Settings, rich metadata/maps, scoped revocation, GeoIP configuration |
-| `example.discord-delivery-provider` | Reference | Core-coordinated external delivery and write-only secrets |
+The Material/MkDocs wiki uses the same light/dark organization as the main app's
+wiki. Its sources live under `docs/`; `mkdocs serve` opens the local developer wiki
+at `http://127.0.0.1:8000`. [Testing](docs/testing/index.md) includes package,
+browser and actual host conformance/lifecycle commands and PowerShell instructions.
 
-### What makes a real demo plugin?
+## Find a working example
 
-A real demo performs application-level work after receiving data from the host. It has logic, state transformation, and a visible or useful result. It does **not** implement the host's lifecycle, gateway, notification service, metadata service, or storage engine.
+| Source | Purpose |
+| --- | --- |
+| [UI/API](examples/ui-api/README.md) | Small reference: declarative page, setting and library action |
+| [Playtime Report](examples/playtime-report/README.md) | Read → calculate → persist a user-scoped report |
+| [Recently Played Notifier](examples/recently-played-notifier/README.md) | Library data and host notifications |
+| [Metadata Curator](examples/metadata-curator/README.md) | Settings, metadata search and normalized state |
+| [Discord Delivery Provider](examples/discord-delivery-provider/README.md) | Core-coordinated external delivery and write-only secrets |
+| [UI Playground](examples/ui-playground/README.md) | Sandboxed Vue pages and bridge; CDN teaching limitation |
+| [Help Button](examples/help-button/README.md) | Native contributions, dialogs, overlays, navigation and cleanup |
+| [Jellyfin Media Sync](examples/jellyfin-media-sync/README.md) | Queued sync, destination-bound token, progress and native settings |
+| [Scoped Document Viewer](examples/scoped-document-viewer/README.md) | Scoped document APIs and sandbox PDF/text/Office reader |
+| [Self-Service Session Manager](examples/self-service-session-manager/README.md) | Scoped own/admin sessions and privileged native Settings/maps |
 
-That distinction is deliberate: the application provides the plugin platform; plugins provide behavior on top of it.
+The [example map](docs/examples/index.md) identifies tests and relevant captures.
+Small references stay small; real demos document supported behavior and host limitations.
 
-## For developers
+## Understand the repository
 
-Read the complete [plugin author guide](docs/plugin-author-guide.md) and
-[third-party catalogue specification](docs/catalogue-specification.md). They cover
-independent repositories/catalogues, API v1, manifests, runtime, scoped data,
-pages, signing, builds, SemVer, hashes, release history and release-specific
-automatic-update policy.
+| Path | Role |
+| --- | --- |
+| `examples/` | Complete maintained plugin source; one intentional source tree |
+| `sdk/` | Public v1 protocol helper bundled with packages |
+| `tools/`, `tests/` | Existing build/validation tools and conformance tests |
+| `docs/`, `mkdocs.yml` | Developer wiki, real assets and dated evidence |
+| `publishers/` | Reviewed public keys/registry; never private signing keys |
+| `dist/` | Generated immutable installable `.utp` versions |
+| `releases/` | Append-only generated release metadata/history, including retired plugins |
+| `catalogue.json` | Authored display name and HTTPS hosting base URL |
+| `list.json` | Generated current catalogue with complete per-plugin histories |
 
-Distribution is generated from real packages. Author runtime declarations in
-`manifest.json`, and publisher/tags/icon/notes/update policy in `release.json`.
-Every new package includes its README and generated `distribution.json`. Do not
-hand-edit `list.json` or `releases/*.json`. Each catalogue release retains its own
-manifest, docs, scopes, hashes and policy. Major version bumps default to
-`automatic_update: false`; a later patch may permit updates again. The current
-host `plugin-manager` consumes this additive v1 list, displays README/tags and
-host-defined permission risks, validates advertised package hashes/versions and
-respects each release's automatic-update policy. Its rollback UI uses locally
-retained packages; catalogue history remains distribution metadata.
+Development builds write isolated `.validation/` previews. Published packages
+and historical records remain unchanged. Do not manually edit generated lists,
+re-sign old ZIPs, or remove historical packages to tidy the repository. GitHub
+Releases distributes/presents these same outputs; repository history is retained.
 
-A plugin declares its identity, compatibility range, capabilities, permissions, dependencies, UI contributions, storage quota, optional frontend bundle, and package integrity in `manifest.json`. Runtime access goes through the v1 gateway rather than direct database access, host filesystem access, or application internals.
+## Sign and publish independently
 
-Plugins may also declare authenticated JSON backend handlers. Normal handlers are mounted below `/api/plugins/<plugin-id>/...` with `backend.routes.plugin`; the host owns authentication, installation-scoped grants, lifecycle gating, conflicts, limits, and auditing. `backend.routes.host` is reserved for exceptional trusted plugins that need a direct `/api/...` route. The document viewer and session manager demonstrate the safe namespaced form while continuing to access user data only through scoped Plugin API methods.
+Author `release.json` for publisher/tags/icon/notes/update policy. The existing
+builder creates canonical payload and final archive hashes, signs Ed25519 over
+`plugin-package-v1:<payload hash>`, verifies the result, and derives all release
+and catalogue metadata from the package. Conventional Commits select SemVer;
+explicit higher source versions remain supported. Update policy belongs to each release.
 
-### Plugin frontends
+Official main publication uses `python tools/build_packages.py --require-signing`
+with the existing secure CI key and active scoped publisher registry. It preserves
+all historical packages and commits packages/history/catalogue/resolved versions
+together. Tag only an already-published snapshot. Never commit a private key.
 
-Help Button and Jellyfin use the explicit `native_frontend` contract with
-`frontend.native`. Their bundled `native/` modules export `activate(context)` and
-use supplied Vue/host APIs. CSS selectors are scoped to plugin classes and polling
-timers have lifecycle cleanup. This privileged mode requires administrator review;
-generated declarative UI remains available without the native grant. The package
-builder includes and validates native entries/styles alongside iframe assets.
-
-Plugins may ship a static `frontend/` bundle. The host serves that bundle inside a sandboxed iframe, so a plugin can ship a complete Vue/Vite application without being able to modify the host Vue application or access its DOM. The frontend communicates with the host through a small `postMessage` bridge for approved operations such as saving settings, storing secrets, and running declared plugin actions. Production plugins should bundle their frontend dependencies; the UI Playground uses a pinned Vue CDN dependency only to keep the example source small.
-
-Use the real demos as templates:
-- Start with **playtime-report** for a complete read → process → persist workflow.
-- Use **recently-played-notifier** for a plugin that combines core data with a side effect.
-- Use **metadata-curator** for configurable integration logic.
-- Use **ui-api** when learning the declarative UI/gateway contract in isolation.
-- Use **Scoped Document Viewer** for a sandboxed game Docs reader that calls a read-only domain API and scoped download bridge.
-- Use **[Self-Service Session Manager](examples/self-service-session-manager/README.md)** for full native Settings integration, separate read/destructive grants, scoped admin APIs, maps, and GeoIP configuration. Its native browser permission is Critical and requires appropriate review.
-- Use **External Discord Delivery Provider** for provider registration, write-only secrets, and core-owned delivery state.
-
-For development/testing, run `pytest`, `python tools/build_packages.py`,
-`python tools/distribution.py --root .validation --check-source`,
-`python tools/verify_packages.py .validation/dist/*.utp`, and
-`python tools/validate_packages.py .validation/dist/*.utp`. A development build
-generates an isolated preview under `.validation/`, exercises all ten current
-plugins and retains historical packages. New preview releases are unsigned by
-default; unchanged published packages are reused byte for byte.
-
-Main publication uses the existing `--require-signing` command with
-`PLUGIN_SIGNING_KEY_B64` and `PLUGIN_SIGNING_KEY_ID` for an active scoped key in
-`publishers/registry.json`. Changed source/docs/SDK/metadata receive an automatic
-SemVer increment using Conventional Commits; unchanged packages are reused.
-Publication writes `/dist`, release histories, `list.json` and resolved source
-versions together, and fails if signing or validation fails. GitHub release
-events retain the existing asset upload mechanism and include catalogue/history
-metadata. Tag the generated main snapshot after publication succeeds. Never
-commit a private key or overwrite an old release to correct it.
-
-For key rotation, add and review the successor public key before it signs releases, retain the predecessor as `retiring` only for the approved overlap, then mark it `revoked`. A revoked key must not be used to produce a release. Publish the matching reviewed registry to the host deployment before switching release signing, and never alter historical release artifacts to simulate a rotation.
-
-## Repository layout
-
-- `examples/` — official demo and reference plugins
-- `sdk/` — protocol helper used by plugins
-- `publishers/` — publisher verification keys
-- `tools/build_packages.py` — package builder
-- `tests/` — plugin validation tests
-- `dist/` — generated installable packages
-- `releases/` — generated historical release snapshots
-- `catalogue.json` — author-maintained display name and hosting base URL
-- `list.json` — generated current catalogue and complete per-plugin histories
-- `tools/schemas/` — exported public manifest/UI contracts
-
-
-### Currently installable packages
-
-All ten maintained plugins are built and validated in development CI. Download
-the current package linked by `list.json` or from a published GitHub release.
-Legacy distributions retain their original signatures/unsigned status; newly
-published releases require a reviewed signer. Catalogue membership itself does
-not establish host publisher trust or approve the requested permissions.
+Follow [package publishing](docs/publishing/packages.md),
+[versioning](docs/publishing/versioning.md), and the complete
+[third-party catalogue tutorial](docs/publishing/community-catalogue.md).
+The [catalogue v1 specification](docs/catalogue-specification.md) is unchanged:
+HTTPS immutable package URLs, exact hashes/manifests/signatures and retained
+history. Register catalogue endpoints and reviewed publisher keys separately
+in Plugin Manager; permissions always remain host-controlled.

@@ -7,21 +7,22 @@ on:
 
 jobs:
   test-and-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "22"
-      - run: python -m pip install --upgrade pip pytest cryptography jsonschema pydantic
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
+          package-manager-cache: false
+      - run: python -m pip install --upgrade pip -r requirements-dev.txt
+      - run: python tools/check_source_layout.py
+      - name: Build developer wiki with strict validation
+        run: python -m mkdocs build --strict
       - run: node --test tests/session_manager_ui.test.mjs
       - run: node --test tests/native_frontends.test.mjs
       - run: node --check examples/self-service-session-manager/frontend/app.js
@@ -37,25 +38,27 @@ jobs:
       - run: python tools/distribution.py --root .validation --check-source
       - run: python tools/verify_packages.py .validation/dist/*.utp
       - run: python tools/validate_packages.py .validation/dist/*.utp
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: Rosefall-a/unnamed_tracking_app
           ref: plugin-manager
           path: .validation/host
       - run: python tools/check_host_contract.py --host-root .validation/host
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "24"
+          package-manager-cache: false
       - run: npm ci
       - run: npx playwright install --with-deps chromium --only-shell
       - run: npm run check
       - run: npm test
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: validated-plugin-distribution
           path: |
             .validation/dist/*.utp
             .validation/list.json
             .validation/releases/*.json
+            .validation/wiki/**
           include-hidden-files: true
           if-no-files-found: error
