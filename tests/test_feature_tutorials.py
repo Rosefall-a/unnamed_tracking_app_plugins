@@ -34,7 +34,7 @@ CASES = {
 
 
 def run_recipe(tmp_path, name, responses, values=None):
-    page = (ROOT / "docs/development" / CASES[name][0]).read_text(encoding="utf-8")
+    page = (ROOT / "wiki/docs/development" / CASES[name][0]).read_text(encoding="utf-8")
     block = re.search(r"<!-- recipe: " + re.escape(name) + r" -->\s*```python\n(.*?)\n```", page, re.S)
     assert block, f"Missing exact recipe {name}"
     (tmp_path / "recipe.py").write_text(block[1], encoding="utf-8")
