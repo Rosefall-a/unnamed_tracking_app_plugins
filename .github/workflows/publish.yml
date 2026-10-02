@@ -37,6 +37,8 @@ jobs:
           package-manager-cache: false
       - run: python -m pip install --upgrade pip -r requirements-dev.txt
       - run: python tools/check_source_layout.py
+      - name: Validate documentation and repository references
+        run: python tools/check_docs.py
       - name: Validate developer wiki before publication
         run: python -m mkdocs build --strict
       - run: node --test tests/session_manager_ui.test.mjs tests/native_frontends.test.mjs
@@ -46,6 +48,13 @@ jobs:
       - run: npx playwright install --with-deps chromium --only-shell
       - run: npm run check
       - run: npm test
+      - name: Reject unexpected test output before signed generation
+        run: |
+          if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
+            git status --short --untracked-files=all
+            echo "::error::Validation must leave the checkout clean."
+            exit 1
+          fi
       - name: Build signed immutable releases and generated catalogue
         env:
           PLUGIN_SIGNING_KEY_B64: ${{ secrets.PLUGIN_SIGNING_KEY_B64 }}
@@ -70,6 +79,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A -- dist releases list.json examples/*/manifest.json
+          git diff --exit-code
+          if [ -n "$(git ls-files --others --exclude-standard)" ]; then
+            git ls-files --others --exclude-standard
+            echo "::error::Package generation produced output outside the authoritative snapshot."
+            exit 1
+          fi
           if ! git diff --cached --quiet; then
             git commit -m "chore: publish plugin packages and release history"
             git push origin HEAD:main
@@ -79,7 +94,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: gh release upload "$RELEASE_TAG" dist/*.utp list.json releases/*.json --clobber
+        run: |
+          if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
+            git status --short --untracked-files=all
+            echo "::error::A tagged release must reuse the committed distribution without generated changes."
+            exit 1
+          fi
+          gh release upload "$RELEASE_TAG" dist/*.utp list.json releases/*.json --clobber
       - uses: actions/upload-artifact@v7
         with:
           name: unnamed-tracking-example-plugins-${{ github.sha }}

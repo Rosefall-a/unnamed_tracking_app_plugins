@@ -27,6 +27,7 @@ npx playwright install --with-deps chromium --only-shell
 npm run check
 npm test
 python tools/check_source_layout.py
+python tools/check_docs.py
 python tools/build_packages.py
 python tools/distribution.py --root .validation --check-source
 python tools/distribution.py --baseline-ref origin/main
@@ -55,7 +56,8 @@ reinstall, purge and uninstall. It does not substitute for authenticated host
 permission approval. Windows cannot run the real POSIX worker acceptance.
 
 The required `host-integration.yml` job provisions PostgreSQL and runs the host's
-`tools/check_plugin_repository_lifecycle.py --plugins-root . --work-root <empty-dir> --browser`.
+`tools/check_plugin_repository_lifecycle.py` through the plugin repository's
+`tools/check_host_lifecycle.py --host-root .validation/host --plugins-root . --work-root <empty-dir> --browser` adapter.
 It builds the actual Plugin Manager frontend and verifies consent, effective
 grants, new-scope staging, release policy, rollback and failed worker restoration.
 Then it runs the additional reference lifecycle check. Use the host's
@@ -71,3 +73,18 @@ contribution and cleanup. Include stored-format compatibility across update and
 rollback. Extend real-host acceptance when behavior depends on ownership,
 permissions or persistent host records. Keep fixtures disposable and never
 commit private test seeds into production publisher configuration.
+
+## CI and release gates
+
+The [lifecycle matrix](lifecycle.md) maps every operation to representative real
+packages. The [release audit](../publishing/release-history.md) lists the fields
+checked against every archive.
+
+CI and publication run strict MkDocs plus the offline documentation-reference
+checker. Distribution checks reject unindexed output, metadata/hash disagreement,
+changed historical bytes and disappearing baseline catalogue identities. Tests
+and package validation must leave the checkout clean; untracked output fails CI.
+Signed publication may stage only the existing authoritative distribution and
+resolved manifests; unexpected generated files fail before the commit/upload.
+Browser tests execute real assets. Required Linux integration exercises PostgreSQL/HTTP
+consent and real worker transactions; unit successes do not replace it.

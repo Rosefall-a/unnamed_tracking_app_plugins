@@ -32,7 +32,7 @@ UI/API, report, notifier and curator. See [testing](../testing/index.md).
 
 ## Migration considerations
 
-![Real host package and update review](../assets/screenshots/update-review.png)
+![Real host package and update review](../assets/screenshots/update-review-current.png)
 
 Store an explicit data schema version. Prefer additive fields and readers that
 accept the previous schema. Make migrations idempotent and bounded, and avoid

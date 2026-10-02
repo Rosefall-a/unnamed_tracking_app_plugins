@@ -1,5 +1,11 @@
 # Events, background tasks and notifications
 
+Start with [events](events.md), [background tasks](background-tasks.md) or
+[notifications](notifications.md) for one-feature exercises.
+**Goal:** connect them into a durable queue/worker/status flow.
+**Prerequisites:** a complete Jellyfin-style plugin with approved background,
+event, storage and domain capabilities actually used.
+
 Jellyfin is the working example for `events.subscribe`, `tasks.background`,
 durable progress and a single supervised worker. Recently Played Notifier is a
 small example of a user-triggered host notification.
@@ -39,3 +45,19 @@ core-coordinated delivery; do not duplicate host retries/deduplication here.
 Test empty data (no unwanted notification), failures, repeated events, queue
 deduplication and resumed work. Never put secrets or another user's data in a
 notification.
+
+## Test command and expected result
+
+```sh
+python -m pytest tests/test_jellyfin.py -k "worker_queue or queue_arriving"
+python -m pytest tests/test_help_button.py -k notification
+```
+
+Queue/cursor/retry behavior and host notification requests pass with protocol
+fixtures. [Host conformance](../testing/lifecycle.md) checks real workers/grants.
+
+## Common mistakes
+
+Holding an action open for a whole job; sharing memory across action processes;
+advancing a cursor before processing; treating queued as delivered; overwriting
+concurrent requests or continuing after grant revocation.

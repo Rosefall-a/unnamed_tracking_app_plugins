@@ -135,12 +135,14 @@ Keep validation strict and add regression coverage for these real failures when 
 - Existing publish shell reproduced against full and shallow local checkouts; invalid multiline outputs, release bypass, unstaged deletions and no-op commit failure observed.
 - GitHub job summaries and logs inspected for the successful route-example publish run; production signing secrets and live releases were not accessed or changed.
 
-Useful existing host test commands (from `src/backend`, with development configuration available):
+Useful existing host test commands (from the host's `src/backend`, with development
+configuration available). Set `HOST_BACKEND` to that checkout's absolute backend
+directory; these test paths belong to the host, not this plugin repository:
 
 ```bash
-python -m pytest -q tests/test_plugin_api_contracts.py tests/test_plugin_manifest.py tests/test_plugin_ui_contracts.py
-python -m pytest -q tests/test_plugin_backend_routes.py tests/test_plugin_route_capabilities.py tests/test_plugin_ui_extensions.py
-PLUGIN_REPOSITORY_PATH=/path/to/unnamed_tracking_app_plugins python -m pytest -q tests/test_plugin_repository_trust.py
+python -m pytest -q "$HOST_BACKEND/tests/test_plugin_api_contracts.py" "$HOST_BACKEND/tests/test_plugin_manifest.py" "$HOST_BACKEND/tests/test_plugin_ui_contracts.py"
+python -m pytest -q "$HOST_BACKEND/tests/test_plugin_backend_routes.py" "$HOST_BACKEND/tests/test_plugin_route_capabilities.py" "$HOST_BACKEND/tests/test_plugin_ui_extensions.py"
+PLUGIN_REPOSITORY_PATH=/path/to/unnamed_tracking_app_plugins python -m pytest -q "$HOST_BACKEND/tests/test_plugin_repository_trust.py"
 ```
 
 This is package/contract and fixture-based integration verification. It does not establish production browser rendering, live database ownership behavior for every example, real Jellyfin/Discord delivery, or Linux process/network isolation. No full Docker/database E2E or signed production rebuild was performed. The existing host cross-repository test selects one checked-in package; the audit's separate inspection covered every package.

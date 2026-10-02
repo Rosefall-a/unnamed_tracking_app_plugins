@@ -29,4 +29,9 @@ Live install/permission/settings screenshots are produced by the existing real
 host acceptance job; [asset provenance](../assets/screenshots/index.md) includes
 successful captures and explains how to refresh them.
 
-![Real host permission review](../assets/screenshots/permission-review.png)
+![Real authenticated installer](../assets/screenshots/plugin-install.png)
+
+![Real host permission review](../assets/screenshots/permission-consent.png)
+
+See [authenticated installed/settings/lifecycle views](../assets/screenshots/index.md#authenticated-installation-consent-configuration-and-lifecycle)
+for the real deployment and exact capture provenance.
