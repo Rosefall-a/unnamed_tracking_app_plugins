@@ -82,6 +82,9 @@ checked against every archive.
 
 CI and publication run strict MkDocs plus the offline documentation-reference
 checker. Distribution checks reject unindexed output, metadata/hash disagreement,
-changed historical bytes and disappearing baseline catalogue identities. Browser
-tests execute real assets. Required Linux integration exercises PostgreSQL/HTTP
+changed historical bytes and disappearing baseline catalogue identities. Tests
+and package validation must leave the checkout clean; untracked output fails CI.
+Signed publication may stage only the existing authoritative distribution and
+resolved manifests; unexpected generated files fail before the commit/upload.
+Browser tests execute real assets. Required Linux integration exercises PostgreSQL/HTTP
 consent and real worker transactions; unit successes do not replace it.

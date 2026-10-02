@@ -72,6 +72,11 @@ try {
   await dialog.getByRole("button", { name: "Close plugin settings", exact: true }).click();
   await page.goto(origin + "/plugins/example.jellyfin-media-sync");
   await page.getByText("Jellyfin server URL", { exact: true }).waitFor();
+  // Native configuration loads asynchronously through a real plugin action.
+  // Capture the persisted response rather than the initial empty form.
+  await page.waitForFunction(() => [...document.querySelectorAll("input")]
+    .some((input) => input.value.startsWith("http://127.0.0.1:")));
+  assert.equal(await page.getByLabel("API key or access token (blank keeps existing token)").inputValue(), "");
   await capture("plugin-settings.png", "Actual configured Jellyfin native settings/UI; saved token is not returned to the input.");
   assert.deepEqual(errors, [], "Authenticated host browser errors");
   const revision = (repository) => execFileSync("git", ["-C", repository, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
