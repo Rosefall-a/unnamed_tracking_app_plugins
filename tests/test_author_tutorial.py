@@ -16,7 +16,7 @@ def tutorial_project(root):
     for directory in ("tools", "sdk", "publishers"):
         shutil.copytree(ROOT / directory, root / directory,
                         ignore=shutil.ignore_patterns("__pycache__"))
-    page = (ROOT / "docs/getting-started/first-plugin.md").read_text(encoding="utf-8")
+    page = (ROOT / "wiki/docs/getting-started/first-plugin.md").read_text(encoding="utf-8")
     blocks = re.findall(r"<!-- tutorial: ([\w.]+) -->\n```\w+\n(.*?)\n```", page, re.S)
     assert {name for name, _ in blocks} == {"manifest.json", "plugin.py", "ui.json", "README.md"}
     source = root / "examples/library-summary"

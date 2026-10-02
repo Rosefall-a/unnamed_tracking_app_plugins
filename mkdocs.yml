@@ -1,0 +1,4 @@
+# Keep the documented repository-root commands while the wiki lives under wiki/.
+INHERIT: wiki/mkdocs.yml
+docs_dir: wiki/docs
+site_dir: .validation/wiki
