@@ -62,12 +62,14 @@ def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path):
             "import json, plugin; print(json.dumps(plugin.read_document_route({'path_parameters': {'document_id': 'opaque-id'}, 'query': {'offset': ['24576'], 'content_sha256': ['digest']}})))",
         ],
         cwd=tmp_path,
-        input="\n".join([json.dumps({"payload": {"value": 0}}), json.dumps({"payload": {"error": {"kind": "missing", "message": "Document not found.", "status_code": 404}}})])\n        + "\n",
+        input="\n".join([json.dumps({"payload": {"value": 0}}), json.dumps({"payload": {"error": {"kind": "missing", "message": "Document not found.", "status_code": 404}}})]) + "\n",
         text=True,
         capture_output=True,
         check=True,
     )
     settings_wire, settings_response, wire, response = map(json.loads, result.stdout.splitlines())
+    assert settings_wire == {"api_version": "v1", "method": "settings.get", "capability": "plugin.settings", "payload": {"key": "max_preview_mb"}}
+    assert settings_response == {"value": 0}
     assert wire == {
         "api_version": "v1",
         "method": "documents.read",
