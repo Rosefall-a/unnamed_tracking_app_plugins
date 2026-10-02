@@ -55,7 +55,9 @@ def read_document(values: dict[str, Any]) -> dict[str, Any]:
     document_id = values.get("document_id")
     if not isinstance(document_id, str) or not document_id:
         raise ValueError("document_id is required")
-    payload: dict[str, Any] = {"document_id": document_id, "chunk_bytes": 24 * 1024, "max_bytes": _max_preview_bytes()}
+    requested_max = values.get("max_bytes")
+    max_bytes = requested_max if type(requested_max) is int and requested_max >= 0 else _max_preview_bytes()
+    payload: dict[str, Any] = {"document_id": document_id, "chunk_bytes": 24 * 1024, "max_bytes": max_bytes}
     if any(key in values for key in ("chunk_bytes", "offset", "content_sha256")):
         payload.update(
             {
