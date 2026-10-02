@@ -1,0 +1,98 @@
+{
+  "plugin_id": "example.ui-api",
+  "releases": [
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "9bac2bd4be91d2b5d721859db9a5c813981e4d31",
+        "source_committed_at": "2026-09-29T16:52:57+08:00",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": "*",
+        "capabilities": [
+          {
+            "name": "games.read",
+            "version": 1
+          },
+          {
+            "name": "plugin.settings",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Reference native declarative UI and gateway API plugin.",
+        "entrypoint": "plugin:main",
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "b5033182cd5274b36119bbbfc529cc0ec9ebb43a234ea8d2324f249d960681a0",
+          "signature": "28QYcrSlsZujijrEoXtyFIAVfk8mVzKiohjwzrxyrq3/cp4r4GqJFWMSfrvZzS7UkCcaZmlVf7YVQOhhc19ODA=="
+        },
+        "manifest_version": 1,
+        "name": "UI and API Example",
+        "permissions": [
+          {
+            "capability": {
+              "name": "games.read",
+              "version": 1
+            },
+            "rationale": "Read games requested by the user."
+          },
+          {
+            "capability": {
+              "name": "plugin.settings",
+              "version": 1
+            },
+            "rationale": "Persist native UI settings."
+          }
+        ],
+        "plugin_id": "example.ui-api",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "refresh"
+          ],
+          "pages": [
+            "games"
+          ],
+          "settings": [
+            "settings"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "package": {
+        "filename": "example.ui-api-1.0.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 1720
+      },
+      "package_sha256": "085fca2f0aa705042155527c1380a6b0b4112b4f52b0367d70856b80b6a4a0e4",
+      "plugin_id": "example.ui-api",
+      "publisher": "Unnamed Tracking Official",
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "b5033182cd5274b36119bbbfc529cc0ec9ebb43a234ea8d2324f249d960681a0",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "b5033182cd5274b36119bbbfc529cc0ec9ebb43a234ea8d2324f249d960681a0",
+        "signature": "28QYcrSlsZujijrEoXtyFIAVfk8mVzKiohjwzrxyrq3/cp4r4GqJFWMSfrvZzS7UkCcaZmlVf7YVQOhhc19ODA=="
+      },
+      "tags": [],
+      "version": "1.0.0"
+    }
+  ],
+  "version": 1
+}

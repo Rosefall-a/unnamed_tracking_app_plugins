@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import time
 
 from sdk.plugin_protocol import request
 
@@ -8,7 +9,10 @@ from sdk.plugin_protocol import request
 DEFAULT_QUERY = "Example Game"
 
 
-def main() -> None:
+def search(values: dict) -> dict:
+    user_id = (values.get("_plugin_context") or {}).get("user_id")
+    if not user_id:
+        raise ValueError("An authenticated action context is required.")
     settings = request("settings.get", "plugin.settings", {"key": "query"})
     query = str(settings.get("value") or DEFAULT_QUERY).strip() or DEFAULT_QUERY
 
@@ -31,13 +35,15 @@ def main() -> None:
     request(
         "storage.put",
         "plugin.storage",
-        {"key": "latest-search", "value": json.dumps({"query": query, "results": curated}, sort_keys=True)},
+        {"key": f"users/{user_id}/latest-search", "value": json.dumps({"query": query, "results": curated}, sort_keys=True)},
     )
-    request(
-        "lifecycle.ready",
-        "plugin.storage",
-        {"state": "ready", "query": query, "result_count": len(curated)},
-    )
+    return {"query": query, "result_count": len(curated), "results": curated}
+
+
+def main() -> None:
+    request("lifecycle.ready", "lifecycle.ready", {})
+    while True:
+        time.sleep(3600)
 
 
 if __name__ == "__main__":

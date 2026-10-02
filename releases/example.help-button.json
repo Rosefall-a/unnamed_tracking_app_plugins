@@ -1,0 +1,303 @@
+{
+  "plugin_id": "example.help-button",
+  "releases": [
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "3591d068d6a404290ef495d6ba90b76977375c31",
+        "source_committed_at": "2026-09-30T04:58:01Z",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": ">=1.0.0",
+        "capabilities": [],
+        "dependencies": [],
+        "description": "A deliberately unhelpful global help button and Home Hub override.",
+        "entrypoint": "plugin:main",
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "1af6b0e8b5ea6f498d08e0655176f803e8dce49015fffbbf15a005f11fb07013",
+          "signature": "kWryF33B6zYy7ofEQ68roH0DGOuaa+VLqN15wfPYag4nKIhuiWevmvkfLoRdZXCZhXNYcjn0yWD1Op4JaPQ3Bg=="
+        },
+        "manifest_version": 1,
+        "name": "Help Button (Totally Not Helpful)",
+        "permissions": [],
+        "plugin_id": "example.help-button",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "rickroll"
+          ],
+          "menus": [
+            "help"
+          ],
+          "pages": [
+            "help"
+          ],
+          "settings": []
+        },
+        "version": "1.0.0"
+      },
+      "package": {
+        "filename": "example.help-button-1.0.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 2626
+      },
+      "package_sha256": "d649697db73db4e65eb8c171bc91377cb7ceb5ed48414971bc61dea8ce22ee3d",
+      "plugin_id": "example.help-button",
+      "publisher": "Unnamed Tracking Official",
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "1af6b0e8b5ea6f498d08e0655176f803e8dce49015fffbbf15a005f11fb07013",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "1af6b0e8b5ea6f498d08e0655176f803e8dce49015fffbbf15a005f11fb07013",
+        "signature": "kWryF33B6zYy7ofEQ68roH0DGOuaa+VLqN15wfPYag4nKIhuiWevmvkfLoRdZXCZhXNYcjn0yWD1Op4JaPQ3Bg=="
+      },
+      "tags": [],
+      "version": "1.0.0"
+    },
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "b281cd9831d351e9076d2cf7aa82a0c8e842d2ba",
+        "source_committed_at": "2026-10-01T21:20:16+08:00",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": "^1.0.0",
+        "capabilities": [
+          {
+            "name": "frontend.navigation.main",
+            "version": 1
+          },
+          {
+            "name": "frontend.navigation.settings",
+            "version": 1
+          },
+          {
+            "name": "frontend.settings",
+            "version": 1
+          },
+          {
+            "name": "frontend.overlay",
+            "version": 1
+          },
+          {
+            "name": "frontend.dialog",
+            "version": 1
+          },
+          {
+            "name": "frontend.context.game",
+            "version": 1
+          },
+          {
+            "name": "frontend.page.extend",
+            "version": 1
+          },
+          {
+            "name": "frontend.routes",
+            "version": 1
+          },
+          {
+            "name": "frontend.native",
+            "version": 1
+          },
+          {
+            "name": "plugin.settings",
+            "version": 1
+          },
+          {
+            "name": "plugin.storage",
+            "version": 1
+          },
+          {
+            "name": "events.subscribe",
+            "version": 1
+          },
+          {
+            "name": "notifications.send",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "An intentionally playful showcase of overlays, dialogs, notifications, Settings, Home extensions, routes, events and privileged native Vue UI.",
+        "entrypoint": "plugin:main",
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "e471d9b315ba8611c24452f6f2b63bb94a2bbd7a401fedf73af4efab13d829fe",
+          "signature": "U9OG39vN0OVsAl0EP4+47cAfvePcbFs+xTaM4PV8ioUYYdTR2VqRmg5gkgj0+vFOJROp0uOpjPKny6M/jdaECA=="
+        },
+        "manifest_version": 1,
+        "name": "Help Button · Capability Showcase",
+        "native_frontend": {
+          "entry": "native/app.js",
+          "styles": [
+            "native/style.css"
+          ]
+        },
+        "permissions": [
+          {
+            "capability": {
+              "name": "frontend.navigation.main",
+              "version": 1
+            },
+            "rationale": "Add the showcase to the main sidebar."
+          },
+          {
+            "capability": {
+              "name": "frontend.navigation.settings",
+              "version": 1
+            },
+            "rationale": "Link to the showcase Settings section."
+          },
+          {
+            "capability": {
+              "name": "frontend.settings",
+              "version": 1
+            },
+            "rationale": "Provide a native showcase Settings section."
+          },
+          {
+            "capability": {
+              "name": "frontend.overlay",
+              "version": 1
+            },
+            "rationale": "Mount the floating Help Button on host pages."
+          },
+          {
+            "capability": {
+              "name": "frontend.dialog",
+              "version": 1
+            },
+            "rationale": "Open a host-owned demonstration dialog."
+          },
+          {
+            "capability": {
+              "name": "frontend.context.game",
+              "version": 1
+            },
+            "rationale": "Offer the demo remember action on a game."
+          },
+          {
+            "capability": {
+              "name": "frontend.page.extend",
+              "version": 1
+            },
+            "rationale": "Add a showcase card below Home widgets."
+          },
+          {
+            "capability": {
+              "name": "frontend.routes",
+              "version": 1
+            },
+            "rationale": "Expose the plugin-owned showcase route."
+          },
+          {
+            "capability": {
+              "name": "frontend.native",
+              "version": 1
+            },
+            "rationale": "Run explicitly privileged Vue components and scoped CSS in the host; required for the floating button and local toast."
+          },
+          {
+            "capability": {
+              "name": "plugin.settings",
+              "version": 1
+            },
+            "rationale": "Read the configurable showcase greeting."
+          },
+          {
+            "capability": {
+              "name": "plugin.storage",
+              "version": 1
+            },
+            "rationale": "Remember a demo visit under the authenticated user ID."
+          },
+          {
+            "capability": {
+              "name": "events.subscribe",
+              "version": 1
+            },
+            "rationale": "Display the types of up to five current-user host activity events."
+          },
+          {
+            "capability": {
+              "name": "notifications.send",
+              "version": 1
+            },
+            "rationale": "Send a real current-user host notification on demand."
+          }
+        ],
+        "plugin_id": "example.help-button",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "rickroll",
+            "remember",
+            "inspect-state",
+            "notify",
+            "activity"
+          ],
+          "menus": [
+            "help"
+          ],
+          "pages": [
+            "help",
+            "floating",
+            "home-card"
+          ],
+          "settings": [
+            "showcase"
+          ]
+        },
+        "version": "2.0.0"
+      },
+      "package": {
+        "filename": "example.help-button-2.0.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 6780
+      },
+      "package_sha256": "c2bd173b769266adddc54bcbf3dd3857168c92c9179de9bd5f6aed6dd1481101",
+      "plugin_id": "example.help-button",
+      "publisher": "Unnamed Tracking Official",
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "e471d9b315ba8611c24452f6f2b63bb94a2bbd7a401fedf73af4efab13d829fe",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "e471d9b315ba8611c24452f6f2b63bb94a2bbd7a401fedf73af4efab13d829fe",
+        "signature": "U9OG39vN0OVsAl0EP4+47cAfvePcbFs+xTaM4PV8ioUYYdTR2VqRmg5gkgj0+vFOJROp0uOpjPKny6M/jdaECA=="
+      },
+      "tags": [],
+      "version": "2.0.0"
+    }
+  ],
+  "version": 1
+}

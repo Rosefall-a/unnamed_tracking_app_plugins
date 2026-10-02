@@ -19,6 +19,10 @@
     {
       "name": "plugin.storage",
       "version": 1
+    },
+    {
+      "name": "frontend.navigation.main",
+      "version": 1
     }
   ],
   "permissions": [
@@ -42,6 +46,13 @@
         "version": 1
       },
       "rationale": "Remember the last generated notification."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.main",
+        "version": 1
+      },
+      "rationale": "Expose the declared plugin page in the main navigation."
     }
   ],
   "dependencies": [],

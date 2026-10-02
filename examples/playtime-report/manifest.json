@@ -15,6 +15,10 @@
     {
       "name": "plugin.storage",
       "version": 1
+    },
+    {
+      "name": "frontend.navigation.main",
+      "version": 1
     }
   ],
   "permissions": [
@@ -31,6 +35,13 @@
         "version": 1
       },
       "rationale": "Store the latest generated report in the plugin namespace."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.main",
+        "version": 1
+      },
+      "rationale": "Expose the declared plugin page in the main navigation."
     }
   ],
   "dependencies": [],

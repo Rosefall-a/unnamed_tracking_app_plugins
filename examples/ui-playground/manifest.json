@@ -15,6 +15,10 @@
     {
       "name": "plugin.storage",
       "version": 1
+    },
+    {
+      "name": "plugin.settings",
+      "version": 1
     }
   ],
   "permissions": [
@@ -31,6 +35,13 @@
         "version": 1
       },
       "rationale": "Store the Discord webhook in the plugin's private persistent data directory; the secret is never saved as ordinary UI settings."
+    },
+    {
+      "capability": {
+        "name": "plugin.settings",
+        "version": 1
+      },
+      "rationale": "Save the ordinary plugin-owned filter controls through the host settings API."
     }
   ],
   "dependencies": [],
@@ -43,6 +54,12 @@
       "announce-page"
     ],
     "pages": [
+      "overview",
+      "library",
+      "details",
+      "diagnostics"
+    ],
+    "menus": [
       "overview",
       "library",
       "details",

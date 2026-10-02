@@ -47,6 +47,7 @@ def load_plugin(name: str):
                 "notification_providers.register",
                 "notification_providers.deliver",
                 "plugin.storage",
+                "frontend.navigation.main",
             },
         ),
     ],

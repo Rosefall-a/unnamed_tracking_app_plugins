@@ -1,1 +1,13 @@
-Demonstrates v1 native UI declarations and gateway-backed API requests. No plugin JavaScript is loaded by the native host.
+# UI and API Example
+
+A small Plugin API v1 reference with a real declarative page, a `display_mode`
+settings section and a **Read library** action returning up to 50 current-user
+games. It requests `games.read`, `plugin.settings` and `frontend.navigation.main`.
+The host owns permission classification and supplies authenticated gateway context.
+The entrypoint reports ready and remains supervised instead of exiting after
+startup requests. No plugin JavaScript is loaded by the native host.
+
+Use it as the minimal structure in the [author guide](../../docs/plugin-author-guide.md).
+Build/test with `pytest` and `python tools/build_packages.py`; inspect the isolated
+`.validation/` distribution. New packages include this README, an icon, tags and
+release-specific update metadata. Release signing requires a registered publisher.
