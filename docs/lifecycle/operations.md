@@ -26,3 +26,8 @@ verify it afterward. After testing purge, save a fresh sentinel before uninstall
 otherwise the uninstall test proves only that an empty store remains empty.
 The [lifecycle conformance matrix](../testing/lifecycle.md) identifies which real
 host tests establish each behavior.
+
+![Actual authenticated lifecycle controls](../assets/screenshots/lifecycle-controls.png)
+
+The [capture record](../assets/screenshots/index.md) documents the actual host,
+disposable installation and permission-denial state behind these controls.
