@@ -60,9 +60,10 @@ Every new package includes its README and generated `distribution.json`. Do not
 hand-edit `list.json` or `releases/*.json`. Each catalogue release retains its own
 manifest, docs, scopes, hashes and policy. Major version bumps default to
 `automatic_update: false`; a later patch may permit updates again. The current
-host `plugin-manager` accepts this additive v1 list, but does not yet expose its
-extra history/README/tags or consume automatic-update policy; the guides document
-that compatibility boundary explicitly.
+host `plugin-manager` consumes this additive v1 list, displays README/tags and
+host-defined permission risks, validates advertised package hashes/versions and
+respects each release's automatic-update policy. Its rollback UI uses locally
+retained packages; catalogue history remains distribution metadata.
 
 A plugin declares its identity, compatibility range, capabilities, permissions, dependencies, UI contributions, storage quota, optional frontend bundle, and package integrity in `manifest.json`. Runtime access goes through the v1 gateway rather than direct database access, host filesystem access, or application internals.
 
