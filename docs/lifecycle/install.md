@@ -30,3 +30,7 @@ host acceptance job; [asset provenance](../assets/screenshots/index.md) includes
 successful captures and explains how to refresh them.
 
 ![Real host permission review](../assets/screenshots/permission-review.png)
+
+See [installer and installed-card views](../assets/screenshots/index.md#installer-installed-state-and-lifecycle-controls)
+for actual host components with fixture data. The image above is authenticated
+permission-review evidence.
