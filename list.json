@@ -10,7 +10,7 @@
     },
     {
       "plugin_id": "example.help-button",
-      "name": "Help Button \u00b7 Capability Showcase",
+      "name": "Help Button · Capability Showcase",
       "description": "An intentionally playful showcase of overlays, dialogs, notifications, Settings, Home extensions, routes, events and privileged native Vue UI.",
       "version": "2.0.0",
       "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.help-button-2.0.0.utp"
@@ -46,9 +46,9 @@
     {
       "plugin_id": "example.scoped-document-viewer",
       "name": "Scoped Document Viewer",
-      "description": "Game Docs reader with new-tab previews, original downloads, PDF, text, safe HTML and Office/OpenDocument reading views.",
-      "version": "1.5.0",
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.scoped-document-viewer-1.5.0.utp"
+      "description": "Game Docs reader with configurable, optionally unlimited preview size, new-tab previews, original downloads, PDF, text, safe HTML and Office/OpenDocument reading views.",
+      "version": "1.6.0",
+      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.scoped-document-viewer-1.6.0.utp"
     },
     {
       "plugin_id": "example.self-service-session-manager",
