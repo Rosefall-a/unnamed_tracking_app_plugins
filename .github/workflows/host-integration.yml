@@ -66,6 +66,12 @@ jobs:
           python .validation/host/tools/check_plugin_repository_lifecycle.py \
             --plugins-root . \
             --work-root "${{ runner.temp }}/plugin-acceptance" --browser
+      - name: Exercise real reference packages through runtime transactions
+        env:
+          # Matches the existing process-mode acceptance above. The actual
+          # supervisor still probes and reports isolation; nothing is mocked.
+          NONBUBBLE_ENV: 'true'
+        run: python tools/check_reference_lifecycle.py --host-root .validation/host
       - uses: actions/upload-artifact@v4
         if: always()
         with:
