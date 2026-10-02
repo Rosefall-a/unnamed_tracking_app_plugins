@@ -59,7 +59,7 @@ def test_real_plugin_manifests_declare_required_capabilities():
         "metadata-curator": {"games.read", "plugin.settings", "plugin.storage"},
         "ui-playground": {"notifications.send"},
         "help-button": set(),
-        "jellyfin-media-sync": {"media.read", "media.write", "plugin.settings", "plugin.storage", "tasks.background", "events.subscribe"},
+        "jellyfin-media-sync": {"media.write", "plugin.storage", "tasks.background", "network.outbound", "frontend.context.media", "frontend.page.extend"},
     }
     for name, capabilities in expected.items():
         data = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
@@ -165,6 +165,6 @@ def test_help_button_declares_global_overlay_and_home_extension() -> None:
 def test_jellyfin_declares_secret_storage_and_background_capabilities() -> None:
     manifest = json.loads((ROOT / "examples" / "jellyfin-media-sync" / "manifest.json").read_text(encoding="utf-8"))
     capabilities = {item["name"] for item in manifest["capabilities"]}
-    assert {"media.read", "media.write", "plugin.storage", "tasks.background", "events.subscribe"} <= capabilities
+    assert {"media.write", "plugin.storage", "tasks.background", "network.outbound", "frontend.context.media"} <= capabilities
     ui = json.loads((ROOT / "examples" / "jellyfin-media-sync" / "ui.json").read_text(encoding="utf-8"))
-    assert any(action["id"] == "list-media" for action in ui["actions"])
+    assert any(action["id"] == "watch-now" for action in ui["actions"])

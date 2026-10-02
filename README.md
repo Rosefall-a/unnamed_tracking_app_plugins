@@ -62,7 +62,7 @@ Use the [tutorial map](wiki/docs/development/index.md) for one-feature exercises
 | [Discord Delivery Provider](examples/discord-delivery-provider/README.md) | Core-coordinated external delivery and write-only secrets |
 | [UI Playground](examples/ui-playground/README.md) | Sandboxed Vue pages and bridge; CDN teaching limitation |
 | [Help Button](examples/help-button/README.md) | Native contributions, dialogs, overlays, navigation and cleanup |
-| [Jellyfin Media Sync](examples/jellyfin-media-sync/README.md) | Queued sync, destination-bound token, progress and native settings |
+| [Jellyfin Media Sync](examples/jellyfin-media-sync/README.md) | Master server, approved user identities, library mapping, episode completion and Watch Now |
 | [Scoped Document Viewer](examples/scoped-document-viewer/README.md) | Scoped document APIs and sandbox PDF/text/Office reader |
 | [Self-Service Session Manager](examples/self-service-session-manager/README.md) | Scoped own/admin sessions and privileged native Settings/maps |
 

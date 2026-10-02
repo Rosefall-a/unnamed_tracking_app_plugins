@@ -4,6 +4,11 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      host_ref:
+        description: "Companion repository ref (default: matching branch, then plugin-manager)"
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -24,17 +29,36 @@ jobs:
           --health-cmd="pg_isready -U test -d plugin_integration"
           --health-interval=5s --health-timeout=5s --health-retries=10
     env:
-      DATABASE_URL: postgresql+psycopg://test:test@localhost:5432/plugin_integration
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: plugin_integration
       SECRET_KEY: XJVqc8r7Uj801VzGUYhlQV8A2tZTBepjOYEiP2pTzFk=
       PYTHONPATH: ${{ github.workspace }}/.validation/host/src/backend
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      - name: Select companion repository ref
+        id: companion
+        env:
+          REQUESTED_REF: ${{ inputs.host_ref }}
+          COMPANION_BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          ref="$REQUESTED_REF"
+          if [ -z "$ref" ]; then
+            ref=plugin-manager
+            if git ls-remote --exit-code --heads https://github.com/Rosefall-a/unnamed_tracking_app.git "refs/heads/$COMPANION_BRANCH" >/dev/null; then
+              ref="$COMPANION_BRANCH"
+            fi
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "Testing companion repository ref: $ref"
       - uses: actions/checkout@v7
         with:
           repository: Rosefall-a/unnamed_tracking_app
-          ref: plugin-manager
+          ref: ${{ steps.companion.outputs.ref }}
           path: .validation/host
       - uses: actions/setup-python@v6
         with:
@@ -63,6 +87,8 @@ jobs:
           npm ci
           npx playwright install --with-deps chromium --only-shell
       - name: Verify official distribution and real-worker lifecycle
+        env:
+          JELLYFIN_SCREENSHOT_DIR: ${{ runner.temp }}/plugin-acceptance/screenshots
         run: |
           python tools/check_host_lifecycle.py --host-root .validation/host \
             --plugins-root . \
@@ -79,6 +105,7 @@ jobs:
           name: plugin-manager-integration-evidence
           path: |
             ${{ runner.temp }}/plugin-acceptance/*.log
-            ${{ runner.temp }}/plugin-acceptance/*.png
+            ${{ runner.temp }}/plugin-acceptance/conformance.json
+            ${{ runner.temp }}/plugin-acceptance/**/*.png
             ${{ runner.temp }}/plugin-acceptance/workflow-captures.json
           if-no-files-found: warn

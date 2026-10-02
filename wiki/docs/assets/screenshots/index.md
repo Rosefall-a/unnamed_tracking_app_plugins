@@ -185,3 +185,17 @@ node tools/capture_host_components.mjs .validation/host .validation/host-compone
 
 Review and copy PNGs and the generated manifest together when refreshing docs.
 Keep authenticated captures and component fixture captures separately named.
+
+## Jellyfin 3.0 fixture captures
+
+Captured from the installed package with disposable HTTP fixture data during the paired capability PR verification. These images do not establish live-server acceptance.
+
+![admin-settings](jellyfin-admin-settings.png)
+
+![library-mapping](jellyfin-library-mapping.png)
+
+![user-mapping](jellyfin-user-mapping.png)
+
+![sync-status](jellyfin-sync-status.png)
+
+![watch-now](jellyfin-watch-now.png)

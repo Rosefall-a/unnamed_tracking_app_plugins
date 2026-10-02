@@ -8,7 +8,7 @@ PLUGINS = {
     "metadata-curator": ("settings.get", "games.metadata.search", "storage.put", "lifecycle.ready"),
     "ui-playground": ("notifications.send",),
     "help-button": (),
-    "jellyfin-media-sync": ("settings.get", "storage.get", "media.import", "media.list", "events.poll", "lifecycle.ready"),
+    "jellyfin-media-sync": ("storage.get", "tasks.request", "media.sync", "network.request", "lifecycle.ready"),
 }
 
 

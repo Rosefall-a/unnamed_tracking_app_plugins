@@ -68,3 +68,5 @@ as checked by [lifecycle conformance](../testing/lifecycle.md).
 Putting fields directly in top-level `settings[]`; mismatched section/page IDs;
 replacing false/zero with defaults; storing tokens in ordinary fields; assuming
 a plugin form automatically creates a host Settings section.
+
+Jellyfin uses administrator-checked backend actions and plugin storage for its master server configuration. Ordinary settings writes cannot change its credential or identity approvals. See [Jellyfin setup](../examples/jellyfin.md).
