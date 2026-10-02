@@ -116,7 +116,7 @@ function pluginRequest(method, payload = {}, signal) {
 }
 
 async function loadSettings() {
-  const result = await pluginRequest("settings.get");
+  const result = await pluginRequest("plugin.run-action", { actionId: "load-settings", values: {} });
   const value = result?.value;
   maxPreviewMiB =
     typeof value === "number" && Number.isFinite(value) && value >= 0
