@@ -111,6 +111,7 @@ async function openFixture({
   context = {},
   plainAssets = false,
   noWait = false,
+  maxPreviewMiB = 0,
 } = {}) {
   const page = await browser.newPage({
     viewport: { width: 1280, height: 1000 },
@@ -133,6 +134,12 @@ async function openFixture({
   const calls = [];
   await page.exposeFunction("bridge", async (envelope) => {
     calls.push(envelope);
+    if (envelope.payload.actionId === "load-settings")
+      return { value: maxPreviewMiB };
+    if (envelope.method === "plugin.save-settings") {
+      maxPreviewMiB = envelope.payload.max_preview_mb;
+      return {};
+    }
     if (envelope.method === "plugin.context") return context;
     if (envelope.method === "plugin.download-document")
       return { download_started: true };
@@ -707,5 +714,33 @@ test("unsupported preview retains an original download in the direct reader", as
       .document_id,
     id,
   );
+  await page.close();
+});
+
+test("configured finite preview limit reaches every document chunk", async () => {
+  const { page, frame, calls } = await openFixture({
+    bytes: Buffer.alloc(50000, 97),
+    maxPreviewMiB: 2,
+  });
+  await frame.locator("#viewer pre").waitFor();
+  const reads = calls.filter((call) => call.payload.actionId === "read-document");
+  assert.ok(reads.length > 1);
+  assert.ok(reads.every((call) => call.payload.values.max_bytes === 2 * 1024 * 1024));
+  await frame.locator("#settings-button").click();
+  await frame.locator("#max-preview-mb").fill("0");
+  await frame.locator("#save-settings").click();
+  await frame.locator("#settings-status").filter({ hasText: "unlimited" }).waitFor();
+  assert.deepEqual(calls.find((call) => call.method === "plugin.save-settings").payload, { max_preview_mb: 0 });
+  await page.close();
+});
+
+test("unlimited previews render text beyond the legacy five MiB ceiling", async () => {
+  const bytes = Buffer.alloc(5 * 1024 * 1024 + 1, 97);
+  const { page, frame, calls } = await openFixture({ bytes, maxPreviewMiB: 0 });
+  await frame.locator("#viewer pre").waitFor();
+  assert.equal((await frame.locator("#viewer pre").textContent()).length, bytes.length);
+  const reads = calls.filter((call) => call.payload.actionId === "read-document");
+  assert.ok(reads.length > 200);
+  assert.ok(reads.every((call) => call.payload.values.max_bytes === 0));
   await page.close();
 });

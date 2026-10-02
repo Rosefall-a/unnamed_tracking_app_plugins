@@ -2,7 +2,7 @@
 
 The official plugin implementation of [application PR #241](https://github.com/Rosefall-a/unnamed_tracking_app/pull/241), inspected at `a9b7d3102c1efec08a5bf11a919c6d2204376ebc`. The PR's current code supports sanitized HTML/XHTML, despite its older summary describing only PDF/text.
 
-Version **1.6.0** opens game Docs entries in a new browser tab through a declared reader contribution. The optional library remains available through Browse library. It provides a plugin-owned reader with game/file metadata, paginated listing, loading and explicit error states, PDF pages and zoom, literal UTF-8 text, and sanitized HTML with a source toggle. It reuses the host's `GameFileItem` rows and `games/<folder>/docs` storage through public document DTOs and opaque IDs. Upload files in the host game's Docs tab; the plugin does not create a separate document store.
+Version **1.7.0** adds configurable preview limits to the game Docs reader. The optional library remains available through Browse library. It provides a plugin-owned reader with game/file metadata, paginated listing, loading and explicit error states, PDF pages and zoom, literal UTF-8 text, and sanitized HTML with a source toggle. It reuses the host's `GameFileItem` rows and `games/<folder>/docs` storage through public document DTOs and opaque IDs. Upload files in the host game's Docs tab; the plugin does not create a separate document store.
 
 ## Permissions
 
@@ -81,6 +81,6 @@ The new checked-in `.utp` is a valid **unsigned local build**, requiring the hos
 
 Digest verification and secure request correlation also work on HTTP deployments: Web Crypto is used when available, with bundled SHA-256 and `getRandomValues` fallbacks otherwise. Browser tests verify this path. See the [Web Crypto context rules](https://developer.mozilla.org/en-US/docs/Web/API/Window/crypto), [PDF.js API](https://mozilla.github.io/pdf.js/api/) and [native PDF sandbox restriction](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe).
 
-![Sandboxed PDF preview](../../docs/assets/screenshots/scoped-document-viewer.png)
+![Sandboxed PDF preview](../../wiki/docs/assets/screenshots/scoped-document-viewer.png)
 
-![Direct game document reading preview](../../docs/assets/screenshots/scoped-document-reader-office.png)
+![Direct game document reading preview](../../wiki/docs/assets/screenshots/scoped-document-reader-office.png)

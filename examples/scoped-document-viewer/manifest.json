@@ -91,6 +91,7 @@
   },
   "ui": {
     "actions": [
+      "load-settings",
       "list-documents",
       "read-document"
     ],
