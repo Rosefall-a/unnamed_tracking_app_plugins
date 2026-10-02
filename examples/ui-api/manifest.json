@@ -1,1 +1,67 @@
-{"manifest_version":1,"plugin_id":"example.ui-api","name":"UI and API Example","version":"1.0.0","description":"Reference native declarative UI and gateway API plugin.","entrypoint":"plugin:main","sdk_version_range":"^1.0.0","application_version_range":"*","capabilities":[{"name":"games.read","version":1},{"name":"plugin.settings","version":1}],"permissions":[{"capability":{"name":"games.read","version":1},"rationale":"Read games requested by the user."},{"capability":{"name":"plugin.settings","version":1},"rationale":"Persist native UI settings."}],"dependencies":[],"ui":{"settings":["settings"],"actions":["refresh"],"pages":["games"]},"storage":{"quota_mb":1},"integrity":{"sha256":"bd3f70884205b6f530258a4cf4bd3ecd3113fdd7c1b269ced142e3a7cfba489d","signature":"54o1O6Swuk8+32letWw4T++l2Dd05Ie8b7ypJPIiIIuroJ85hDXBosT2L84sHgYCVyMlvm3a1xIkTVxrjJaZAA==","key_id":"official-example-2026"}}
+{
+  "manifest_version": 1,
+  "plugin_id": "example.ui-api",
+  "name": "UI and API Example",
+  "version": "1.0.0",
+  "description": "Reference native declarative UI and gateway API plugin.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": "^1.0.0",
+  "application_version_range": "*",
+  "capabilities": [
+    {
+      "name": "games.read",
+      "version": 1
+    },
+    {
+      "name": "plugin.settings",
+      "version": 1
+    },
+    {
+      "name": "frontend.navigation.main",
+      "version": 1
+    }
+  ],
+  "permissions": [
+    {
+      "capability": {
+        "name": "games.read",
+        "version": 1
+      },
+      "rationale": "Read games requested by the user."
+    },
+    {
+      "capability": {
+        "name": "plugin.settings",
+        "version": 1
+      },
+      "rationale": "Persist native UI settings."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.main",
+        "version": 1
+      },
+      "rationale": "Expose the declared plugin page in the main navigation."
+    }
+  ],
+  "dependencies": [],
+  "ui": {
+    "settings": [
+      "settings"
+    ],
+    "actions": [
+      "refresh"
+    ],
+    "pages": [
+      "games"
+    ]
+  },
+  "storage": {
+    "quota_mb": 1
+  },
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null,
+    "key_id": null
+  }
+}

@@ -6,12 +6,11 @@
     {
       "id": "main",
       "title": "Recently Played",
-      "components": [
-        {"type": "text", "text": "Send a notification containing the latest library activity."},
-        {"type": "action", "action_id": "run", "label": "Send notification"}
-      ]
+      "description": "Send a notification containing the latest library activity.",
+      "actions": ["run"],
+      "navigation": {"sidebar": true}
     }
   ],
   "settings": [],
-  "actions": [{"id": "run", "label": "Send notification"}]
+  "actions": [{"id": "run", "label": "Send notification", "handler": "plugin:run", "capability": {"name": "notifications.send", "version": 1}}]
 }
