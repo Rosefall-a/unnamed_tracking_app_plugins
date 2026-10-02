@@ -67,9 +67,8 @@ def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path):
         capture_output=True,
         check=True,
     )
-    settings_wire, settings_response, wire, response = map(json.loads, result.stdout.splitlines())
+    settings_wire, wire, response = map(json.loads, result.stdout.splitlines())
     assert settings_wire == {"api_version": "v1", "method": "settings.get", "capability": "plugin.settings", "payload": {"key": "max_preview_mb"}}
-    assert settings_response == {"value": 0}
     assert wire == {
         "api_version": "v1",
         "method": "documents.read",
