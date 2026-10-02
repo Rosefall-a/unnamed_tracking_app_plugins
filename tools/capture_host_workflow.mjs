@@ -76,7 +76,11 @@ try {
   // Capture the persisted response rather than the initial empty form.
   await page.waitForFunction(() => [...document.querySelectorAll("input")]
     .some((input) => input.value.startsWith("http://127.0.0.1:")));
-  assert.equal(await page.getByLabel("API key or access token (blank keeps existing token)").inputValue(), "");
+  const masterCredential = page.getByLabel("Server credential · blank keeps existing");
+  const legacyCredential = page.getByLabel("API key or access token (blank keeps existing token)");
+  const credential = await masterCredential.count() ? masterCredential : legacyCredential;
+  assert.equal(await credential.getAttribute("type"), "password");
+  assert.equal(await credential.inputValue(), "");
   await capture("plugin-settings.png", "Actual configured Jellyfin native settings/UI; saved token is not returned to the input.");
   assert.deepEqual(errors, [], "Authenticated host browser errors");
   const revision = (repository) => execFileSync("git", ["-C", repository, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
