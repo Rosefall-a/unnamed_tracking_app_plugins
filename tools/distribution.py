@@ -43,6 +43,15 @@ def git(root: Path, *args: str) -> str | None:
 
 
 def discover_plugins(root: Path) -> list[tuple[Path, dict]]:
+    if (root / "examples.old").exists():
+        raise ValueError("obsolete examples.old source tree; keep maintained plugins under examples/")
+    for source in sorted((root / "examples").iterdir()):
+        if source.name.startswith(".") or source.name in {"__pycache__", "node_modules"}:
+            continue
+        if source.is_symlink():
+            raise ValueError("plugin source cannot be a symbolic link")
+        if source.is_dir() and not (source / "manifest.json").is_file():
+            raise ValueError(f"{source.name}: manifest.json is missing (incomplete plugin source)")
     plugins = [(p.parent, json.loads(p.read_text(encoding="utf-8"))) for p in sorted((root / "examples").glob("*/manifest.json"))]
     if not plugins:
         raise ValueError("no plugin manifests found under examples/")
@@ -195,7 +204,13 @@ def next_release(root: Path, source: Path, manifest: dict, history: list[dict], 
     if latest["build"]["source_digest"] == fingerprint:
         return latest["version"], True, "none"
     revision = latest["build"].get("source_commit")
-    messages = git(root, "log", f"{revision}..HEAD", "--format=%B%x00", "--", source.relative_to(root).as_posix(), "sdk") if revision else ""
+    paths = [source.relative_to(root).as_posix(), "sdk"]
+    # A layout move must not hide Conventional Commits made at the last
+    # published source location. Historical provenance remains immutable.
+    previous_path = latest["build"].get("source_path")
+    if previous_path and safe_path(previous_path) and previous_path not in paths:
+        paths.append(previous_path)
+    messages = git(root, "log", f"{revision}..HEAD", "--format=%B%x00", "--", *paths) if revision else ""
     bump = "patch"
     for message in (messages or "").split("\0"):
         subject = message.strip().splitlines()[0] if message.strip() else ""

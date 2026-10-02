@@ -25,7 +25,7 @@ def checkout(tmp_path):
     # Give release-simulation tests a fixed SemVer seed independently of the
     # real plugin's automatically advancing version. Its implementation stays real.
     manifest_path = tmp_path / "examples/help-button/manifest.json"
-    manifest = json.loads(manifest_path.read_text())
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     manifest["version"] = "2.0.0"
     manifest_path.write_text(json.dumps(manifest))
     # A disposable publisher is registered only inside the isolated test checkout.
@@ -56,13 +56,13 @@ def run_build(root, env, *flags, check=True):
 
 
 def records(root):
-    return json.loads((root / "releases/example.help-button.json").read_text())["releases"]
+    return json.loads((root / "releases/example.help-button.json").read_text(encoding="utf-8"))["releases"]
 
 
 def test_signed_releases_preserve_history_and_release_specific_opt_out(checkout):
     root, env = checkout
     metadata_path = root / "examples/help-button/release.json"
-    metadata = json.loads(metadata_path.read_text())
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
     metadata["automatic_update"] = False
     metadata_path.write_text(json.dumps(metadata))
     commit(root, "fix: require manual approval for initial release")
@@ -121,7 +121,7 @@ def test_generated_metadata_corruption_is_rejected(built_distribution, tmp_path,
     shutil.copytree(built_distribution, tmp_path / "candidate")
     root = tmp_path / "candidate"
     path = root / "list.json"
-    data = json.loads(path.read_text())
+    data = json.loads(path.read_text(encoding="utf-8"))
     entry = data["plugins"][0]
     if defect == "missing_package":
         (root / "dist" / entry["package"]["filename"]).unlink()
@@ -217,7 +217,7 @@ def test_ci_rejects_rewriting_historical_release_metadata(checkout):
     commit(root, "chore: publish release")
     validate_immutable_history(root, root, "HEAD")
     history_path = root / "releases/example.help-button.json"
-    data = json.loads(history_path.read_text())
+    data = json.loads(history_path.read_text(encoding="utf-8"))
     data["releases"][0]["release_notes"] = "Changed historical notes"
     history_path.write_text(json.dumps(data))
     with pytest.raises(ValueError, match="historical release metadata"):

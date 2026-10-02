@@ -97,8 +97,8 @@ def test_bulk_routes_use_distinct_self_service_and_admin_grants(monkeypatch):
 
 def test_native_settings_and_all_destructive_actions_are_declared():
     root = ROOT / "examples" / "self-service-session-manager"
-    manifest = json.loads((root / "manifest.json").read_text())
-    ui = json.loads((root / "ui.json").read_text())
+    manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    ui = json.loads((root / "ui.json").read_text(encoding="utf-8"))
     from tools.distribution import version_key
     assert version_key(manifest["version"]) >= (2, 0, 0)
     assert manifest["native_frontend"]["entry"] == "native/index.js"

@@ -28,70 +28,32 @@ Do not duplicate host infrastructure here.
 
 # 1. Repository Structure
 
-The repository currently follows this general structure:
+Maintained source lives in one intentional tree:
 
 ```text
-.
-├── examples/
-│   ├── lifecycle/
-│   ├── events/
-│   ├── ui-api/
-│   ├── advanced/
-│   ├── notifications/
-│   ├── metadata/
-│   ├── events-filter/
-│   ├── playtime-report/
-│   ├── recently-played-notifier/
-│   └── metadata-curator/
-├── sdk/
-│   └── plugin_protocol.py
-├── publishers/
-│   └── *.public-key.b64
-├── tests/
-├── tools/
-│   └── build_packages.py
-├── dist/
-└── README.md
+examples/<plugin-name>/  # complete official reference and demo sources
+sdk/                    # public Plugin API v1 protocol helper
+docs/                   # Material/MkDocs developer manual and dated history
+tests/                  # source, package, browser and release contract tests
+tools/                  # existing builder, validators and host conformance tools
+publishers/             # reviewed public keys; never private keys
+dist/                   # immutable installable .utp versions
+releases/               # append-only generated release histories
+catalogue.json          # authored catalogue hosting configuration
+list.json               # generated catalogue
+mkdocs.yml              # strict wiki navigation
 ```
 
-The repository intentionally contains two kinds of examples:
+`examples.old/` and README-only plugin directories are invalid. Discovery and CI
+reject incomplete source rather than silently omitting it from publication.
+UI/API and Discord Delivery Provider are focused references. Playtime Report,
+Recently Played Notifier, Metadata Curator and UI Playground are small useful
+demos. Help Button, Jellyfin, Document Viewer and Session Manager demonstrate
+more substantial host integrations. Keep this mixture; no duplicate source trees.
 
-### Reference plugins
-
-Small examples that demonstrate one or a few Plugin API capabilities.
-
-Examples include:
-
-```text
-lifecycle
-events
-ui-api
-advanced
-notifications
-metadata
-events-filter
-```
-
-### Real demo plugins
-
-Application-level examples that perform useful work.
-
-Currently:
-
-```text
-playtime-report
-recently-played-notifier
-metadata-curator
-```
-
-A real plugin:
-
-* contains actual application logic;
-* transforms host-provided data;
-* may maintain plugin state;
-* may provide useful UI or side effects;
-* uses the public gateway;
-* does not implement the host platform.
+Historical lifecycle/events/advanced packages and their release records remain
+immutable even though those old source stubs are retired. Never rewrite embedded
+historical source paths merely because documentation or directories move.
 
 Do not confuse the reference examples with foundational plugin infrastructure.
 
@@ -414,7 +376,7 @@ The package builder includes plugin source, the SDK, UI/assets, README, declared
 icon and generated release metadata in the existing package payload. Signed main
 publication uses `--require-signing`, writes `dist/`, `list.json`, `releases/` and
 resolved source versions together, and preserves immutable historical packages.
-Read `docs/plugin-author-guide.md` and `docs/catalogue-specification.md` before
+Read `docs/plugin-author-guide.md` and the tutorial wiki configured in `mkdocs.yml` and `docs/catalogue-specification.md` before
 changing distribution or release behavior.
 
 The package digest is calculated from canonical sorted payload paths and bytes.
@@ -935,7 +897,7 @@ Before considering a task complete:
 * [ ] `.utp` integrity is valid.
 * [ ] Signature is valid when applicable.
 * [ ] No private signing material was committed.
-* [ ] Documentation is updated.
+* [ ] Documentation is updated and `python -m mkdocs build --strict` passes.
 * [ ] Root plugin listing is updated when necessary.
 * [ ] No unrelated files were modified.
 * [ ] No architecture boundaries were bypassed.

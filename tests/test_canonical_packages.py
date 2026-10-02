@@ -50,7 +50,7 @@ def test_native_assets_manifest_and_integrity_in_real_packages(packages):
                 if name.startswith("payload/")
             }
         source_name = "jellyfin-media-sync" if "jellyfin-media-sync" in path.name else "help-button"
-        expected_version = json.loads((ROOT / "examples" / source_name / "manifest.json").read_text())["version"]
+        expected_version = json.loads((ROOT / "examples" / source_name / "manifest.json").read_text(encoding="utf-8"))["version"]
         assert manifest["version"] == expected_version
         assert manifest["integrity"]["signature"] is None
         assert manifest["integrity"]["sha256"] == canonical_payload_digest(

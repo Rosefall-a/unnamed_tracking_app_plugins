@@ -18,7 +18,7 @@ SOURCE = ROOT / "examples/scoped-document-viewer"
 
 def test_document_package_contains_current_source_and_pinned_libraries(current_packages):
     package = current_packages["example.scoped-document-viewer"]
-    lock = json.loads((SOURCE / "vendor-lock.json").read_text())
+    lock = json.loads((SOURCE / "vendor-lock.json").read_text(encoding="utf-8"))
     with zipfile.ZipFile(package) as archive:
         manifest = json.loads(archive.read("manifest.json"))
         assert package.name == f"{manifest['plugin_id']}-{manifest['version']}.utp"
