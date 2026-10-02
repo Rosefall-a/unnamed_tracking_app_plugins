@@ -1,11 +1,4 @@
 {
-  "manifest_version": 1,
-  "plugin_id": "example.metadata-curator",
-  "name": "Metadata Curator",
-  "version": "1.0.0",
-  "description": "Runs a configurable metadata search and stores a normalized local result set.",
-  "entrypoint": "plugin:main",
-  "sdk_version_range": "^1.0.0",
   "application_version_range": "*",
   "capabilities": [
     {
@@ -25,6 +18,16 @@
       "version": 1
     }
   ],
+  "dependencies": [],
+  "description": "Runs a configurable metadata search and stores a normalized local result set.",
+  "entrypoint": "plugin:main",
+  "integrity": {
+    "key_id": null,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null
+  },
+  "manifest_version": 1,
+  "name": "Metadata Curator",
   "permissions": [
     {
       "capability": {
@@ -55,24 +58,21 @@
       "rationale": "Expose the declared plugin page in the main navigation."
     }
   ],
-  "dependencies": [],
+  "plugin_id": "example.metadata-curator",
+  "sdk_version_range": "^1.0.0",
+  "storage": {
+    "quota_mb": 2
+  },
   "ui": {
-    "settings": [
-      "query"
-    ],
     "actions": [
       "search"
     ],
     "pages": [
       "search"
+    ],
+    "settings": [
+      "query"
     ]
   },
-  "storage": {
-    "quota_mb": 2
-  },
-  "integrity": {
-    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "signature": null,
-    "key_id": null
-  }
+  "version": "1.1.0"
 }

@@ -1,11 +1,4 @@
 {
-  "manifest_version": 1,
-  "plugin_id": "example.discord-delivery-provider",
-  "name": "External Discord Delivery Provider",
-  "version": "1.0.0",
-  "description": "Registers a Discord notification destination while core retains preferences, retry state, and delivery ownership.",
-  "entrypoint": "plugin:main",
-  "sdk_version_range": "^1.0.0",
   "application_version_range": ">=1.0.0",
   "capabilities": [
     {
@@ -25,6 +18,19 @@
       "version": 1
     }
   ],
+  "dependencies": [],
+  "description": "Registers a Discord notification destination while core retains preferences, retry state, and delivery ownership.",
+  "entrypoint": "plugin:main",
+  "frontend": {
+    "entry": "frontend/index.html"
+  },
+  "integrity": {
+    "key_id": null,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null
+  },
+  "manifest_version": 1,
+  "name": "External Discord Delivery Provider",
   "permissions": [
     {
       "capability": {
@@ -55,29 +61,23 @@
       "rationale": "Expose the declared plugin page in the main navigation."
     }
   ],
-  "dependencies": [],
+  "plugin_id": "example.discord-delivery-provider",
+  "sdk_version_range": "^1.0.0",
+  "storage": {
+    "quota_mb": 1
+  },
   "ui": {
-    "settings": [
-      "destination"
-    ],
     "actions": [
       "deliver",
       "check-configuration"
     ],
+    "menus": [],
     "pages": [
       "provider"
     ],
-    "menus": []
+    "settings": [
+      "destination"
+    ]
   },
-  "storage": {
-    "quota_mb": 1
-  },
-  "integrity": {
-    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "signature": null,
-    "key_id": null
-  },
-  "frontend": {
-    "entry": "frontend/index.html"
-  }
+  "version": "1.1.0"
 }

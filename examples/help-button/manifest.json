@@ -1,11 +1,4 @@
 {
-  "manifest_version": 1,
-  "plugin_id": "example.help-button",
-  "name": "Help Button \u00b7 Capability Showcase",
-  "version": "2.0.0",
-  "description": "An intentionally playful showcase of overlays, dialogs, notifications, Settings, Home extensions, routes, events and privileged native Vue UI.",
-  "entrypoint": "plugin:main",
-  "sdk_version_range": "^1.0.0",
   "application_version_range": "^1.0.0",
   "capabilities": [
     {
@@ -61,6 +54,22 @@
       "version": 1
     }
   ],
+  "dependencies": [],
+  "description": "An intentionally playful showcase of overlays, dialogs, notifications, Settings, Home extensions, routes, events and privileged native Vue UI.",
+  "entrypoint": "plugin:main",
+  "integrity": {
+    "key_id": null,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null
+  },
+  "manifest_version": 1,
+  "name": "Help Button · Capability Showcase",
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": [
+      "native/style.css"
+    ]
+  },
   "permissions": [
     {
       "capability": {
@@ -154,11 +163,12 @@
       "rationale": "Send a real current-user host notification on demand."
     }
   ],
-  "dependencies": [],
+  "plugin_id": "example.help-button",
+  "sdk_version_range": "^1.0.0",
+  "storage": {
+    "quota_mb": 1
+  },
   "ui": {
-    "settings": [
-      "showcase"
-    ],
     "actions": [
       "rickroll",
       "remember",
@@ -166,27 +176,17 @@
       "notify",
       "activity"
     ],
+    "menus": [
+      "help"
+    ],
     "pages": [
       "help",
       "floating",
       "home-card"
     ],
-    "menus": [
-      "help"
+    "settings": [
+      "showcase"
     ]
   },
-  "storage": {
-    "quota_mb": 1
-  },
-  "integrity": {
-    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "signature": null,
-    "key_id": null
-  },
-  "native_frontend": {
-    "entry": "native/app.js",
-    "styles": [
-      "native/style.css"
-    ]
-  }
+  "version": "2.1.0"
 }

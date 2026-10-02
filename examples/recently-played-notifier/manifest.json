@@ -1,11 +1,4 @@
 {
-  "manifest_version": 1,
-  "plugin_id": "example.recently-played-notifier",
-  "name": "Recently Played Notifier",
-  "version": "1.0.0",
-  "description": "Creates a small notification from the most recently played games.",
-  "entrypoint": "plugin:main",
-  "sdk_version_range": "^1.0.0",
   "application_version_range": "*",
   "capabilities": [
     {
@@ -25,6 +18,16 @@
       "version": 1
     }
   ],
+  "dependencies": [],
+  "description": "Creates a small notification from the most recently played games.",
+  "entrypoint": "plugin:main",
+  "integrity": {
+    "key_id": null,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null
+  },
+  "manifest_version": 1,
+  "name": "Recently Played Notifier",
   "permissions": [
     {
       "capability": {
@@ -55,22 +58,19 @@
       "rationale": "Expose the declared plugin page in the main navigation."
     }
   ],
-  "dependencies": [],
+  "plugin_id": "example.recently-played-notifier",
+  "sdk_version_range": "^1.0.0",
+  "storage": {
+    "quota_mb": 1
+  },
   "ui": {
-    "settings": [],
     "actions": [
       "run"
     ],
     "pages": [
       "main"
-    ]
+    ],
+    "settings": []
   },
-  "storage": {
-    "quota_mb": 1
-  },
-  "integrity": {
-    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "signature": null,
-    "key_id": null
-  }
+  "version": "1.1.0"
 }

@@ -575,6 +575,233 @@
       },
       "tags": [],
       "version": "2.0.1"
+    },
+    {
+      "automatic_update": true,
+      "build": {
+        "builder": "tools/build_packages.py",
+        "contract_revision": "f1165fcc805e57ee428e7bc42fa6b83f4a6caf25",
+        "legacy": false,
+        "source_commit": "6b4fb8a5412e5a8138312efc4da4a1ea1dd0d0c4",
+        "source_committed_at": "2026-10-02T12:32:33+08:00",
+        "source_digest": "ae07aa4a1aed202ce7570b532bf26c73e748c15bbc3447ab8123aeaf30dfa6c4",
+        "source_path": "examples/jellyfin-media-sync",
+        "version_bump": "minor"
+      },
+      "icon": {
+        "path": "icon.svg",
+        "sha256": "5de24c1b950d8e2610a6932a6fb57ad6308e7f95a4fadfabe43b08f4555adfbc"
+      },
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "source",
+        "validated",
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": "^1.0.0",
+        "capabilities": [
+          {
+            "name": "media.read",
+            "version": 1
+          },
+          {
+            "name": "media.write",
+            "version": 1
+          },
+          {
+            "name": "plugin.settings",
+            "version": 1
+          },
+          {
+            "name": "plugin.storage",
+            "version": 1
+          },
+          {
+            "name": "tasks.background",
+            "version": 1
+          },
+          {
+            "name": "events.subscribe",
+            "version": 1
+          },
+          {
+            "name": "network.outbound",
+            "version": 1
+          },
+          {
+            "name": "frontend.native",
+            "version": 1
+          },
+          {
+            "name": "frontend.navigation.main",
+            "version": 1
+          },
+          {
+            "name": "frontend.navigation.settings",
+            "version": 1
+          },
+          {
+            "name": "frontend.settings",
+            "version": 1
+          },
+          {
+            "name": "frontend.routes",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "A supervised, paginated Jellyfin media sync for films, TV shows and anime with write-only tokens, native configuration and persistent progress.",
+        "entrypoint": "plugin:main",
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "a998861503b8dd7ab8bf32283325d6fa759745240fe1b5ddda6b3305b87edc17",
+          "signature": "ND+FN5cAqThqVX/xjaaAYwRSzMehGPVrI1IseswUnffROFjiM9GpDY9UdSjVz4yTB6mNKOiI006socIQfJdECA=="
+        },
+        "manifest_version": 1,
+        "name": "Jellyfin Media Sync",
+        "native_frontend": {
+          "entry": "native/app.js",
+          "styles": [
+            "native/style.css"
+          ]
+        },
+        "permissions": [
+          {
+            "capability": {
+              "name": "media.read",
+              "version": 1
+            },
+            "rationale": "Preview up to 100 movies in the signed-in user media library."
+          },
+          {
+            "capability": {
+              "name": "media.write",
+              "version": 1
+            },
+            "rationale": "Import paginated Jellyfin movie metadata and watched flags into the enabling user media library."
+          },
+          {
+            "capability": {
+              "name": "plugin.settings",
+              "version": 1
+            },
+            "rationale": "Read the Jellyfin server, user ID, interval and background switch."
+          },
+          {
+            "capability": {
+              "name": "plugin.storage",
+              "version": 1
+            },
+            "rationale": "Keep a write-only token bound to its destination, queued work, progress and activity cursor."
+          },
+          {
+            "capability": {
+              "name": "tasks.background",
+              "version": 1
+            },
+            "rationale": "Run synchronization in the supervised plugin worker rather than a long UI action."
+          },
+          {
+            "capability": {
+              "name": "events.subscribe",
+              "version": 1
+            },
+            "rationale": "Poll current-user host activity and persist a cursor after a successful sync."
+          },
+          {
+            "capability": {
+              "name": "network.outbound",
+              "version": 1
+            },
+            "rationale": "Contact only the configured Jellyfin server after a live grant check; redirects are refused."
+          },
+          {
+            "capability": {
+              "name": "frontend.native",
+              "version": 1
+            },
+            "rationale": "Render native Vue configuration, write-only credential entry and progress using the host SDK."
+          },
+          {
+            "capability": {
+              "name": "frontend.navigation.main",
+              "version": 1
+            },
+            "rationale": "Add Jellyfin Sync to the sidebar."
+          },
+          {
+            "capability": {
+              "name": "frontend.navigation.settings",
+              "version": 1
+            },
+            "rationale": "Link to the native Jellyfin Settings contribution."
+          },
+          {
+            "capability": {
+              "name": "frontend.settings",
+              "version": 1
+            },
+            "rationale": "Provide native configuration and status within Settings."
+          },
+          {
+            "capability": {
+              "name": "frontend.routes",
+              "version": 1
+            },
+            "rationale": "Expose the plugin-owned Jellyfin sync route."
+          }
+        ],
+        "plugin_id": "example.jellyfin-media-sync",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 32
+        },
+        "ui": {
+          "actions": [
+            "save-token",
+            "get-config",
+            "sync-now",
+            "status",
+            "refresh-status",
+            "list-media"
+          ],
+          "menus": [
+            "sync"
+          ],
+          "pages": [
+            "sync"
+          ],
+          "settings": [
+            "jellyfin"
+          ]
+        },
+        "version": "2.1.0"
+      },
+      "package": {
+        "filename": "example.jellyfin-media-sync-2.1.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 16103
+      },
+      "package_sha256": "6394120555c90fbda09ba24fc6e14b3bd0cfcdbb78f96182b564d6ace4a95e26",
+      "plugin_id": "example.jellyfin-media-sync",
+      "publisher": "Unnamed Tracking Official",
+      "readme": "# Jellyfin Media Sync\n\nVersion 2.0.1 is the serious integration example for Plugin API v1 on the completed\n`plugin-manager` platform. It bundles a privileged native Vue interface without\nCDN dependencies. It synchronizes **films, TV shows, and anime** for the host user that enabled the\ninstallation. Jellyfin movies and series are paginated together, and anime is\nidentified from Jellyfin genre/tag metadata without requiring a separate library. It has no plugin dependencies.\n\n## Configuration\n\n1. Install the `.utp` in Settings → Plugins and review the narrow permissions below.\n2. Enable it from the host account whose media library should receive imports.\n3. Use the **same account** to configure it in the Jellyfin Sync sidebar page or\n   native Settings section. Save the HTTP(S) server URL (including a proxy base\n   path if applicable), Jellyfin user ID (32 hex characters), interval (5–1440\n   minutes), and optional periodic-sync switch.\n4. Enter a Jellyfin API key or user access token. Do not enter a password or a\n   username. Save configuration and token. Blank token entry preserves the token.\n5. Queue a sync. The supervised worker handles it and the native progress panel\n   refreshes every five seconds. Periodic sync is disabled by default.\n\nToken entry is a declared secret field. Ordinary settings contain no credential.\nThe explicit `save-token` action writes into reserved `secrets/api_key` storage;\nonly plugin backend code reads that namespace. The token is never returned by\nconfiguration, status, media, event or action responses. It is bound to the saved\nserver and Jellyfin user: changing either requires saving a token again, preventing\nan old credential being forwarded to a new destination. No credentials belong in\nsource, catalogue, artwork URLs, logs or packages. There is no password-login flow.\n\nThis is an installation-owned integration, not per-user Jellyfin account linking.\nQueued work always imports for the enabling host account, not the person pressing\nQueue sync. Grant backend data capabilities only to that intended account. The\nhost currently lacks a public background identity/profile contract, so configure\nand enable consistently; multi-user account linking is not claimed.\n\n## Permissions and behavior\n\n| Permission | Why it is needed |\n| --- | --- |\n| `media.read` | Preview 100 media items in the current user's host library |\n| `media.write` | Import paginated normalized movies for the enabling user |\n| `plugin.settings` | Read non-secret integration configuration |\n| `plugin.storage` | Reserved secret token, queued requests, progress and event cursor |\n| `tasks.background` | Supervised worker, queued manual and periodic synchronization |\n| `events.subscribe` | Poll host activity after sync or on demand, retaining only a cursor |\n| `network.outbound` | HTTP only to the configured Jellyfin server, checked before every request |\n| `frontend.native` | **Privileged** native Vue configuration and progress in the host realm |\n| `frontend.navigation.main` | Jellyfin Sync sidebar entry |\n| `frontend.navigation.settings` | Settings sidebar link |\n| `frontend.settings` | Native integration Settings section |\n| `frontend.routes` | `/plugins/example.jellyfin-media-sync/sync` |\n\nNo parent subtree, full API, host routes, game read or notification permission is\nrequested. Configuration and native Settings contributions are distinct: the\nsame fields/actions also remain available in generated Plugins configuration\nwhen native mode is denied. Save ordinary fields first, then press Save token\nseparately. Runtime grants remain authoritative for all gateway calls.\n\nThe worker uses bounded 100-item Jellyfin pages containing both Movie and Series items, a 4 MiB response limit, 15-second\nHTTP timeout, JSON validation, and a live outbound grant check for **each** request.\nIt uses the standard Authorization header, refuses all redirects, and uses default\nTLS verification. Server URLs cannot carry credentials/query/fragment. Progress\nis persisted after each import page. Unique queued request keys survive restart;\nonly the worker writes progress, avoiding concurrent manual/background syncs.\nA new request arriving during sync is processed next. Partial imports are retained\non error and a retry starts from the beginning to refresh remote watched state.\n\nErrors distinguish credential rejection, HTTP failure, rate limiting, response\nsize/shape, incomplete pagination and connection/TLS/egress failure. Raw exception\ntext and Jellyfin response bodies are never persisted. Failed periodic work waits\nthe configured interval; manual queue requests can retry sooner. Disabling the\nplugin terminates the host-supervised worker; native polling timers are cleaned up.\n\nHost event polling observes host activity; Jellyfin polling reads the remote\nlibrary. These are separate integrations. No Jellyfin webhook subscription or\nbidirectional playback update is claimed.\n\n## Generic platform gaps discovered\n\nThese limits are in the platform, not solved with plugin-specific host paths:\n\n* **Brokered outbound HTTP:** `network.outbound` can be checked, but no generic\n  gateway HTTP method or host allowlist contract exists. The default bubblewrap\n  runtime unshares networking, so direct HTTP cannot reach Jellyfin. The example\n  reports an actionable connection error there. Direct requests work only in an\n  already configured runtime permitting egress (for example its documented\n  nonbubble mode). This plugin does not switch isolation modes. A host-owned,\n  permission-enforced HTTP broker with server allowlisting, bounded responses,\n  redirect policy and secret references is the required generic contract.\n* **Provider-neutral import identity and playback:** `media.import` currently\n  hard-codes source `jellyfin` and upserts Jellyfin media by title. It accepts external IDs\n  but does not persist/use them for deduplication. Different movies sharing a title\n  can merge; renamed items can duplicate. Runtime, genres, poster URL and a true\n  watched flag are applied; release year, play count, last-played date and watched\n  reversals are not persisted. The plugin normalizes and sends these fields but\n  does not claim complete playback parity. A generic provider/external-ID upsert\n  and versioned playback DTO are required. It never accesses the host database.\n* **Background identity:** workers inherit the enabling user's host scope. A\n  public authenticated worker identity and per-user integration/secret namespace\n  are required before automatic account linking can be implemented safely.\n\nToken-free artwork URLs may require public/proxy access; embedding the secret in\nhost-visible URLs is intentionally avoided. No generic authenticated artwork\nproxy is currently exposed to plugins.\n\n## Test, build and release\n\nUpgrading from 1.x changes the UI to native mode and configuration to token + user\nID. Save the token again to bind it to the destination; legacy raw tokens produce\nan explicit upgrade message. Old password login is unsupported. The host must\nreview newly requested permissions during this major update.\n\nFrom the repository root:\n\n```sh\npytest\npython tools/build_packages.py\npython tools/verify_packages.py dist/*.utp\npython tools/validate_packages.py dist/*.utp\n```\n\nBehavior tests cover paging beyond 200 items, watched data normalization, queued\nwork, persistent progress, event cursors, retries, invalid configuration, secret\nredaction, credential destination binding, outbound grant denial and redirect\nrejection. Native tests exercise loading, saving, secret clearing, progress and\ncleanup. Package tests check assets, deterministic digests, invalid native assets\nand corruption rejection.\n\nDevelopment builds `dist/example.jellyfin-media-sync-2.0.1.utp` unsigned. The\nexisting release workflow signs with the configured reviewed publisher key.\nPublisher keys/signing rules and package validation are unchanged. Installation\nof an unsigned native package requires the normal elevated-consent/password flow.\n\nManual integration: install the actual package on `plugin-manager`, configure a\ntest Jellyfin library with more than 200 mixed films and TV shows, including anime, sync in an egress-enabled runtime,\nverify progress and host imports, change watched state and repeat. Try invalid\ncredentials, a renamed movie, equal titles, an unreachable URL, a revoked outbound\ngrant, disabled periodic sync, restart during a queued sync and plugin disable.\nIn the default isolated runtime, verify the documented HTTP limitation is visible.\n\nProtocol references: [Jellyfin GetItems](https://api.jellyfin.org/#tag/Items/operation/GetItems)\nand the [official Python API client](https://github.com/jellyfin/jellyfin-apiclient-python/blob/master/jellyfin_apiclient_python/api.py).\n",
+      "release_notes": "Package lifecycle metadata, embedded documentation and validated Plugin API v1 contributions.",
+      "sha256": "a998861503b8dd7ab8bf32283325d6fa759745240fe1b5ddda6b3305b87edc17",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "a998861503b8dd7ab8bf32283325d6fa759745240fe1b5ddda6b3305b87edc17",
+        "signature": "ND+FN5cAqThqVX/xjaaAYwRSzMehGPVrI1IseswUnffROFjiM9GpDY9UdSjVz4yTB6mNKOiI006socIQfJdECA=="
+      },
+      "tags": [
+        "media",
+        "integration"
+      ],
+      "version": "2.1.0"
     }
   ],
   "version": 1

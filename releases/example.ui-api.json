@@ -92,6 +92,120 @@
       },
       "tags": [],
       "version": "1.0.0"
+    },
+    {
+      "automatic_update": true,
+      "build": {
+        "builder": "tools/build_packages.py",
+        "contract_revision": "f1165fcc805e57ee428e7bc42fa6b83f4a6caf25",
+        "legacy": false,
+        "source_commit": "6b4fb8a5412e5a8138312efc4da4a1ea1dd0d0c4",
+        "source_committed_at": "2026-10-02T12:32:33+08:00",
+        "source_digest": "94af399494a9124b8370df6a99a4ddd78320bf63a615371809fae777ce3f6f63",
+        "source_path": "examples/ui-api",
+        "version_bump": "minor"
+      },
+      "icon": {
+        "path": "icon.svg",
+        "sha256": "f9544b68ddd7e369f95f9d73f2da5a7f63c1b319f08093b75385b6473188fe98"
+      },
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "source",
+        "validated",
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": "*",
+        "capabilities": [
+          {
+            "name": "games.read",
+            "version": 1
+          },
+          {
+            "name": "plugin.settings",
+            "version": 1
+          },
+          {
+            "name": "frontend.navigation.main",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Reference native declarative UI and gateway API plugin.",
+        "entrypoint": "plugin:main",
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "665fb64ba2ae7a373e062267c3a3d4a7c7fd10d0d73fe972f8900571082cb89e",
+          "signature": "HvGUuaih7fOD/zk7DseEXA1jJTXJ1Fo29YVlRGcd4HOzNC8CTxDg8tetLbQcZzNz5cDw3bN2C7GRgiY/Mj1dBA=="
+        },
+        "manifest_version": 1,
+        "name": "UI and API Example",
+        "permissions": [
+          {
+            "capability": {
+              "name": "games.read",
+              "version": 1
+            },
+            "rationale": "Read games requested by the user."
+          },
+          {
+            "capability": {
+              "name": "plugin.settings",
+              "version": 1
+            },
+            "rationale": "Persist native UI settings."
+          },
+          {
+            "capability": {
+              "name": "frontend.navigation.main",
+              "version": 1
+            },
+            "rationale": "Expose the declared plugin page in the main navigation."
+          }
+        ],
+        "plugin_id": "example.ui-api",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "refresh"
+          ],
+          "pages": [
+            "games"
+          ],
+          "settings": [
+            "settings"
+          ]
+        },
+        "version": "1.1.0"
+      },
+      "package": {
+        "filename": "example.ui-api-1.1.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 3783
+      },
+      "package_sha256": "d551be236b02d6274a60564e4cc59c7b2b18773b49dd96e44d2cee9055edea77",
+      "plugin_id": "example.ui-api",
+      "publisher": "Unnamed Tracking Official",
+      "readme": "# UI and API Example\n\nA small Plugin API v1 reference with a real declarative page, a `display_mode`\nsettings section and a **Read library** action returning up to 50 current-user\ngames. It requests `games.read`, `plugin.settings` and `frontend.navigation.main`.\nThe host owns permission classification and supplies authenticated gateway context.\nThe entrypoint reports ready and remains supervised instead of exiting after\nstartup requests. No plugin JavaScript is loaded by the native host.\n\nUse it as the minimal structure in the [author guide](../../docs/plugin-author-guide.md).\nBuild/test with `pytest` and `python tools/build_packages.py`; inspect the isolated\n`.validation/` distribution. New packages include this README, an icon, tags and\nrelease-specific update metadata. Release signing requires a registered publisher.\n",
+      "release_notes": "Package lifecycle metadata, embedded documentation and validated Plugin API v1 contributions.",
+      "sha256": "665fb64ba2ae7a373e062267c3a3d4a7c7fd10d0d73fe972f8900571082cb89e",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "665fb64ba2ae7a373e062267c3a3d4a7c7fd10d0d73fe972f8900571082cb89e",
+        "signature": "HvGUuaih7fOD/zk7DseEXA1jJTXJ1Fo29YVlRGcd4HOzNC8CTxDg8tetLbQcZzNz5cDw3bN2C7GRgiY/Mj1dBA=="
+      },
+      "tags": [
+        "reference",
+        "frontend"
+      ],
+      "version": "1.1.0"
     }
   ],
   "version": 1
