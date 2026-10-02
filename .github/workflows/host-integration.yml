@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       host_ref:
-        description: "Companion repository ref (default: matching branch, then plugin-manager)"
+        description: "Host ref (main uses plugin-manager; feature branches prefer a matching host branch)"
         type: string
         required: false
 
@@ -49,7 +49,8 @@ jobs:
           ref="$REQUESTED_REF"
           if [ -z "$ref" ]; then
             ref=plugin-manager
-            if git ls-remote --exit-code --heads https://github.com/Rosefall-a/unnamed_tracking_app.git "refs/heads/$COMPANION_BRANCH" >/dev/null; then
+            # Repository main branches have different ownership targets.
+            if [ "$COMPANION_BRANCH" != main ] && git ls-remote --exit-code --heads https://github.com/Rosefall-a/unnamed_tracking_app.git "refs/heads/$COMPANION_BRANCH" >/dev/null; then
               ref="$COMPANION_BRANCH"
             fi
           fi
