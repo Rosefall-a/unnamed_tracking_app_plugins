@@ -59,7 +59,10 @@ def check(root: Path = ROOT) -> None:
             parsed = urlsplit(target)
             if parsed.scheme or parsed.netloc or not parsed.path:
                 continue
-            path = (root if parsed.path.startswith("/") else page.parent) / unquote(parsed.path).lstrip("/")
+            relative_target = unquote(parsed.path).lstrip("/")
+            path = (root if parsed.path.startswith("/") else page.parent) / relative_target
+            if not path.exists() and page == root / "README.md" and relative_target.startswith("docs/"):
+                path = root / "wiki" / relative_target
             if not path.resolve().is_relative_to(root) or not path.exists():
                 errors.append(f"{page.relative_to(root)}: missing local link {target}")
         # Validate commands, including fenced blocks, rather than illustrative
