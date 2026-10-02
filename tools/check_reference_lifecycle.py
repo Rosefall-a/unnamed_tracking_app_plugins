@@ -95,6 +95,13 @@ def main() -> None:
             path.write_text(json.dumps(manifest), encoding="utf-8")
         commit(source, "feat: exercise permission transition")
         third = releases(source, env)
+        # A valid signed package whose real entrypoint cannot activate. This is
+        # a runtime failure, not malformed ZIP bytes or a mocked health result.
+        for name in NAMES:
+            with (source / "examples" / name / "plugin.py").open("a", encoding="utf-8") as stream:
+                stream.write('\n\ndef main() -> None:\n    raise RuntimeError("Disposable activation failure")\n')
+        commit(source, "fix: exercise failed activation restoration")
+        broken = releases(source, env)
         verifier = PluginPackageVerifier({"disposable": TrustedPublisher(
             key_id="disposable", public_key=public, publisher=record["publisher"],
             status="active", plugin_id_prefixes=("example.",))})
@@ -108,7 +115,7 @@ def main() -> None:
                 def active():
                     return next(p for p in registry.list() if p["plugin_id"] == plugin_id)
 
-                def install(path, replace=False):
+                def stage(path, replace=False):
                     verifier.inspect(path)
                     operation = str(uuid4())
                     registry.install_package(path.read_bytes(), path.name,
@@ -120,6 +127,10 @@ def main() -> None:
                         assert "permission commit" in str(exc)
                     else:
                         raise AssertionError("uncommitted package started")
+                    return operation
+
+                def install(path, replace=False):
+                    operation = stage(path, replace)
                     registry.finish_installation(plugin_id, operation, commit=True)
                     registry.start(plugin_id, user_id="acceptance-user")
                     assert registry.health(plugin_id), registry.diagnostics(plugin_id)
@@ -164,6 +175,11 @@ def main() -> None:
                 install(rollback, replace=True)
                 assert active()["version"] == history["version"]
                 preserved()
+                previous_digest = registry.package(plugin_id)[1]["integrity"]["sha256"]
+                rejected = stage(third[plugin_id], replace=True)
+                registry.finish_installation(plugin_id, rejected, commit=False)
+                assert registry.package(plugin_id)[1]["integrity"]["sha256"] == previous_digest
+                preserved()
                 install(third[plugin_id], replace=True)
                 assert any(p["capability"]["name"] == "media.read" for p in registry.package(plugin_id)[1]["permissions"])
                 preserved()
@@ -171,15 +187,39 @@ def main() -> None:
                 reinstall.write_bytes(base64.b64decode(registry.package_archive(plugin_id)["package"]))
                 install(reinstall, replace=True)
                 preserved()
+                previous_manifest = registry.package(plugin_id)[1]
+                previous_payload = {
+                    p.relative_to(registry.package(plugin_id)[0]): p.read_bytes()
+                    for p in registry._payload_files(registry.package(plugin_id)[0])
+                }
+                failed = stage(broken[plugin_id], replace=True)
+                registry.finish_installation(plugin_id, failed, commit=True)
+                try:
+                    registry.start(plugin_id, user_id="acceptance-user")
+                except RuntimePolicyError:
+                    pass
+                assert not registry.health(plugin_id), "broken candidate was reported healthy"
+                registry.finish_activation(plugin_id, failed, commit=False)
+                restored, manifest = registry.package(plugin_id)
+                assert manifest == previous_manifest
+                assert {p.relative_to(restored): p.read_bytes() for p in registry._payload_files(restored)} == previous_payload
+                preserved()
                 registry.stop(plugin_id)
                 registry.purge_data(plugin_id)
                 assert not configuration.exists() and not storage.exists()
                 registry.start(plugin_id)
                 assert registry.health(plugin_id)
+                # Recreate data after purge so uninstall proves deletion of
+                # nonempty state, rather than checking an already-empty store.
+                registry.storage_put(plugin_id, "uninstall-sentinel", "must be deleted")
+                registry.settings(plugin_id, settings)
+                assert storage.exists() and configuration.exists()
                 registry.delete(plugin_id)
-                assert not storage.exists()
+                assert not storage.exists() and not configuration.exists()
+                assert not (work / "runtime" / plugin_id).exists()
+                assert not (work / "runtime/.history" / plugin_id).exists()
                 assert all(p["plugin_id"] != plugin_id for p in registry.list())
-                print(f"{plugin_id}: real install/configure/start/restart/disable/update/permission transaction/rollback/reinstall/purge/uninstall passed", flush=True)
+                print(f"{plugin_id}: real install/configure/start/restart/disable/update/rejected permission transaction/rollback/reinstall/failed activation restoration/purge/nonempty uninstall passed", flush=True)
         finally:
             supervisor.stop_all()
 

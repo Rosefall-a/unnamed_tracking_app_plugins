@@ -1,0 +1,35 @@
+{
+  "kind": "actual-host-components-with-fixture-api",
+  "captured_at": "2026-10-02T13:01:00.903Z",
+  "host_revision": "5af8f17dcdda41b8242953f46ef87d46febb1f03",
+  "plugin_revision": "82b5ee01d81de39f30c94e152ac6e11480c3816c",
+  "plugin_id": "example.ui-api",
+  "plugin_version": "1.1.0",
+  "captures": [
+    {
+      "filename": "installed-plugin-component.png",
+      "description": "Actual Plugin Manager installed card; status/grants are fixture data.",
+      "sha256": "ad4dea033ccd500c0490bd3887cd5dbe03d483b0e9de74af01520b1b096563cf"
+    },
+    {
+      "filename": "plugin-install-component.png",
+      "description": "Actual installer source chooser: upload, URL and catalogue; no install executed.",
+      "sha256": "4bb0fafffd2b50da7a83a3030d8b5f32717495f9fd33d0cf6fd493f8684af1d7"
+    },
+    {
+      "filename": "lifecycle-controls-component.png",
+      "description": "Actual stop/disable/reinstall/purge/uninstall controls; no operation executed.",
+      "sha256": "16418f907b5c0fdadcf7a582c0a1f68d682a9a110ed75e20b037b0c049ff19dd"
+    },
+    {
+      "filename": "retained-versions-component.png",
+      "description": "Actual retained-version and automatic-update controls with fixture history.",
+      "sha256": "e25703e21a3f5913ace9aaa4241dafda567c4bfbd16d6c79dd468e2de83306e4"
+    },
+    {
+      "filename": "plugin-settings-component.png",
+      "description": "Actual declarative UI/API configuration form and action; no save/action executed.",
+      "sha256": "f3ab6e84d33803f8c1acf1fff8435574c8465213fab6f121aa7e60c435bf2447"
+    }
+  ]
+}

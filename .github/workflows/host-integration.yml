@@ -90,7 +90,7 @@ jobs:
         env:
           JELLYFIN_SCREENSHOT_DIR: ${{ runner.temp }}/plugin-acceptance/screenshots
         run: |
-          python .validation/host/tools/check_plugin_repository_lifecycle.py \
+          python tools/check_host_lifecycle.py --host-root .validation/host \
             --plugins-root . \
             --work-root "${{ runner.temp }}/plugin-acceptance" --browser
       - name: Exercise real reference packages through runtime transactions
@@ -107,4 +107,5 @@ jobs:
             ${{ runner.temp }}/plugin-acceptance/*.log
             ${{ runner.temp }}/plugin-acceptance/conformance.json
             ${{ runner.temp }}/plugin-acceptance/**/*.png
+            ${{ runner.temp }}/plugin-acceptance/workflow-captures.json
           if-no-files-found: warn

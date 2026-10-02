@@ -343,6 +343,17 @@ def validate_distribution(output: Path, *, source_root: Path = ROOT, check_sourc
 def validate_immutable_history(output: Path, repository: Path, baseline_ref: str) -> None:
     if not git(repository, "rev-parse", "--verify", baseline_ref):
         raise ValueError("baseline Git revision is unavailable; fetch full history")
+    baseline_catalogue = subprocess.run(
+        ["git", "-C", str(repository), "show", f"{baseline_ref}:list.json"],
+        capture_output=True,
+    )
+    if baseline_catalogue.returncode:
+        raise ValueError("cannot read baseline catalogue")
+    previous_ids = {entry["plugin_id"] for entry in json.loads(baseline_catalogue.stdout)["plugins"]}
+    current_ids = {entry["plugin_id"] for entry in json.loads((output / "list.json").read_bytes())["plugins"]}
+    removed = previous_ids - current_ids
+    if removed:
+        raise ValueError(f"published plugins disappeared from catalogue: {', '.join(sorted(removed))}")
     names = git(repository, "ls-tree", "-r", "--name-only", baseline_ref, "--", "dist", "releases")
     for name in (names or "").splitlines():
         if not name.endswith((".utp", ".json")):

@@ -1,0 +1,57 @@
+{
+  "kind": "authenticated-real-host",
+  "captured_at": "2026-10-02T13:31:18.207Z",
+  "host_revision": "45424fe6846587e2c25cbdafa882c621d2dbcd04",
+  "plugin_revision": "c885eb5aedca8910cbb37faf79e61ca4b4214b32",
+  "plugin_id": "example.jellyfin-media-sync",
+  "signing_identity": "integration-disposable",
+  "captures": [
+    {
+      "filename": "installed-plugin.png",
+      "description": "Authenticated installed Jellyfin predecessor after denying a newly requested update scope.",
+      "sha256": "08f5a327ad221e0803bbc8116bcb641f6516e019fb68ac27ea86c2f4f3734f0b"
+    },
+    {
+      "filename": "plugin-install.png",
+      "description": "Actual authenticated installer source chooser with live catalogue data.",
+      "sha256": "f7f038c811e057e0bd2d151fc70d87dc2749d086e86232f90e331207493e402e"
+    },
+    {
+      "filename": "lifecycle-controls.png",
+      "description": "Actual authenticated lifecycle controls; predecessor remains enabled and healthy.",
+      "sha256": "05bf5501c9b13ac1d90157672dda8e37b9ad6bc2c2e9d60dd97ba1a113237a5d"
+    },
+    {
+      "filename": "retained-versions.png",
+      "description": "Actual retained predecessors and automatic-update controls from real lifecycle acceptance.",
+      "sha256": "ca99777cc281e8c983a350a8565f3a3290178afa350e04e4966159b0c2840b9c"
+    },
+    {
+      "filename": "plugin-settings.png",
+      "description": "Actual configured Jellyfin native settings/UI; saved token is not returned to the input.",
+      "sha256": "ad69b6b06d24adcbc2fc23068b096592f36e0c36c6a320b2e88e648a78d70c92"
+    },
+    {
+      "filename": "permission-consent.png",
+      "source_filename": "permission-review.png",
+      "description": "Actual authenticated install consent, selected permission groups and host-owned risk classification.",
+      "sha256": "d2fed1f3b36827278b28e24ba3adef6e83a48b09699d1dde72e50329d5eaef1f"
+    },
+    {
+      "filename": "plugin-ui.png",
+      "source_filename": "jellyfin-native-ui.png",
+      "description": "Actual native plugin UI before configuration, with the expected empty-server validation error.",
+      "sha256": "ec44c498e6142e823c30bd80bd5a4885cb56149a7f8ad64685aa20d8e756ba85"
+    },
+    {
+      "filename": "update-review-current.png",
+      "source_filename": "update-review.png",
+      "description": "Actual authenticated update review with signed identity, compatibility, digest and retained/new grant details.",
+      "sha256": "9243a17f97be061e083c1f0ba2360c3ed6b8f4ba43e65e94d7e8116fd3d9141a"
+    }
+  ],
+  "workflow_run": 37013301255,
+  "artifact_id": 11229145134,
+  "artifact_zip_sha256": "b3d492c39d8da93bfe1810a73fe945b04f064e7c2ea099e5e10560debd847bbe",
+  "branch_revision": "f2aa6f7e47aff3655e54f966158465852ed7e1da"
+}
