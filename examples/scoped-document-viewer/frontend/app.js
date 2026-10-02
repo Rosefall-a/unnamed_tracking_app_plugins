@@ -6,6 +6,12 @@ const metadata = document.querySelector("#document-meta");
 const refreshButton = document.querySelector("#refresh");
 const moreButton = document.querySelector("#more");
 const downloadButton = document.querySelector("#download");
+const settingsButton = document.querySelector("#settings-button");
+const settingsPanel = document.querySelector("#settings-panel");
+const maxPreviewInput = document.querySelector("#max-preview-mb");
+const saveSettingsButton = document.querySelector("#save-settings");
+const cancelSettingsButton = document.querySelector("#cancel-settings");
+const settingsStatus = document.querySelector("#settings-status");
 let currentDocument = null;
 let generation = 0;
 let controller = null;
@@ -13,8 +19,9 @@ let pdfTask = null;
 let renderTask = null;
 let nextOffset = 0;
 let listGeneration = 0;
-const MAX_BYTES = 5 * 1024 * 1024;
+const MAX_BYTES = Number.MAX_SAFE_INTEGER;
 const CHUNK_BYTES = 24 * 1024;
+let maxPreviewMiB = 0;
 
 class DocumentError extends Error {
   constructor(kind, message) {
@@ -106,6 +113,25 @@ function pluginRequest(method, payload = {}, signal) {
       "*",
     );
   });
+}
+
+async function loadSettings() {
+  const result = await pluginRequest("settings.get");
+  const value = result?.value;
+  maxPreviewMiB =
+    typeof value === "number" && Number.isFinite(value) && value >= 0
+      ? Math.floor(value)
+      : 0;
+  maxPreviewInput.value = String(maxPreviewMiB);
+}
+
+function setSettingsPanel(open) {
+  settingsPanel.hidden = !open;
+  if (open) {
+    maxPreviewInput.value = String(maxPreviewMiB);
+    settingsStatus.textContent = "";
+    maxPreviewInput.focus();
+  }
 }
 
 function displayName(filename) {
@@ -205,7 +231,7 @@ async function loadDocument(item, token) {
   let previous = null;
   const chunks = [];
   do {
-    const values = { document_id: item.id, chunk_bytes: CHUNK_BYTES, offset };
+    const values = { document_id: item.id, chunk_bytes: CHUNK_BYTES, offset, max_bytes: maxPreviewMiB * 1024 * 1024 };
     if (previous) values.content_sha256 = previous.content_sha256;
     const result = await pluginRequest(
       "plugin.run-action",
@@ -551,12 +577,40 @@ downloadButton.onclick = async () => {
     downloadButton.disabled = false;
   }
 };
+settingsButton.onclick = () => {
+  setSettingsPanel(settingsPanel.hidden);
+};
+cancelSettingsButton.onclick = () => {
+  setSettingsPanel(false);
+};
+saveSettingsButton.onclick = async () => {
+  const value = Number(maxPreviewInput.value);
+  if (!Number.isSafeInteger(value) || value < 0) {
+    settingsStatus.textContent = "Enter a non-negative whole number of MiB.";
+    return;
+  }
+  saveSettingsButton.disabled = true;
+  settingsStatus.textContent = "Saving…";
+  try {
+    await pluginRequest("plugin.save-settings", { max_preview_mb: value });
+    maxPreviewMiB = value;
+    settingsStatus.textContent =
+      value === 0
+        ? "Saved. Preview size is unlimited."
+        : `Saved. Preview size is limited to ${value} MiB.`;
+  } catch (error) {
+    settingsStatus.textContent = error.message || "Settings could not be saved.";
+  } finally {
+    saveSettingsButton.disabled = false;
+  }
+};
 moreButton.onclick = () => {
   void loadList();
 };
 window.addEventListener("beforeunload", clearViewer);
 async function initialize() {
   try {
+    await loadSettings();
     const context = await pluginRequest("plugin.context");
     if (context.document_id) {
       if (
