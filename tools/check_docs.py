@@ -43,12 +43,13 @@ def navigation_paths(value):
 
 def check(root: Path = ROOT) -> None:
     root = root.resolve()
-    config = yaml.safe_load((root / "mkdocs.yml").read_text(encoding="utf-8"))
-    docs = root / config.get("docs_dir", "docs")
+    config_path = root / "wiki/mkdocs.yml"
+    config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    docs = config_path.parent / config.get("docs_dir", "docs")
     errors = []
     for target in navigation_paths(config["nav"]):
         if not (docs / target).is_file():
-            errors.append(f"mkdocs.yml: missing navigation page {target}")
+            errors.append(f"{config_path.relative_to(root)}: missing navigation page {target}")
     pages = [root / "README.md", *sorted(docs.rglob("*.md"))]
     for page in pages:
         source = page.read_text(encoding="utf-8")
