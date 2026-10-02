@@ -4009,11 +4009,11 @@
         "builder": "tools/build_packages.py",
         "contract_revision": "f1165fcc805e57ee428e7bc42fa6b83f4a6caf25",
         "legacy": false,
-        "source_commit": "6b4fb8a5412e5a8138312efc4da4a1ea1dd0d0c4",
-        "source_committed_at": "2026-10-02T12:32:33+08:00",
-        "source_digest": "97118937b44bcc43ca497ef6e86788af35e450aad2e0c299e82241a36b524cec",
+        "source_commit": "48bd638349ee4a4716ffc419186a96d5f86139f0",
+        "source_committed_at": "2026-10-02T20:34:13+08:00",
+        "source_digest": "a222b08cbcacc36d23283d3c0a53f84d11be06b453955aa0e0c931c9a90c646f",
         "source_path": "examples/scoped-document-viewer",
-        "version_bump": "patch"
+        "version_bump": "minor"
       },
       "capabilities": [
         {
@@ -4096,8 +4096,8 @@
         },
         "integrity": {
           "key_id": "non-secret-testkey",
-          "sha256": "091eee79e239954d26633e9b7f7edd490a1edb5ffccf782d75e5a79d551a0880",
-          "signature": "5PgwMbCBdqveg/JJXE0+8Nerp6koniF4GACqhTB/xtPErdm0k9iz9rAcM6Wx/8YF89P39A7PTh4SnQLLuZAIAw=="
+          "sha256": "8d78405a21be23c5027b3302ae3ca67cb365bcb0c4d6eacd9f0b15d6fe003e58",
+          "signature": "PijfTL6+zbdyIMCOjV7dXG/H8eB/yHoKk2pjEcmxJY6rq1oqnqkY7yZAQTngp6MbOQ6sjMEMN8KrJUoJ3UjWDQ=="
         },
         "manifest_version": 1,
         "name": "Scoped Document Viewer",
@@ -4140,15 +4140,15 @@
           ],
           "settings": []
         },
-        "version": "1.5.1"
+        "version": "1.6.0"
       },
       "name": "Scoped Document Viewer",
       "package": {
-        "filename": "example.scoped-document-viewer-1.5.1.utp",
+        "filename": "example.scoped-document-viewer-1.6.0.utp",
         "format": "utp-v1",
-        "size_bytes": 692107
+        "size_bytes": 692112
       },
-      "package_sha256": "652347ca59fa4b9d6c1f951e6ded29973ee0f95d8a8206ecaddac02dc0089b09",
+      "package_sha256": "0732ac61fbcd2d30a80a99c3f1a04f146b6b5ada7c4925598204308335fcc060",
       "permissions": [
         {
           "capability": {
@@ -4174,7 +4174,7 @@
       ],
       "plugin_id": "example.scoped-document-viewer",
       "publisher": "Unnamed Tracking Official",
-      "readme": "# Scoped Document Viewer\n\nThe official plugin implementation of [application PR #241](https://github.com/Rosefall-a/unnamed_tracking_app/pull/241), inspected at `a9b7d3102c1efec08a5bf11a919c6d2204376ebc`. The PR's current code supports sanitized HTML/XHTML, despite its older summary describing only PDF/text.\n\nVersion **1.5.0** opens game Docs entries in a new browser tab through a declared reader contribution. The optional library remains available through Browse library. It provides a plugin-owned reader with game/file metadata, paginated listing, loading and explicit error states, PDF pages and zoom, literal UTF-8 text, and sanitized HTML with a source toggle. It reuses the host's `GameFileItem` rows and `games/<folder>/docs` storage through public document DTOs and opaque IDs. Upload files in the host game's Docs tab; the plugin does not create a separate document store.\n\n## Permissions\n\n| Permission | Purpose |\n| --- | --- |\n| `documents.read` v1 | List/read documents belonging to the current caller's games. |\n| `backend.routes.plugin` v1 | Publish authenticated JSON handlers under this plugin's namespace. |\n| `frontend.context.documents` v1 | Register the reader for game Docs entries; the host opens an owned document ID in a new tab. |\n\nNo native frontend, full API, host route, network, filesystem, credential, or persistent-storage permission is requested. The backend imports only the public SDK. Updates require normal host consent for the document-context grant. There is no mandatory Documents sidebar section.\n\n## Security model\n\nThe host checks the current installation, lifecycle, active user and live grants on each action, route and document chunk. Document queries join `GameFileItem` to the caller's active games, exclude trashed items/non-document kinds, and do not expose another user's IDs/content. Another user's ID and a nonexistent ID both produce a missing-document result.\n\nPaths remain host-owned. Stored names containing separators, encoded separators, dot traversal, NUL or Windows drive syntax are rejected. Resolved paths and game folders must stay within the caller's game/document root; escaping symlinks are rejected. The host reads at most 5 MiB plus one sentinel byte before returning any content, validates the complete representation, and transports 24 KiB chunks as base64 JSON. Every continuation repeats authorization and content validation; SHA-256 detects replacement or mixed chunks. The frontend also validates IDs, MIME/format, byte counts, offsets, UTF-8 and final digest. No limits or sandbox flags were relaxed.\n\nThe host serves verified package CSS and classic scripts in the authenticated entry response (`frontend.inline_assets: true`), authorizing only the bundled scripts with a fresh CSP nonce. Opaque iframe subresource requests do not need login cookies; no asset endpoint is made public and no same-origin permission is granted. The custom frontend runs under the host's `sandbox=\"allow-scripts\"` and CSP. It gets no cookies or host DOM access. Requests use the correlated parent bridge, with cancellation and timeouts. User data responses carry `nosniff` and `private, no-store`; document bytes are never served as an uploaded HTML page. PDF.js, DOMPurify and the SHA-256 fallback are packaged offline, pinned and integrity checked; no CDN/runtime download is used.\n\nPDF.js renders canvas pages with evaluation, XFA, form/annotation interaction, external resource fetching and font downloads disabled. HTML uses DOMPurify's HTML profile and PR #241's forbidden tags/attributes, with additional restrictions on navigation/ping. SVG/MathML, scripts, images, forms, frames, styles and active URLs are removed. All remaining links are inert. Plain text always uses `textContent`.\n\n## Supported documents\n\n- PDF identified by `%PDF-`, including PDFs with an incorrect extension. Malformed/encrypted PDFs produce a renderer error.\n- Strict UTF-8: `.cfg`, `.conf`, `.csv`, `.ini`, `.json`, `.log`, `.md`, `.nfo`, `.properties`, `.toml`, `.txt`, `.xml`, `.yaml`, `.yml`; the PR's conservative text MIME allowlist also applies. Existing platform `.markdown` and `.rst` support remains.\n- `.html`, `.htm`, `.xhtml`: transported as `text/plain` with `format: html`, then sanitized. A source view shows literal text.\n- `.docx`, `.pptx`, `.odt`, `.odp`: local reading previews show text, basic tables and embedded PNG/JPEG images. Slides retain presentation order. Office styles, charts, animations, equations and complex layout are not reproduced. The original remains downloadable.\n- Office containers are limited to 1,024 entries, 20 MiB expanded total, 2 MiB per XML part, 5 MiB per other part and 100:1 compression (a 1 KiB floor allows tiny compressed parts). XML DTDs/entities, macros, ActiveX, embedded objects, encryption and escaping/duplicate archive paths are rejected. XML trees are capped at 50,000 nodes; presentations at 500 slides. External links/resources are inert; SVG images and unknown raster types are not rendered.\n- Empty text is supported. Binary controls and invalid UTF-8 are rejected. SVG, legacy `.doc`/`.ppt`, macro-enabled Office, arbitrary archives and other unsupported files remain listed with metadata and fail explicitly when opened.\n\n## Opening and downloading\n\nIn a game's **Docs** tab, click a filename to open the registered reader in a new browser tab. The host passes only `document_id` and `game_id` through `plugin.context`; the reader opens that ID directly without fetching the whole library. If no authorized reader is active, the filename retains its normal download behavior. Readers are selected by declared extension and deterministic order. A separate Download link remains on every game document row.\n\n**Download original** in the reader calls `plugin.download-document`. The parent checks the scoped attachment endpoint using authenticated HEAD, then starts the download. GET repeats live authorization and ownership; unsupported/malformed/oversized previews can still be downloaded as inert originals. The download endpoint is `/api/plugins/<plugin-id>/capabilities/documents/<document-id>/download`, uses opaque IDs and safe stored-path resolution, and always sends attachment disposition, octet-stream, nosniff and private/no-store. Downloads stream independently of the 5 MiB preview cap. The sandbox gets neither a raw URL nor cookies and requires no download/native privilege.\n\n## Dedicated plugin API\n\n`GET /api/plugins/example.scoped-document-viewer/documents?limit=32&offset=0` returns a page and `next_offset`. `GET .../documents/<document-id>` returns the first bounded chunk. Continue with `?offset=<next_offset>&content_sha256=<digest>` until `complete` is true. JSON errors retain their `kind`, safe `message` and HTTP status (`400`, `404`, `409`, `413`, `415`, `500`). The host separately enforces `401`/`403` authorization and lifecycle errors.\n\nThe UI invokes the equivalent declared actions; it never fetches host data endpoints directly. Neither API accepts caller-supplied storage paths or user IDs.\n\n## Differences and restrictions relative to PR #241\n\n- **PDFs also have the platform's 5 MiB cap.** PR #241 limits text to 5 MiB but streams PDFs without a viewer size cap. Large PDFs can be downloaded, but their inline preview requires a future authorized streaming API; this plugin does not bypass the current bounded domain API.\n- The browser-native PDF iframe cannot reliably load in an opaque sandbox. Bundled PDF.js supplies page/zoom controls. Native print, PDF text search/selection, interactive forms and links are not reproduced. PDF passwords are unsupported.\n- File upload compatibility (`file`/`files`), file/media rename and generic downloads added on the PR branch are host management features. The read-only document APIs cannot reproduce them. Use the host's existing Docs management UI; this plugin adds no write privilege or undocumented endpoints.\n- Only indexed, active `GameFileItem(kind=doc)` rows are listed. Legacy disk-only files need the host Docs listing/scan to index them. No document editing, indexing, OCR or annotation is provided.\n- HTML links are disabled, a stricter navigation policy than the PR's sanitized HTML component.\n- Requires the accompanying `plugin-manager` document chunk/pagination contract and reader contribution, inline-asset delivery, scoped download and bridge context/status support. Version 1.5.0 must not be advertised as compatible with an older host just because both expose API v1.\n\n## Build and verification\n\n```sh\npython -m pytest -q\nnpm ci\nnpx playwright install --with-deps chromium --only-shell\nnpm run check\nnpm test\npython tools/build_packages.py\npython tools/verify_packages.py dist/*.utp\npython tools/validate_packages.py dist/*.utp\n```\n\nBrowser tests run the actual assets in the host's opaque sandbox/CSP and verify PDF pixels/page controls, sanitization, UTF-8, explicit errors, malformed payloads/documents, integrity and stale responses. They also reproduce the original authenticated sandbox CSS failure, exercise direct game links/downloads, and render actual OOXML/OpenDocument archives. Host tests cover persisted ownership, live grants/revocation, deletion, traversal, limits and transport size. For a direct comparison to the actual PR source:\n\n```sh\npython tools/check_document_parity.py --reference /path/to/pr241-checkout --host /path/to/updated-host\n```\n\nSee the [validation report](../../docs/scoped-document-viewer-validation.md) for recorded results, baseline static-check failures, and environment limitations.\n\n`tools/vendor_document_libraries.py` reproducibly downloads the pinned upstream libraries (PDF.js 5.6.205, DOMPurify 3.4.14, js-sha256 0.11.1, fflate 0.8.3), checks npm SHA-512 archive integrity against `vendor-lock.json`, and records packaged-file SHA-256 hashes and licenses. Classic-script wrappers allow the libraries to run in an opaque origin without module CORS or worker/network privileges. PDF.js uses its in-process worker implementation.\n\nThe new checked-in `.utp` is a valid **unsigned local build**, requiring the host's explicit untrusted-package install confirmation. Existing signed releases are preserved. Trusted release signing must use the repository's reviewed publisher workflow; no private key or fabricated signature is included.\n\nDigest verification and secure request correlation also work on HTTP deployments: Web Crypto is used when available, with bundled SHA-256 and `getRandomValues` fallbacks otherwise. Browser tests verify this path. See the [Web Crypto context rules](https://developer.mozilla.org/en-US/docs/Web/API/Window/crypto), [PDF.js API](https://mozilla.github.io/pdf.js/api/) and [native PDF sandbox restriction](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe).\n\n![Sandboxed PDF preview](../../docs/screenshots/scoped-document-viewer.png)\n\n![Direct game document reading preview](../../docs/screenshots/scoped-document-reader-office.png)\n",
+      "readme": "# Scoped Document Viewer\n\nThe official plugin implementation of [application PR #241](https://github.com/Rosefall-a/unnamed_tracking_app/pull/241), inspected at `a9b7d3102c1efec08a5bf11a919c6d2204376ebc`. The PR's current code supports sanitized HTML/XHTML, despite its older summary describing only PDF/text.\n\nVersion **1.5.0** opens game Docs entries in a new browser tab through a declared reader contribution. The optional library remains available through Browse library. It provides a plugin-owned reader with game/file metadata, paginated listing, loading and explicit error states, PDF pages and zoom, literal UTF-8 text, and sanitized HTML with a source toggle. It reuses the host's `GameFileItem` rows and `games/<folder>/docs` storage through public document DTOs and opaque IDs. Upload files in the host game's Docs tab; the plugin does not create a separate document store.\n\n## Permissions\n\n| Permission | Purpose |\n| --- | --- |\n| `documents.read` v1 | List/read documents belonging to the current caller's games. |\n| `backend.routes.plugin` v1 | Publish authenticated JSON handlers under this plugin's namespace. |\n| `frontend.context.documents` v1 | Register the reader for game Docs entries; the host opens an owned document ID in a new tab. |\n\nNo native frontend, full API, host route, network, filesystem, credential, or persistent-storage permission is requested. The backend imports only the public SDK. Updates require normal host consent for the document-context grant. There is no mandatory Documents sidebar section.\n\n## Security model\n\nThe host checks the current installation, lifecycle, active user and live grants on each action, route and document chunk. Document queries join `GameFileItem` to the caller's active games, exclude trashed items/non-document kinds, and do not expose another user's IDs/content. Another user's ID and a nonexistent ID both produce a missing-document result.\n\nPaths remain host-owned. Stored names containing separators, encoded separators, dot traversal, NUL or Windows drive syntax are rejected. Resolved paths and game folders must stay within the caller's game/document root; escaping symlinks are rejected. The host reads at most 5 MiB plus one sentinel byte before returning any content, validates the complete representation, and transports 24 KiB chunks as base64 JSON. Every continuation repeats authorization and content validation; SHA-256 detects replacement or mixed chunks. The frontend also validates IDs, MIME/format, byte counts, offsets, UTF-8 and final digest. No limits or sandbox flags were relaxed.\n\nThe host serves verified package CSS and classic scripts in the authenticated entry response (`frontend.inline_assets: true`), authorizing only the bundled scripts with a fresh CSP nonce. Opaque iframe subresource requests do not need login cookies; no asset endpoint is made public and no same-origin permission is granted. The custom frontend runs under the host's `sandbox=\"allow-scripts\"` and CSP. It gets no cookies or host DOM access. Requests use the correlated parent bridge, with cancellation and timeouts. User data responses carry `nosniff` and `private, no-store`; document bytes are never served as an uploaded HTML page. PDF.js, DOMPurify and the SHA-256 fallback are packaged offline, pinned and integrity checked; no CDN/runtime download is used.\n\nPDF.js renders canvas pages with evaluation, XFA, form/annotation interaction, external resource fetching and font downloads disabled. HTML uses DOMPurify's HTML profile and PR #241's forbidden tags/attributes, with additional restrictions on navigation/ping. SVG/MathML, scripts, images, forms, frames, styles and active URLs are removed. All remaining links are inert. Plain text always uses `textContent`.\n\n## Supported documents\n\n- PDF identified by `%PDF-`, including PDFs with an incorrect extension. Malformed/encrypted PDFs produce a renderer error.\n- Strict UTF-8: `.cfg`, `.conf`, `.csv`, `.ini`, `.json`, `.log`, `.md`, `.nfo`, `.properties`, `.toml`, `.txt`, `.xml`, `.yaml`, `.yml`; the PR's conservative text MIME allowlist also applies. Existing platform `.markdown` and `.rst` support remains.\n- `.html`, `.htm`, `.xhtml`: transported as `text/plain` with `format: html`, then sanitized. A source view shows literal text.\n- `.docx`, `.pptx`, `.odt`, `.odp`: local reading previews show text, basic tables and embedded PNG/JPEG images. Slides retain presentation order. Office styles, charts, animations, equations and complex layout are not reproduced. The original remains downloadable.\n- Office containers are limited to 1,024 entries, 20 MiB expanded total, 2 MiB per XML part, 5 MiB per other part and 100:1 compression (a 1 KiB floor allows tiny compressed parts). XML DTDs/entities, macros, ActiveX, embedded objects, encryption and escaping/duplicate archive paths are rejected. XML trees are capped at 50,000 nodes; presentations at 500 slides. External links/resources are inert; SVG images and unknown raster types are not rendered.\n- Empty text is supported. Binary controls and invalid UTF-8 are rejected. SVG, legacy `.doc`/`.ppt`, macro-enabled Office, arbitrary archives and other unsupported files remain listed with metadata and fail explicitly when opened.\n\n## Opening and downloading\n\nIn a game's **Docs** tab, click a filename to open the registered reader in a new browser tab. The host passes only `document_id` and `game_id` through `plugin.context`; the reader opens that ID directly without fetching the whole library. If no authorized reader is active, the filename retains its normal download behavior. Readers are selected by declared extension and deterministic order. A separate Download link remains on every game document row.\n\n**Download original** in the reader calls `plugin.download-document`. The parent checks the scoped attachment endpoint using authenticated HEAD, then starts the download. GET repeats live authorization and ownership; unsupported/malformed/oversized previews can still be downloaded as inert originals. The download endpoint is `/api/plugins/<plugin-id>/capabilities/documents/<document-id>/download`, uses opaque IDs and safe stored-path resolution, and always sends attachment disposition, octet-stream, nosniff and private/no-store. Downloads stream independently of the 5 MiB preview cap. The sandbox gets neither a raw URL nor cookies and requires no download/native privilege.\n\n## Dedicated plugin API\n\n`GET /api/plugins/example.scoped-document-viewer/documents?limit=32&offset=0` returns a page and `next_offset`. `GET .../documents/<document-id>` returns the first bounded chunk. Continue with `?offset=<next_offset>&content_sha256=<digest>` until `complete` is true. JSON errors retain their `kind`, safe `message` and HTTP status (`400`, `404`, `409`, `413`, `415`, `500`). The host separately enforces `401`/`403` authorization and lifecycle errors.\n\nThe UI invokes the equivalent declared actions; it never fetches host data endpoints directly. Neither API accepts caller-supplied storage paths or user IDs.\n\n## Differences and restrictions relative to PR #241\n\n- **PDFs also have the platform's 5 MiB cap.** PR #241 limits text to 5 MiB but streams PDFs without a viewer size cap. Large PDFs can be downloaded, but their inline preview requires a future authorized streaming API; this plugin does not bypass the current bounded domain API.\n- The browser-native PDF iframe cannot reliably load in an opaque sandbox. Bundled PDF.js supplies page/zoom controls. Native print, PDF text search/selection, interactive forms and links are not reproduced. PDF passwords are unsupported.\n- File upload compatibility (`file`/`files`), file/media rename and generic downloads added on the PR branch are host management features. The read-only document APIs cannot reproduce them. Use the host's existing Docs management UI; this plugin adds no write privilege or undocumented endpoints.\n- Only indexed, active `GameFileItem(kind=doc)` rows are listed. Legacy disk-only files need the host Docs listing/scan to index them. No document editing, indexing, OCR or annotation is provided.\n- HTML links are disabled, a stricter navigation policy than the PR's sanitized HTML component.\n- Requires the accompanying `plugin-manager` document chunk/pagination contract and reader contribution, inline-asset delivery, scoped download and bridge context/status support. Version 1.5.0 must not be advertised as compatible with an older host just because both expose API v1.\n\n## Build and verification\n\n```sh\npython -m pytest -q\nnpm ci\nnpx playwright install --with-deps chromium --only-shell\nnpm run check\nnpm test\npython tools/build_packages.py\npython tools/verify_packages.py dist/*.utp\npython tools/validate_packages.py dist/*.utp\n```\n\nBrowser tests run the actual assets in the host's opaque sandbox/CSP and verify PDF pixels/page controls, sanitization, UTF-8, explicit errors, malformed payloads/documents, integrity and stale responses. They also reproduce the original authenticated sandbox CSS failure, exercise direct game links/downloads, and render actual OOXML/OpenDocument archives. Host tests cover persisted ownership, live grants/revocation, deletion, traversal, limits and transport size. For a direct comparison to the actual PR source:\n\n```sh\npython tools/check_document_parity.py --reference /path/to/pr241-checkout --host /path/to/updated-host\n```\n\nSee the [validation report](../../docs/scoped-document-viewer-validation.md) for recorded results, baseline static-check failures, and environment limitations.\n\n`tools/vendor_document_libraries.py` reproducibly downloads the pinned upstream libraries (PDF.js 5.6.205, DOMPurify 3.4.14, js-sha256 0.11.1, fflate 0.8.3), checks npm SHA-512 archive integrity against `vendor-lock.json`, and records packaged-file SHA-256 hashes and licenses. Classic-script wrappers allow the libraries to run in an opaque origin without module CORS or worker/network privileges. PDF.js uses its in-process worker implementation.\n\nThe new checked-in `.utp` is a valid **unsigned local build**, requiring the host's explicit untrusted-package install confirmation. Existing signed releases are preserved. Trusted release signing must use the repository's reviewed publisher workflow; no private key or fabricated signature is included.\n\nDigest verification and secure request correlation also work on HTTP deployments: Web Crypto is used when available, with bundled SHA-256 and `getRandomValues` fallbacks otherwise. Browser tests verify this path. See the [Web Crypto context rules](https://developer.mozilla.org/en-US/docs/Web/API/Window/crypto), [PDF.js API](https://mozilla.github.io/pdf.js/api/) and [native PDF sandbox restriction](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe).\n\n![Sandboxed PDF preview](../../docs/assets/screenshots/scoped-document-viewer.png)\n\n![Direct game document reading preview](../../docs/assets/screenshots/scoped-document-reader-office.png)\n",
       "release_notes": "Package lifecycle metadata, embedded documentation and validated Plugin API v1 contributions.",
       "releases": [
         {
@@ -4864,14 +4864,155 @@
           ],
           "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.scoped-document-viewer-1.5.1.utp",
           "version": "1.5.1"
+        },
+        {
+          "automatic_update": true,
+          "build": {
+            "builder": "tools/build_packages.py",
+            "contract_revision": "f1165fcc805e57ee428e7bc42fa6b83f4a6caf25",
+            "legacy": false,
+            "source_commit": "48bd638349ee4a4716ffc419186a96d5f86139f0",
+            "source_committed_at": "2026-10-02T20:34:13+08:00",
+            "source_digest": "a222b08cbcacc36d23283d3c0a53f84d11be06b453955aa0e0c931c9a90c646f",
+            "source_path": "examples/scoped-document-viewer",
+            "version_bump": "minor"
+          },
+          "icon": {
+            "path": "icon.svg",
+            "sha256": "64b8fdc12bf5da1e0db71144703582d52dd591ba54d0477e11ee2abffd501851"
+          },
+          "lifecycle": "published",
+          "lifecycle_stages": [
+            "source",
+            "validated",
+            "built",
+            "catalogued",
+            "published",
+            "downloadable"
+          ],
+          "manifest": {
+            "application_version_range": ">=1.0.0",
+            "backend_routes": [
+              {
+                "authorization": "authenticated",
+                "handler": "plugin:list_documents_route",
+                "id": "list-documents-api",
+                "methods": [
+                  "GET"
+                ],
+                "path": "documents",
+                "scope": "plugin"
+              },
+              {
+                "authorization": "authenticated",
+                "handler": "plugin:read_document_route",
+                "id": "read-document-api",
+                "methods": [
+                  "GET"
+                ],
+                "path": "documents/{document_id}",
+                "scope": "plugin"
+              }
+            ],
+            "capabilities": [
+              {
+                "name": "documents.read",
+                "version": 1
+              },
+              {
+                "name": "backend.routes.plugin",
+                "version": 1
+              },
+              {
+                "name": "frontend.context.documents",
+                "version": 1
+              }
+            ],
+            "dependencies": [],
+            "description": "Game Docs reader with new-tab previews, original downloads, PDF, text, safe HTML and Office/OpenDocument reading views.",
+            "entrypoint": "plugin:main",
+            "frontend": {
+              "entry": "frontend/index.html",
+              "inline_assets": true
+            },
+            "integrity": {
+              "key_id": "non-secret-testkey",
+              "sha256": "8d78405a21be23c5027b3302ae3ca67cb365bcb0c4d6eacd9f0b15d6fe003e58",
+              "signature": "PijfTL6+zbdyIMCOjV7dXG/H8eB/yHoKk2pjEcmxJY6rq1oqnqkY7yZAQTngp6MbOQ6sjMEMN8KrJUoJ3UjWDQ=="
+            },
+            "manifest_version": 1,
+            "name": "Scoped Document Viewer",
+            "permissions": [
+              {
+                "capability": {
+                  "name": "documents.read",
+                  "version": 1
+                },
+                "rationale": "List and open only documents belonging to the signed-in user's games. Host paths and unsupported active content are never exposed."
+              },
+              {
+                "capability": {
+                  "name": "backend.routes.plugin",
+                  "version": 1
+                },
+                "rationale": "Serve the document viewer API only below this plugin's authenticated route namespace."
+              },
+              {
+                "capability": {
+                  "name": "frontend.context.documents",
+                  "version": 1
+                },
+                "rationale": "Open game document rows in this sandboxed reader in a new tab; retain the optional library page."
+              }
+            ],
+            "plugin_id": "example.scoped-document-viewer",
+            "sdk_version_range": "^1.0.0",
+            "storage": {
+              "quota_mb": 1
+            },
+            "ui": {
+              "actions": [
+                "list-documents",
+                "read-document"
+              ],
+              "menus": [],
+              "pages": [
+                "documents"
+              ],
+              "settings": []
+            },
+            "version": "1.6.0"
+          },
+          "package": {
+            "filename": "example.scoped-document-viewer-1.6.0.utp",
+            "format": "utp-v1",
+            "size_bytes": 692112
+          },
+          "package_sha256": "0732ac61fbcd2d30a80a99c3f1a04f146b6b5ada7c4925598204308335fcc060",
+          "plugin_id": "example.scoped-document-viewer",
+          "publisher": "Unnamed Tracking Official",
+          "readme": "# Scoped Document Viewer\n\nThe official plugin implementation of [application PR #241](https://github.com/Rosefall-a/unnamed_tracking_app/pull/241), inspected at `a9b7d3102c1efec08a5bf11a919c6d2204376ebc`. The PR's current code supports sanitized HTML/XHTML, despite its older summary describing only PDF/text.\n\nVersion **1.5.0** opens game Docs entries in a new browser tab through a declared reader contribution. The optional library remains available through Browse library. It provides a plugin-owned reader with game/file metadata, paginated listing, loading and explicit error states, PDF pages and zoom, literal UTF-8 text, and sanitized HTML with a source toggle. It reuses the host's `GameFileItem` rows and `games/<folder>/docs` storage through public document DTOs and opaque IDs. Upload files in the host game's Docs tab; the plugin does not create a separate document store.\n\n## Permissions\n\n| Permission | Purpose |\n| --- | --- |\n| `documents.read` v1 | List/read documents belonging to the current caller's games. |\n| `backend.routes.plugin` v1 | Publish authenticated JSON handlers under this plugin's namespace. |\n| `frontend.context.documents` v1 | Register the reader for game Docs entries; the host opens an owned document ID in a new tab. |\n\nNo native frontend, full API, host route, network, filesystem, credential, or persistent-storage permission is requested. The backend imports only the public SDK. Updates require normal host consent for the document-context grant. There is no mandatory Documents sidebar section.\n\n## Security model\n\nThe host checks the current installation, lifecycle, active user and live grants on each action, route and document chunk. Document queries join `GameFileItem` to the caller's active games, exclude trashed items/non-document kinds, and do not expose another user's IDs/content. Another user's ID and a nonexistent ID both produce a missing-document result.\n\nPaths remain host-owned. Stored names containing separators, encoded separators, dot traversal, NUL or Windows drive syntax are rejected. Resolved paths and game folders must stay within the caller's game/document root; escaping symlinks are rejected. The host reads at most 5 MiB plus one sentinel byte before returning any content, validates the complete representation, and transports 24 KiB chunks as base64 JSON. Every continuation repeats authorization and content validation; SHA-256 detects replacement or mixed chunks. The frontend also validates IDs, MIME/format, byte counts, offsets, UTF-8 and final digest. No limits or sandbox flags were relaxed.\n\nThe host serves verified package CSS and classic scripts in the authenticated entry response (`frontend.inline_assets: true`), authorizing only the bundled scripts with a fresh CSP nonce. Opaque iframe subresource requests do not need login cookies; no asset endpoint is made public and no same-origin permission is granted. The custom frontend runs under the host's `sandbox=\"allow-scripts\"` and CSP. It gets no cookies or host DOM access. Requests use the correlated parent bridge, with cancellation and timeouts. User data responses carry `nosniff` and `private, no-store`; document bytes are never served as an uploaded HTML page. PDF.js, DOMPurify and the SHA-256 fallback are packaged offline, pinned and integrity checked; no CDN/runtime download is used.\n\nPDF.js renders canvas pages with evaluation, XFA, form/annotation interaction, external resource fetching and font downloads disabled. HTML uses DOMPurify's HTML profile and PR #241's forbidden tags/attributes, with additional restrictions on navigation/ping. SVG/MathML, scripts, images, forms, frames, styles and active URLs are removed. All remaining links are inert. Plain text always uses `textContent`.\n\n## Supported documents\n\n- PDF identified by `%PDF-`, including PDFs with an incorrect extension. Malformed/encrypted PDFs produce a renderer error.\n- Strict UTF-8: `.cfg`, `.conf`, `.csv`, `.ini`, `.json`, `.log`, `.md`, `.nfo`, `.properties`, `.toml`, `.txt`, `.xml`, `.yaml`, `.yml`; the PR's conservative text MIME allowlist also applies. Existing platform `.markdown` and `.rst` support remains.\n- `.html`, `.htm`, `.xhtml`: transported as `text/plain` with `format: html`, then sanitized. A source view shows literal text.\n- `.docx`, `.pptx`, `.odt`, `.odp`: local reading previews show text, basic tables and embedded PNG/JPEG images. Slides retain presentation order. Office styles, charts, animations, equations and complex layout are not reproduced. The original remains downloadable.\n- Office containers are limited to 1,024 entries, 20 MiB expanded total, 2 MiB per XML part, 5 MiB per other part and 100:1 compression (a 1 KiB floor allows tiny compressed parts). XML DTDs/entities, macros, ActiveX, embedded objects, encryption and escaping/duplicate archive paths are rejected. XML trees are capped at 50,000 nodes; presentations at 500 slides. External links/resources are inert; SVG images and unknown raster types are not rendered.\n- Empty text is supported. Binary controls and invalid UTF-8 are rejected. SVG, legacy `.doc`/`.ppt`, macro-enabled Office, arbitrary archives and other unsupported files remain listed with metadata and fail explicitly when opened.\n\n## Opening and downloading\n\nIn a game's **Docs** tab, click a filename to open the registered reader in a new browser tab. The host passes only `document_id` and `game_id` through `plugin.context`; the reader opens that ID directly without fetching the whole library. If no authorized reader is active, the filename retains its normal download behavior. Readers are selected by declared extension and deterministic order. A separate Download link remains on every game document row.\n\n**Download original** in the reader calls `plugin.download-document`. The parent checks the scoped attachment endpoint using authenticated HEAD, then starts the download. GET repeats live authorization and ownership; unsupported/malformed/oversized previews can still be downloaded as inert originals. The download endpoint is `/api/plugins/<plugin-id>/capabilities/documents/<document-id>/download`, uses opaque IDs and safe stored-path resolution, and always sends attachment disposition, octet-stream, nosniff and private/no-store. Downloads stream independently of the 5 MiB preview cap. The sandbox gets neither a raw URL nor cookies and requires no download/native privilege.\n\n## Dedicated plugin API\n\n`GET /api/plugins/example.scoped-document-viewer/documents?limit=32&offset=0` returns a page and `next_offset`. `GET .../documents/<document-id>` returns the first bounded chunk. Continue with `?offset=<next_offset>&content_sha256=<digest>` until `complete` is true. JSON errors retain their `kind`, safe `message` and HTTP status (`400`, `404`, `409`, `413`, `415`, `500`). The host separately enforces `401`/`403` authorization and lifecycle errors.\n\nThe UI invokes the equivalent declared actions; it never fetches host data endpoints directly. Neither API accepts caller-supplied storage paths or user IDs.\n\n## Differences and restrictions relative to PR #241\n\n- **PDFs also have the platform's 5 MiB cap.** PR #241 limits text to 5 MiB but streams PDFs without a viewer size cap. Large PDFs can be downloaded, but their inline preview requires a future authorized streaming API; this plugin does not bypass the current bounded domain API.\n- The browser-native PDF iframe cannot reliably load in an opaque sandbox. Bundled PDF.js supplies page/zoom controls. Native print, PDF text search/selection, interactive forms and links are not reproduced. PDF passwords are unsupported.\n- File upload compatibility (`file`/`files`), file/media rename and generic downloads added on the PR branch are host management features. The read-only document APIs cannot reproduce them. Use the host's existing Docs management UI; this plugin adds no write privilege or undocumented endpoints.\n- Only indexed, active `GameFileItem(kind=doc)` rows are listed. Legacy disk-only files need the host Docs listing/scan to index them. No document editing, indexing, OCR or annotation is provided.\n- HTML links are disabled, a stricter navigation policy than the PR's sanitized HTML component.\n- Requires the accompanying `plugin-manager` document chunk/pagination contract and reader contribution, inline-asset delivery, scoped download and bridge context/status support. Version 1.5.0 must not be advertised as compatible with an older host just because both expose API v1.\n\n## Build and verification\n\n```sh\npython -m pytest -q\nnpm ci\nnpx playwright install --with-deps chromium --only-shell\nnpm run check\nnpm test\npython tools/build_packages.py\npython tools/verify_packages.py dist/*.utp\npython tools/validate_packages.py dist/*.utp\n```\n\nBrowser tests run the actual assets in the host's opaque sandbox/CSP and verify PDF pixels/page controls, sanitization, UTF-8, explicit errors, malformed payloads/documents, integrity and stale responses. They also reproduce the original authenticated sandbox CSS failure, exercise direct game links/downloads, and render actual OOXML/OpenDocument archives. Host tests cover persisted ownership, live grants/revocation, deletion, traversal, limits and transport size. For a direct comparison to the actual PR source:\n\n```sh\npython tools/check_document_parity.py --reference /path/to/pr241-checkout --host /path/to/updated-host\n```\n\nSee the [validation report](../../docs/scoped-document-viewer-validation.md) for recorded results, baseline static-check failures, and environment limitations.\n\n`tools/vendor_document_libraries.py` reproducibly downloads the pinned upstream libraries (PDF.js 5.6.205, DOMPurify 3.4.14, js-sha256 0.11.1, fflate 0.8.3), checks npm SHA-512 archive integrity against `vendor-lock.json`, and records packaged-file SHA-256 hashes and licenses. Classic-script wrappers allow the libraries to run in an opaque origin without module CORS or worker/network privileges. PDF.js uses its in-process worker implementation.\n\nThe new checked-in `.utp` is a valid **unsigned local build**, requiring the host's explicit untrusted-package install confirmation. Existing signed releases are preserved. Trusted release signing must use the repository's reviewed publisher workflow; no private key or fabricated signature is included.\n\nDigest verification and secure request correlation also work on HTTP deployments: Web Crypto is used when available, with bundled SHA-256 and `getRandomValues` fallbacks otherwise. Browser tests verify this path. See the [Web Crypto context rules](https://developer.mozilla.org/en-US/docs/Web/API/Window/crypto), [PDF.js API](https://mozilla.github.io/pdf.js/api/) and [native PDF sandbox restriction](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe).\n\n![Sandboxed PDF preview](../../docs/assets/screenshots/scoped-document-viewer.png)\n\n![Direct game document reading preview](../../docs/assets/screenshots/scoped-document-reader-office.png)\n",
+          "release_notes": "Package lifecycle metadata, embedded documentation and validated Plugin API v1 contributions.",
+          "sha256": "8d78405a21be23c5027b3302ae3ca67cb365bcb0c4d6eacd9f0b15d6fe003e58",
+          "signing": {
+            "key_id": "non-secret-testkey",
+            "sha256": "8d78405a21be23c5027b3302ae3ca67cb365bcb0c4d6eacd9f0b15d6fe003e58",
+            "signature": "PijfTL6+zbdyIMCOjV7dXG/H8eB/yHoKk2pjEcmxJY6rq1oqnqkY7yZAQTngp6MbOQ6sjMEMN8KrJUoJ3UjWDQ=="
+          },
+          "tags": [
+            "documents",
+            "games"
+          ],
+          "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.scoped-document-viewer-1.6.0.utp",
+          "version": "1.6.0"
         }
       ],
       "sdk_version_range": "^1.0.0",
-      "sha256": "091eee79e239954d26633e9b7f7edd490a1edb5ffccf782d75e5a79d551a0880",
+      "sha256": "8d78405a21be23c5027b3302ae3ca67cb365bcb0c4d6eacd9f0b15d6fe003e58",
       "signing": {
         "key_id": "non-secret-testkey",
-        "sha256": "091eee79e239954d26633e9b7f7edd490a1edb5ffccf782d75e5a79d551a0880",
-        "signature": "5PgwMbCBdqveg/JJXE0+8Nerp6koniF4GACqhTB/xtPErdm0k9iz9rAcM6Wx/8YF89P39A7PTh4SnQLLuZAIAw=="
+        "sha256": "8d78405a21be23c5027b3302ae3ca67cb365bcb0c4d6eacd9f0b15d6fe003e58",
+        "signature": "PijfTL6+zbdyIMCOjV7dXG/H8eB/yHoKk2pjEcmxJY6rq1oqnqkY7yZAQTngp6MbOQ6sjMEMN8KrJUoJ3UjWDQ=="
       },
       "source": {
         "lifecycle": "source",
@@ -4882,8 +5023,8 @@
         "documents",
         "games"
       ],
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.scoped-document-viewer-1.5.1.utp",
-      "version": "1.5.1"
+      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.scoped-document-viewer-1.6.0.utp",
+      "version": "1.6.0"
     },
     {
       "application_version_range": ">=1.0.0",
@@ -4892,9 +5033,9 @@
         "builder": "tools/build_packages.py",
         "contract_revision": "f1165fcc805e57ee428e7bc42fa6b83f4a6caf25",
         "legacy": false,
-        "source_commit": "6b4fb8a5412e5a8138312efc4da4a1ea1dd0d0c4",
-        "source_committed_at": "2026-10-02T12:32:33+08:00",
-        "source_digest": "d1cdcdd9ffec5568de44d680136f9dc9c3ef51e782cbd44cedf58ffae6e75ec7",
+        "source_commit": "48bd638349ee4a4716ffc419186a96d5f86139f0",
+        "source_committed_at": "2026-10-02T20:34:13+08:00",
+        "source_digest": "b8f6f0d79d1cfe91292ceed9365f8b81ac77513a2d8d2b29808a0d80cb6400a6",
         "source_path": "examples/self-service-session-manager",
         "version_bump": "minor"
       },
@@ -5076,8 +5217,8 @@
         },
         "integrity": {
           "key_id": "non-secret-testkey",
-          "sha256": "f76cb459c6e34f82a6c4f7d44a9c1e370c5066b4ec71e7c3db20db982befbf30",
-          "signature": "t5zg/nNww6jSXmmgPsg/JdL1xMAIpkL1e12CqHTaVDTejcvkYbWafHbZM5nkzFVjI8LhSJZRr9gB2blK51mKAw=="
+          "sha256": "884a92e1d0da19e80e22d25bbe8999b1367ad5ca6fe913ed6717727810a9e113",
+          "signature": "yDZKyswxMIuPjVjjo9hGBwl2AngLnnrXRpVJhukQO3oSUE9Ilx5te1YbgdCD0ZTXuZhlhXoYa/XnolPDTXi1Dw=="
         },
         "manifest_version": 1,
         "name": "Self-Service Session Manager",
@@ -5175,15 +5316,15 @@
           ],
           "settings": []
         },
-        "version": "2.1.0"
+        "version": "2.2.0"
       },
       "name": "Self-Service Session Manager",
       "package": {
-        "filename": "example.self-service-session-manager-2.1.0.utp",
+        "filename": "example.self-service-session-manager-2.2.0.utp",
         "format": "utp-v1",
-        "size_bytes": 20028
+        "size_bytes": 20041
       },
-      "package_sha256": "dfc9eee628dabcdeb08822796e6b17b199c47d769ccabaa488bba17cee992460",
+      "package_sha256": "a928ca4c9dd502c9a6e4f6cc633b0823b1be84dbafb3f56d690004e7798886ce",
       "permissions": [
         {
           "capability": {
@@ -5251,7 +5392,7 @@
       ],
       "plugin_id": "example.self-service-session-manager",
       "publisher": "Unnamed Tracking Official",
-      "readme": "# Self-Service Session Manager\n\nVersion 2.0.0 ports application [PR #248](https://github.com/Rosefall-a/unnamed_tracking_app/pull/248), inspected at head `5bf43f22bd4991999cd278c5b201817aae439e85`. The stable ID remains `example.self-service-session-manager`. This replaces the minimized metadata/Refresh example.\n\n## Experience and source parity\n\nThe primary experience is **Settings → Sessions** (`/settings?section=sessions`) and administrator-only **Settings → Session Manager** (`/settings?section=admin-sessions`). Generic Settings contributions register native Vue components using the host runtime. No host code selects this plugin by ID.\n\n| PR #248 behavior | Plugin 2.0.0 |\n| --- | --- |\n| Current session; active/expired/revoked records | Reproduced with backend state filtering |\n| IP, user agent, country/region/city, timestamps | Reproduced, including creation, activity, expiry, revocation |\n| Network type/label, ASN/network number, organization | Reproduced with the source credential-free serializer |\n| Session search and admin user filters | Reproduced; country/anomaly filters also expose source metadata |\n| GIS map, pan/zoom, clustered selectable pins, admin user colors | Reproduced for loaded pages when City GeoIP is usable |\n| Own one/all; admin one/user/server revocation | Reproduced with separate destructive grants and explicit confirmation |\n| Admin compact table, City/Country/Network MMDB status/uploads | Reproduced with scoped grants, confirmation, and existing host validation |\n| Geographic anomaly and provider notifications | Source session metadata and core notification coordinator reused |\n\nThe current account session has no individual revoke button, matching the source. Revoke all includes it and returns the browser to sign-in. Bulk actions affect all unrevoked records in scope, including expired ones, regardless of displayed filters, matching the source SQL. API keys are separate and are not revoked.\n\nAnomalies show the reason and previous location. Shared password/OIDC session creation queues `session_anomaly` notifications through the existing core coordinator, deduplication, provider registry, delivery state, and preferences. This plugin does not resend or invent alerts; notification providers/preferences stay in their normal host Settings surfaces.\n\nThe map requests visible OpenStreetMap tiles with browser caching, visible attribution, and an origin-only referrer following the [tile usage policy](https://operations.osmfoundation.org/policies/tiles/). OSM receives the viewing browser's IP, application origin, and tile coordinates. Session identifiers, usernames, IP metadata, and user agents are never sent in tile requests. Locations are approximate; private/local addresses are not plotted.\n\n## Permission review: intentionally high risk\n\n| Permission | Why requested | Risk / destructive behavior |\n| --- | --- | --- |\n| `sessions.read` | Rich records owned by the caller | Sensitive device, IP, approximate location, and network metadata; never tokens/hashes |\n| `sessions.revoke` | Own single/bulk revocation | **Destructive:** signs out browsers, including the current browser during bulk revocation |\n| `sessions.admin.read` | Cross-user admin records | **High:** sensitive metadata across users; host admin role independently required |\n| `sessions.admin.revoke` | Admin single/user/server revocation | **Destructive, High:** can sign out every browser; admin required |\n| `sessions.geoip.read` | Database availability | Admin-only status without filesystem paths |\n| `sessions.geoip.configure` | Replace optional MMDB databases | **Destructive, High:** changes shared enrichment data; admin and confirmation required |\n| `frontend.settings` | Account/admin Settings sections | Generic contribution registration and visibility |\n| `frontend.native` | Native cards, table, map, file controls | **Critical:** reviewed code executes in the host browser realm, with DOM/browser authority; scoped backend grants remain enforced |\n| `backend.routes.plugin` | Optional namespaced JSON handlers | Host authentication, admin policies, lifecycle, limits, and installation grants |\n\nNo `api.full`, `backend.routes.host`, arbitrary filesystem/network, broad user-read, or notification-send permission is requested. Read and revoke grants are independent. Declining a grant denies its operation; no broader fallback API is used. Without `frontend.native`, the legacy plugin-owned account page supplies a sandboxed own-session fallback with metadata and confirmed revocation. Full map/admin/configuration parity requires the reviewed native grant.\n\n## Backend security and revocation\n\nAll destructive actions declare host-owned confirmation text. Both UI modes ask for confirmation; the backend action endpoint requires strict boolean `confirmed: true` before dispatch. The plugin and gateway also require explicit confirmation. JSON route clients must expressly confirm. Confirmation prevents accidents; it does not replace authorization.\n\nThe host authenticates the caller, checks live installation grants and health, and creates current-session context from the authenticated cookie. Caller-supplied `_plugin_context` is overwritten. The domain constrains self-service SQL to the caller and independently checks active admin status for cross-user operations. Knowing a foreign UUID cannot change ownership. Malformed UUIDs are rejected. Disabled/unhealthy plugins cannot dispatch actions, routes, or gateway methods. Plugin Python imports only the standard library and public SDK, and receives no cookies, tokens, hashes, ORM objects, or database connections.\n\nRevocation sets `revoked_at`, preserving audit metadata. Subsequent cookie authentication fails immediately. A generic host auth refresh returns remotely revoked browsers to login; current-browser bulk revocation navigates immediately.\n\nOptional routes relative to `/api/plugins/example.self-service-session-manager/`:\n\n| Method/path | Grant | Caller |\n| --- | --- | --- |\n| GET `sessions` | `sessions.read` | Owner |\n| DELETE `sessions/{session_id}` / `sessions` | `sessions.revoke` | Owner |\n| GET `admin/sessions` | `sessions.admin.read` | Administrator |\n| DELETE `admin/sessions/{session_id}` / `admin/users/{user_id}/sessions` / `admin/sessions` | `sessions.admin.revoke` | Administrator |\n\nDELETE bodies require `{ \"confirmed\": true }`. Lists accept `q`, `state`, `country`, `anomaly=true|false`, `limit` (up to 200), `cursor`, and admin-only `user_id`.\n\nMMDB upload uses the generic host capability endpoint `POST /api/plugins/<plugin-id>/capabilities/sessions/geoip?kind=city|country|network&confirmed=true` with multipart `file`. The host validates and atomically replaces the database. Reads are bounded to 256 MiB; proxy limits can be lower. There is no automatic database download, license acquisition, or arbitrary server filesystem access.\n\n## Platform stages 1–4 demonstrated\n\n1. Versioned contracts, risk rationales, installation identity, ownership, separate read/write grants.\n2. Normal package inspection, development trust consent, update permission review, health/lifecycle gating; the entrypoint stays alive under the supervisor.\n3. Native Settings, admin visibility, host Vue integration/cleanup, host action confirmation, sandbox fallback.\n4. Namespaced backend routes with authenticated/admin policies, normalized request envelopes, scoped gateway methods.\n\n## Remaining differences from PR #248\n\n- Lists, map pins, and the admin user selector reflect loaded cursor pages rather than one unbounded response. **Load more** exposes the remainder; search can find users beyond loaded pages.\n- GeoIP configuration does not disclose host filesystem paths.\n- Every single-session destructive action is confirmed; the source account's individual revoke button was immediate.\n- Native integration requires reviewing Critical browser authority plus narrow domain grants. The sandbox fallback lacks map/admin/configuration UI.\n- Historical sessions without metadata cannot be retroactively enriched. New sessions use the shared source metadata/anomaly path.\n- External map tiles, optional MMDB availability, and configured notification delivery remain deployment dependencies, as in the source.\n\nNo source user/admin workflow is omitted from the full native experience.\n\n## Build and verification\n\nRequires the coordinated host changes on `plugin-manager`; the older minimized host lacks rich DTOs, bulk own/user operations, and GeoIP leaves. Capability version 1 retains its ownership scopes with additive DTO fields/new operations. Strict destructive confirmation is an intentional security tightening; older clients must send confirmation.\n\n```sh\npytest\nnode --test tests/session_manager_ui.test.mjs\npython tools/build_packages.py\npython tools/verify_packages.py dist/*.utp\npython tools/validate_packages.py dist/*.utp\n```\n\nPlugin tests exercise permissions, filters, identifier validation, confirmations, routing, packaging, actual UI controller pagination/cancellation/sign-out/errors/cleanup, and map math. Host HTTP tests execute real SQL/grants for cross-user reads/writes, unauthorized revocation, strict confirmation, disabled plugins, malformed IDs, admin checks, pagination, revoked-cookie rejection, GeoIP uploads, and password metadata/anomaly creation. Existing CI checks remain, with Node UI tests added.\n\nLocal packages are **unsigned**, requiring normal untrusted-package consent. Release CI supplies its configured reviewed signing identity. The checked-in 2.0.0 artifact is a development build, not a signed production release. Historical packages and signing identities are preserved.\n\n![Native admin component with fixture data](admin-preview.png)\n\nScreenshot uses the actual native module with disposable fixture data in a local Vue harness, not a deployed authenticated host.\n",
+      "readme": "# Self-Service Session Manager\n\nVersion 2.0.0 ports application [PR #248](https://github.com/Rosefall-a/unnamed_tracking_app/pull/248), inspected at head `5bf43f22bd4991999cd278c5b201817aae439e85`. The stable ID remains `example.self-service-session-manager`. This replaces the minimized metadata/Refresh example.\n\n## Experience and source parity\n\nThe primary experience is **Settings → Sessions** (`/settings?section=sessions`) and administrator-only **Settings → Session Manager** (`/settings?section=admin-sessions`). Generic Settings contributions register native Vue components using the host runtime. No host code selects this plugin by ID.\n\n| PR #248 behavior | Plugin 2.0.0 |\n| --- | --- |\n| Current session; active/expired/revoked records | Reproduced with backend state filtering |\n| IP, user agent, country/region/city, timestamps | Reproduced, including creation, activity, expiry, revocation |\n| Network type/label, ASN/network number, organization | Reproduced with the source credential-free serializer |\n| Session search and admin user filters | Reproduced; country/anomaly filters also expose source metadata |\n| GIS map, pan/zoom, clustered selectable pins, admin user colors | Reproduced for loaded pages when City GeoIP is usable |\n| Own one/all; admin one/user/server revocation | Reproduced with separate destructive grants and explicit confirmation |\n| Admin compact table, City/Country/Network MMDB status/uploads | Reproduced with scoped grants, confirmation, and existing host validation |\n| Geographic anomaly and provider notifications | Source session metadata and core notification coordinator reused |\n\nThe current account session has no individual revoke button, matching the source. Revoke all includes it and returns the browser to sign-in. Bulk actions affect all unrevoked records in scope, including expired ones, regardless of displayed filters, matching the source SQL. API keys are separate and are not revoked.\n\nAnomalies show the reason and previous location. Shared password/OIDC session creation queues `session_anomaly` notifications through the existing core coordinator, deduplication, provider registry, delivery state, and preferences. This plugin does not resend or invent alerts; notification providers/preferences stay in their normal host Settings surfaces.\n\nThe map requests visible OpenStreetMap tiles with browser caching, visible attribution, and an origin-only referrer following the [tile usage policy](https://operations.osmfoundation.org/policies/tiles/). OSM receives the viewing browser's IP, application origin, and tile coordinates. Session identifiers, usernames, IP metadata, and user agents are never sent in tile requests. Locations are approximate; private/local addresses are not plotted.\n\n## Permission review: intentionally high risk\n\n| Permission | Why requested | Risk / destructive behavior |\n| --- | --- | --- |\n| `sessions.read` | Rich records owned by the caller | Sensitive device, IP, approximate location, and network metadata; never tokens/hashes |\n| `sessions.revoke` | Own single/bulk revocation | **Destructive:** signs out browsers, including the current browser during bulk revocation |\n| `sessions.admin.read` | Cross-user admin records | **High:** sensitive metadata across users; host admin role independently required |\n| `sessions.admin.revoke` | Admin single/user/server revocation | **Destructive, High:** can sign out every browser; admin required |\n| `sessions.geoip.read` | Database availability | Admin-only status without filesystem paths |\n| `sessions.geoip.configure` | Replace optional MMDB databases | **Destructive, High:** changes shared enrichment data; admin and confirmation required |\n| `frontend.settings` | Account/admin Settings sections | Generic contribution registration and visibility |\n| `frontend.native` | Native cards, table, map, file controls | **Critical:** reviewed code executes in the host browser realm, with DOM/browser authority; scoped backend grants remain enforced |\n| `backend.routes.plugin` | Optional namespaced JSON handlers | Host authentication, admin policies, lifecycle, limits, and installation grants |\n\nNo `api.full`, `backend.routes.host`, arbitrary filesystem/network, broad user-read, or notification-send permission is requested. Read and revoke grants are independent. Declining a grant denies its operation; no broader fallback API is used. Without `frontend.native`, the legacy plugin-owned account page supplies a sandboxed own-session fallback with metadata and confirmed revocation. Full map/admin/configuration parity requires the reviewed native grant.\n\n## Backend security and revocation\n\nAll destructive actions declare host-owned confirmation text. Both UI modes ask for confirmation; the backend action endpoint requires strict boolean `confirmed: true` before dispatch. The plugin and gateway also require explicit confirmation. JSON route clients must expressly confirm. Confirmation prevents accidents; it does not replace authorization.\n\nThe host authenticates the caller, checks live installation grants and health, and creates current-session context from the authenticated cookie. Caller-supplied `_plugin_context` is overwritten. The domain constrains self-service SQL to the caller and independently checks active admin status for cross-user operations. Knowing a foreign UUID cannot change ownership. Malformed UUIDs are rejected. Disabled/unhealthy plugins cannot dispatch actions, routes, or gateway methods. Plugin Python imports only the standard library and public SDK, and receives no cookies, tokens, hashes, ORM objects, or database connections.\n\nRevocation sets `revoked_at`, preserving audit metadata. Subsequent cookie authentication fails immediately. A generic host auth refresh returns remotely revoked browsers to login; current-browser bulk revocation navigates immediately.\n\nOptional routes relative to `/api/plugins/example.self-service-session-manager/`:\n\n| Method/path | Grant | Caller |\n| --- | --- | --- |\n| GET `sessions` | `sessions.read` | Owner |\n| DELETE `sessions/{session_id}` / `sessions` | `sessions.revoke` | Owner |\n| GET `admin/sessions` | `sessions.admin.read` | Administrator |\n| DELETE `admin/sessions/{session_id}` / `admin/users/{user_id}/sessions` / `admin/sessions` | `sessions.admin.revoke` | Administrator |\n\nDELETE bodies require `{ \"confirmed\": true }`. Lists accept `q`, `state`, `country`, `anomaly=true|false`, `limit` (up to 200), `cursor`, and admin-only `user_id`.\n\nMMDB upload uses the generic host capability endpoint `POST /api/plugins/<plugin-id>/capabilities/sessions/geoip?kind=city|country|network&confirmed=true` with multipart `file`. The host validates and atomically replaces the database. Reads are bounded to 256 MiB; proxy limits can be lower. There is no automatic database download, license acquisition, or arbitrary server filesystem access.\n\n## Platform stages 1–4 demonstrated\n\n1. Versioned contracts, risk rationales, installation identity, ownership, separate read/write grants.\n2. Normal package inspection, development trust consent, update permission review, health/lifecycle gating; the entrypoint stays alive under the supervisor.\n3. Native Settings, admin visibility, host Vue integration/cleanup, host action confirmation, sandbox fallback.\n4. Namespaced backend routes with authenticated/admin policies, normalized request envelopes, scoped gateway methods.\n\n## Remaining differences from PR #248\n\n- Lists, map pins, and the admin user selector reflect loaded cursor pages rather than one unbounded response. **Load more** exposes the remainder; search can find users beyond loaded pages.\n- GeoIP configuration does not disclose host filesystem paths.\n- Every single-session destructive action is confirmed; the source account's individual revoke button was immediate.\n- Native integration requires reviewing Critical browser authority plus narrow domain grants. The sandbox fallback lacks map/admin/configuration UI.\n- Historical sessions without metadata cannot be retroactively enriched. New sessions use the shared source metadata/anomaly path.\n- External map tiles, optional MMDB availability, and configured notification delivery remain deployment dependencies, as in the source.\n\nNo source user/admin workflow is omitted from the full native experience.\n\n## Build and verification\n\nRequires the coordinated host changes on `plugin-manager`; the older minimized host lacks rich DTOs, bulk own/user operations, and GeoIP leaves. Capability version 1 retains its ownership scopes with additive DTO fields/new operations. Strict destructive confirmation is an intentional security tightening; older clients must send confirmation.\n\n```sh\npytest\nnode --test tests/session_manager_ui.test.mjs\npython tools/build_packages.py\npython tools/verify_packages.py dist/*.utp\npython tools/validate_packages.py dist/*.utp\n```\n\nPlugin tests exercise permissions, filters, identifier validation, confirmations, routing, packaging, actual UI controller pagination/cancellation/sign-out/errors/cleanup, and map math. Host HTTP tests execute real SQL/grants for cross-user reads/writes, unauthorized revocation, strict confirmation, disabled plugins, malformed IDs, admin checks, pagination, revoked-cookie rejection, GeoIP uploads, and password metadata/anomaly creation. Existing CI checks remain, with Node UI tests added.\n\nLocal packages are **unsigned**, requiring normal untrusted-package consent. Release CI supplies its configured reviewed signing identity. The checked-in 2.0.0 artifact is a development build, not a signed production release. Historical packages and signing identities are preserved.\n\n![Native admin component with fixture data](../../docs/assets/screenshots/session-manager-admin.png)\n\nScreenshot uses the actual native module with disposable fixture data in a local Vue harness, not a deployed authenticated host.\n",
       "release_notes": "Package lifecycle metadata, embedded documentation and validated Plugin API v1 contributions.",
       "releases": [
         {
@@ -6189,14 +6330,283 @@
           ],
           "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.self-service-session-manager-2.1.0.utp",
           "version": "2.1.0"
+        },
+        {
+          "automatic_update": true,
+          "build": {
+            "builder": "tools/build_packages.py",
+            "contract_revision": "f1165fcc805e57ee428e7bc42fa6b83f4a6caf25",
+            "legacy": false,
+            "source_commit": "48bd638349ee4a4716ffc419186a96d5f86139f0",
+            "source_committed_at": "2026-10-02T20:34:13+08:00",
+            "source_digest": "b8f6f0d79d1cfe91292ceed9365f8b81ac77513a2d8d2b29808a0d80cb6400a6",
+            "source_path": "examples/self-service-session-manager",
+            "version_bump": "minor"
+          },
+          "icon": {
+            "path": "icon.svg",
+            "sha256": "eeeaacd7730ec13c7058af0780ed0d6e3780f260fd066c2608ccf6f0cbb777a0"
+          },
+          "lifecycle": "published",
+          "lifecycle_stages": [
+            "source",
+            "validated",
+            "built",
+            "catalogued",
+            "published",
+            "downloadable"
+          ],
+          "manifest": {
+            "application_version_range": ">=1.0.0",
+            "backend_routes": [
+              {
+                "authorization": "authenticated",
+                "handler": "plugin:list_sessions_route",
+                "id": "list-sessions-api",
+                "methods": [
+                  "GET"
+                ],
+                "path": "sessions",
+                "scope": "plugin"
+              },
+              {
+                "authorization": "authenticated",
+                "handler": "plugin:revoke_session_route",
+                "id": "revoke-session-api",
+                "methods": [
+                  "DELETE"
+                ],
+                "path": "sessions/{session_id}",
+                "scope": "plugin"
+              },
+              {
+                "authorization": "admin",
+                "handler": "plugin:list_admin_sessions_route",
+                "id": "list-admin-sessions-api",
+                "methods": [
+                  "GET"
+                ],
+                "path": "admin/sessions",
+                "scope": "plugin"
+              },
+              {
+                "authorization": "admin",
+                "handler": "plugin:revoke_admin_session_route",
+                "id": "revoke-admin-session-api",
+                "methods": [
+                  "DELETE"
+                ],
+                "path": "admin/sessions/{session_id}",
+                "scope": "plugin"
+              },
+              {
+                "authorization": "admin",
+                "handler": "plugin:revoke_all_admin_sessions_route",
+                "id": "revoke-all-admin-sessions-api",
+                "methods": [
+                  "DELETE"
+                ],
+                "path": "admin/sessions",
+                "scope": "plugin"
+              },
+              {
+                "authorization": "authenticated",
+                "handler": "plugin:revoke_all_sessions_route",
+                "id": "revoke-all-own-api",
+                "methods": [
+                  "DELETE"
+                ],
+                "path": "sessions",
+                "scope": "plugin"
+              },
+              {
+                "authorization": "admin",
+                "handler": "plugin:revoke_user_sessions_route",
+                "id": "revoke-user-api",
+                "methods": [
+                  "DELETE"
+                ],
+                "path": "admin/users/{user_id}/sessions",
+                "scope": "plugin"
+              }
+            ],
+            "capabilities": [
+              {
+                "name": "sessions.read",
+                "version": 1
+              },
+              {
+                "name": "sessions.revoke",
+                "version": 1
+              },
+              {
+                "name": "sessions.admin.read",
+                "version": 1
+              },
+              {
+                "name": "sessions.admin.revoke",
+                "version": 1
+              },
+              {
+                "name": "backend.routes.plugin",
+                "version": 1
+              },
+              {
+                "name": "frontend.settings",
+                "version": 1
+              },
+              {
+                "name": "frontend.native",
+                "version": 1
+              },
+              {
+                "name": "sessions.geoip.read",
+                "version": 1
+              },
+              {
+                "name": "sessions.geoip.configure",
+                "version": 1
+              }
+            ],
+            "dependencies": [],
+            "description": "Manage account and administrator browser sessions inside Settings, with GeoIP, anomaly context, filters, and confirmed revocation.",
+            "entrypoint": "plugin:main",
+            "frontend": {
+              "entry": "frontend/index.html"
+            },
+            "integrity": {
+              "key_id": "non-secret-testkey",
+              "sha256": "884a92e1d0da19e80e22d25bbe8999b1367ad5ca6fe913ed6717727810a9e113",
+              "signature": "yDZKyswxMIuPjVjjo9hGBwl2AngLnnrXRpVJhukQO3oSUE9Ilx5te1YbgdCD0ZTXuZhlhXoYa/XnolPDTXi1Dw=="
+            },
+            "manifest_version": 1,
+            "name": "Self-Service Session Manager",
+            "native_frontend": {
+              "entry": "native/index.js",
+              "styles": [
+                "native/style.css"
+              ]
+            },
+            "permissions": [
+              {
+                "capability": {
+                  "name": "sessions.read",
+                  "version": 1
+                },
+                "rationale": "Read the signed-in user's sensitive IP address, user agent, approximate location, network/ASN, and session timestamps. This read grant does not authorize revocation."
+              },
+              {
+                "capability": {
+                  "name": "sessions.revoke",
+                  "version": 1
+                },
+                "rationale": "DESTRUCTIVE, HIGH RISK: Revoke a browser session owned by the signed-in user after host confirmation. Revoking the current session signs the affected user out immediately; bulk operations cannot be undone."
+              },
+              {
+                "capability": {
+                  "name": "sessions.admin.read",
+                  "version": 1
+                },
+                "rationale": "HIGH RISK: allow a host-authenticated administrator to inspect sensitive device, IP, location, network, and anomaly metadata for all users inside native Settings."
+              },
+              {
+                "capability": {
+                  "name": "sessions.admin.revoke",
+                  "version": 1
+                },
+                "rationale": "DESTRUCTIVE, HIGH RISK: Allow an administrator to revoke another user's browser session after host confirmation. Revoking the current session signs the affected user out immediately; bulk operations cannot be undone."
+              },
+              {
+                "capability": {
+                  "name": "backend.routes.plugin",
+                  "version": 1
+                },
+                "rationale": "Serve user and administrator session operations only below this plugin's authenticated route namespace."
+              },
+              {
+                "capability": {
+                  "name": "frontend.settings",
+                  "version": 1
+                },
+                "rationale": "Contribute Sessions and administrator Session Manager sections to native host Settings."
+              },
+              {
+                "capability": {
+                  "name": "frontend.native",
+                  "version": 1
+                },
+                "rationale": "CRITICAL: execute the official Vue session UI in the host to integrate Settings and the session map. Only install code you trust."
+              },
+              {
+                "capability": {
+                  "name": "sessions.geoip.read",
+                  "version": 1
+                },
+                "rationale": "Allow administrators to inspect availability of optional City, Country and Network/ASN databases."
+              },
+              {
+                "capability": {
+                  "name": "sessions.geoip.configure",
+                  "version": 1
+                },
+                "rationale": "DESTRUCTIVE, HIGH RISK: allow administrators to upload and replace host GeoIP databases after explicit confirmation."
+              }
+            ],
+            "plugin_id": "example.self-service-session-manager",
+            "sdk_version_range": "^1.0.0",
+            "storage": {
+              "quota_mb": 1
+            },
+            "ui": {
+              "actions": [
+                "list-sessions",
+                "revoke-session",
+                "list-admin-sessions",
+                "revoke-admin-session",
+                "revoke-all-admin-sessions",
+                "revoke-all-sessions",
+                "revoke-user-sessions",
+                "geoip-status"
+              ],
+              "menus": [],
+              "pages": [
+                "sessions",
+                "admin-sessions"
+              ],
+              "settings": []
+            },
+            "version": "2.2.0"
+          },
+          "package": {
+            "filename": "example.self-service-session-manager-2.2.0.utp",
+            "format": "utp-v1",
+            "size_bytes": 20041
+          },
+          "package_sha256": "a928ca4c9dd502c9a6e4f6cc633b0823b1be84dbafb3f56d690004e7798886ce",
+          "plugin_id": "example.self-service-session-manager",
+          "publisher": "Unnamed Tracking Official",
+          "readme": "# Self-Service Session Manager\n\nVersion 2.0.0 ports application [PR #248](https://github.com/Rosefall-a/unnamed_tracking_app/pull/248), inspected at head `5bf43f22bd4991999cd278c5b201817aae439e85`. The stable ID remains `example.self-service-session-manager`. This replaces the minimized metadata/Refresh example.\n\n## Experience and source parity\n\nThe primary experience is **Settings → Sessions** (`/settings?section=sessions`) and administrator-only **Settings → Session Manager** (`/settings?section=admin-sessions`). Generic Settings contributions register native Vue components using the host runtime. No host code selects this plugin by ID.\n\n| PR #248 behavior | Plugin 2.0.0 |\n| --- | --- |\n| Current session; active/expired/revoked records | Reproduced with backend state filtering |\n| IP, user agent, country/region/city, timestamps | Reproduced, including creation, activity, expiry, revocation |\n| Network type/label, ASN/network number, organization | Reproduced with the source credential-free serializer |\n| Session search and admin user filters | Reproduced; country/anomaly filters also expose source metadata |\n| GIS map, pan/zoom, clustered selectable pins, admin user colors | Reproduced for loaded pages when City GeoIP is usable |\n| Own one/all; admin one/user/server revocation | Reproduced with separate destructive grants and explicit confirmation |\n| Admin compact table, City/Country/Network MMDB status/uploads | Reproduced with scoped grants, confirmation, and existing host validation |\n| Geographic anomaly and provider notifications | Source session metadata and core notification coordinator reused |\n\nThe current account session has no individual revoke button, matching the source. Revoke all includes it and returns the browser to sign-in. Bulk actions affect all unrevoked records in scope, including expired ones, regardless of displayed filters, matching the source SQL. API keys are separate and are not revoked.\n\nAnomalies show the reason and previous location. Shared password/OIDC session creation queues `session_anomaly` notifications through the existing core coordinator, deduplication, provider registry, delivery state, and preferences. This plugin does not resend or invent alerts; notification providers/preferences stay in their normal host Settings surfaces.\n\nThe map requests visible OpenStreetMap tiles with browser caching, visible attribution, and an origin-only referrer following the [tile usage policy](https://operations.osmfoundation.org/policies/tiles/). OSM receives the viewing browser's IP, application origin, and tile coordinates. Session identifiers, usernames, IP metadata, and user agents are never sent in tile requests. Locations are approximate; private/local addresses are not plotted.\n\n## Permission review: intentionally high risk\n\n| Permission | Why requested | Risk / destructive behavior |\n| --- | --- | --- |\n| `sessions.read` | Rich records owned by the caller | Sensitive device, IP, approximate location, and network metadata; never tokens/hashes |\n| `sessions.revoke` | Own single/bulk revocation | **Destructive:** signs out browsers, including the current browser during bulk revocation |\n| `sessions.admin.read` | Cross-user admin records | **High:** sensitive metadata across users; host admin role independently required |\n| `sessions.admin.revoke` | Admin single/user/server revocation | **Destructive, High:** can sign out every browser; admin required |\n| `sessions.geoip.read` | Database availability | Admin-only status without filesystem paths |\n| `sessions.geoip.configure` | Replace optional MMDB databases | **Destructive, High:** changes shared enrichment data; admin and confirmation required |\n| `frontend.settings` | Account/admin Settings sections | Generic contribution registration and visibility |\n| `frontend.native` | Native cards, table, map, file controls | **Critical:** reviewed code executes in the host browser realm, with DOM/browser authority; scoped backend grants remain enforced |\n| `backend.routes.plugin` | Optional namespaced JSON handlers | Host authentication, admin policies, lifecycle, limits, and installation grants |\n\nNo `api.full`, `backend.routes.host`, arbitrary filesystem/network, broad user-read, or notification-send permission is requested. Read and revoke grants are independent. Declining a grant denies its operation; no broader fallback API is used. Without `frontend.native`, the legacy plugin-owned account page supplies a sandboxed own-session fallback with metadata and confirmed revocation. Full map/admin/configuration parity requires the reviewed native grant.\n\n## Backend security and revocation\n\nAll destructive actions declare host-owned confirmation text. Both UI modes ask for confirmation; the backend action endpoint requires strict boolean `confirmed: true` before dispatch. The plugin and gateway also require explicit confirmation. JSON route clients must expressly confirm. Confirmation prevents accidents; it does not replace authorization.\n\nThe host authenticates the caller, checks live installation grants and health, and creates current-session context from the authenticated cookie. Caller-supplied `_plugin_context` is overwritten. The domain constrains self-service SQL to the caller and independently checks active admin status for cross-user operations. Knowing a foreign UUID cannot change ownership. Malformed UUIDs are rejected. Disabled/unhealthy plugins cannot dispatch actions, routes, or gateway methods. Plugin Python imports only the standard library and public SDK, and receives no cookies, tokens, hashes, ORM objects, or database connections.\n\nRevocation sets `revoked_at`, preserving audit metadata. Subsequent cookie authentication fails immediately. A generic host auth refresh returns remotely revoked browsers to login; current-browser bulk revocation navigates immediately.\n\nOptional routes relative to `/api/plugins/example.self-service-session-manager/`:\n\n| Method/path | Grant | Caller |\n| --- | --- | --- |\n| GET `sessions` | `sessions.read` | Owner |\n| DELETE `sessions/{session_id}` / `sessions` | `sessions.revoke` | Owner |\n| GET `admin/sessions` | `sessions.admin.read` | Administrator |\n| DELETE `admin/sessions/{session_id}` / `admin/users/{user_id}/sessions` / `admin/sessions` | `sessions.admin.revoke` | Administrator |\n\nDELETE bodies require `{ \"confirmed\": true }`. Lists accept `q`, `state`, `country`, `anomaly=true|false`, `limit` (up to 200), `cursor`, and admin-only `user_id`.\n\nMMDB upload uses the generic host capability endpoint `POST /api/plugins/<plugin-id>/capabilities/sessions/geoip?kind=city|country|network&confirmed=true` with multipart `file`. The host validates and atomically replaces the database. Reads are bounded to 256 MiB; proxy limits can be lower. There is no automatic database download, license acquisition, or arbitrary server filesystem access.\n\n## Platform stages 1–4 demonstrated\n\n1. Versioned contracts, risk rationales, installation identity, ownership, separate read/write grants.\n2. Normal package inspection, development trust consent, update permission review, health/lifecycle gating; the entrypoint stays alive under the supervisor.\n3. Native Settings, admin visibility, host Vue integration/cleanup, host action confirmation, sandbox fallback.\n4. Namespaced backend routes with authenticated/admin policies, normalized request envelopes, scoped gateway methods.\n\n## Remaining differences from PR #248\n\n- Lists, map pins, and the admin user selector reflect loaded cursor pages rather than one unbounded response. **Load more** exposes the remainder; search can find users beyond loaded pages.\n- GeoIP configuration does not disclose host filesystem paths.\n- Every single-session destructive action is confirmed; the source account's individual revoke button was immediate.\n- Native integration requires reviewing Critical browser authority plus narrow domain grants. The sandbox fallback lacks map/admin/configuration UI.\n- Historical sessions without metadata cannot be retroactively enriched. New sessions use the shared source metadata/anomaly path.\n- External map tiles, optional MMDB availability, and configured notification delivery remain deployment dependencies, as in the source.\n\nNo source user/admin workflow is omitted from the full native experience.\n\n## Build and verification\n\nRequires the coordinated host changes on `plugin-manager`; the older minimized host lacks rich DTOs, bulk own/user operations, and GeoIP leaves. Capability version 1 retains its ownership scopes with additive DTO fields/new operations. Strict destructive confirmation is an intentional security tightening; older clients must send confirmation.\n\n```sh\npytest\nnode --test tests/session_manager_ui.test.mjs\npython tools/build_packages.py\npython tools/verify_packages.py dist/*.utp\npython tools/validate_packages.py dist/*.utp\n```\n\nPlugin tests exercise permissions, filters, identifier validation, confirmations, routing, packaging, actual UI controller pagination/cancellation/sign-out/errors/cleanup, and map math. Host HTTP tests execute real SQL/grants for cross-user reads/writes, unauthorized revocation, strict confirmation, disabled plugins, malformed IDs, admin checks, pagination, revoked-cookie rejection, GeoIP uploads, and password metadata/anomaly creation. Existing CI checks remain, with Node UI tests added.\n\nLocal packages are **unsigned**, requiring normal untrusted-package consent. Release CI supplies its configured reviewed signing identity. The checked-in 2.0.0 artifact is a development build, not a signed production release. Historical packages and signing identities are preserved.\n\n![Native admin component with fixture data](../../docs/assets/screenshots/session-manager-admin.png)\n\nScreenshot uses the actual native module with disposable fixture data in a local Vue harness, not a deployed authenticated host.\n",
+          "release_notes": "Package lifecycle metadata, embedded documentation and validated Plugin API v1 contributions.",
+          "sha256": "884a92e1d0da19e80e22d25bbe8999b1367ad5ca6fe913ed6717727810a9e113",
+          "signing": {
+            "key_id": "non-secret-testkey",
+            "sha256": "884a92e1d0da19e80e22d25bbe8999b1367ad5ca6fe913ed6717727810a9e113",
+            "signature": "yDZKyswxMIuPjVjjo9hGBwl2AngLnnrXRpVJhukQO3oSUE9Ilx5te1YbgdCD0ZTXuZhlhXoYa/XnolPDTXi1Dw=="
+          },
+          "tags": [
+            "account",
+            "administration"
+          ],
+          "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.self-service-session-manager-2.2.0.utp",
+          "version": "2.2.0"
         }
       ],
       "sdk_version_range": "^1.0.0",
-      "sha256": "f76cb459c6e34f82a6c4f7d44a9c1e370c5066b4ec71e7c3db20db982befbf30",
+      "sha256": "884a92e1d0da19e80e22d25bbe8999b1367ad5ca6fe913ed6717727810a9e113",
       "signing": {
         "key_id": "non-secret-testkey",
-        "sha256": "f76cb459c6e34f82a6c4f7d44a9c1e370c5066b4ec71e7c3db20db982befbf30",
-        "signature": "t5zg/nNww6jSXmmgPsg/JdL1xMAIpkL1e12CqHTaVDTejcvkYbWafHbZM5nkzFVjI8LhSJZRr9gB2blK51mKAw=="
+        "sha256": "884a92e1d0da19e80e22d25bbe8999b1367ad5ca6fe913ed6717727810a9e113",
+        "signature": "yDZKyswxMIuPjVjjo9hGBwl2AngLnnrXRpVJhukQO3oSUE9Ilx5te1YbgdCD0ZTXuZhlhXoYa/XnolPDTXi1Dw=="
       },
       "source": {
         "lifecycle": "source",
@@ -6207,8 +6617,8 @@
         "account",
         "administration"
       ],
-      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.self-service-session-manager-2.1.0.utp",
-      "version": "2.1.0"
+      "url": "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/dist/example.self-service-session-manager-2.2.0.utp",
+      "version": "2.2.0"
     },
     {
       "application_version_range": "*",
