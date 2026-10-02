@@ -2,7 +2,7 @@
 
 The official plugin implementation of [application PR #241](https://github.com/Rosefall-a/unnamed_tracking_app/pull/241), inspected at `a9b7d3102c1efec08a5bf11a919c6d2204376ebc`. The PR's current code supports sanitized HTML/XHTML, despite its older summary describing only PDF/text.
 
-Version **1.5.0** opens game Docs entries in a new browser tab through a declared reader contribution. The optional library remains available through Browse library. It provides a plugin-owned reader with game/file metadata, paginated listing, loading and explicit error states, PDF pages and zoom, literal UTF-8 text, and sanitized HTML with a source toggle. It reuses the host's `GameFileItem` rows and `games/<folder>/docs` storage through public document DTOs and opaque IDs. Upload files in the host game's Docs tab; the plugin does not create a separate document store.
+Version **1.6.0** opens game Docs entries in a new browser tab through a declared reader contribution. The optional library remains available through Browse library. It provides a plugin-owned reader with game/file metadata, paginated listing, loading and explicit error states, PDF pages and zoom, literal UTF-8 text, and sanitized HTML with a source toggle. It reuses the host's `GameFileItem` rows and `games/<folder>/docs` storage through public document DTOs and opaque IDs. Upload files in the host game's Docs tab; the plugin does not create a separate document store.
 
 ## Permissions
 
@@ -12,13 +12,13 @@ Version **1.5.0** opens game Docs entries in a new browser tab through a declare
 | `backend.routes.plugin` v1 | Publish authenticated JSON handlers under this plugin's namespace. |
 | `frontend.context.documents` v1 | Register the reader for game Docs entries; the host opens an owned document ID in a new tab. |
 
-No native frontend, full API, host route, network, filesystem, credential, or persistent-storage permission is requested. The backend imports only the public SDK. Updates require normal host consent for the document-context grant. There is no mandatory Documents sidebar section.
+No native frontend, full API, host route, network, filesystem, credential, or persistent-storage permission is requested. The viewer also requests `plugin.settings` so its preview-size preference can be persisted by the plugin runtime. The backend imports only the public SDK. Updates require normal host consent for the document-context grant. There is no mandatory Documents sidebar section.
 
 ## Security model
 
 The host checks the current installation, lifecycle, active user and live grants on each action, route and document chunk. Document queries join `GameFileItem` to the caller's active games, exclude trashed items/non-document kinds, and do not expose another user's IDs/content. Another user's ID and a nonexistent ID both produce a missing-document result.
 
-Paths remain host-owned. Stored names containing separators, encoded separators, dot traversal, NUL or Windows drive syntax are rejected. Resolved paths and game folders must stay within the caller's game/document root; escaping symlinks are rejected. The host reads at most 5 MiB plus one sentinel byte before returning any content, validates the complete representation, and transports 24 KiB chunks as base64 JSON. Every continuation repeats authorization and content validation; SHA-256 detects replacement or mixed chunks. The frontend also validates IDs, MIME/format, byte counts, offsets, UTF-8 and final digest. No limits or sandbox flags were relaxed.
+Paths remain host-owned. Stored names containing separators, encoded separators, dot traversal, NUL or Windows drive syntax are rejected. Resolved paths and game folders must stay within the caller's game/document root; escaping symlinks are rejected. The host retains a 5 MiB compatibility default but accepts an explicit preview ceiling from this plugin. The setting defaults to `0` (unlimited), and the plugin sends that value on every chunk read. The host still validates ownership, format, traversal and the live capability grant before returning each 24 KiB base64 chunk. Every continuation repeats authorization and content validation; SHA-256 detects replacement or mixed chunks. The frontend also validates IDs, MIME/format, byte counts, offsets, UTF-8 and final digest. No sandbox flags were relaxed. The fixed 5 MiB Plugin API preview ceiling is now configurable for this plugin, including an unlimited (`0`) setting.
 
 The host serves verified package CSS and classic scripts in the authenticated entry response (`frontend.inline_assets: true`), authorizing only the bundled scripts with a fresh CSP nonce. Opaque iframe subresource requests do not need login cookies; no asset endpoint is made public and no same-origin permission is granted. The custom frontend runs under the host's `sandbox="allow-scripts"` and CSP. It gets no cookies or host DOM access. Requests use the correlated parent bridge, with cancellation and timeouts. User data responses carry `nosniff` and `private, no-store`; document bytes are never served as an uploaded HTML page. PDF.js, DOMPurify and the SHA-256 fallback are packaged offline, pinned and integrity checked; no CDN/runtime download is used.
 
@@ -47,12 +47,12 @@ The UI invokes the equivalent declared actions; it never fetches host data endpo
 
 ## Differences and restrictions relative to PR #241
 
-- **PDFs also have the platform's 5 MiB cap.** PR #241 limits text to 5 MiB but streams PDFs without a viewer size cap. Large PDFs can be downloaded, but their inline preview requires a future authorized streaming API; this plugin does not bypass the current bounded domain API.
+- The viewer's **Maximum preview size (MiB)** setting defaults to `0`, meaning no fixed Plugin API preview ceiling. A positive value applies that many MiB as the host-side preview ceiling. The original download remains independently streamable. Browser memory, PDF.js, Office parsing, and renderer limits can still prevent extremely large files from being practical to display.
 - The browser-native PDF iframe cannot reliably load in an opaque sandbox. Bundled PDF.js supplies page/zoom controls. Native print, PDF text search/selection, interactive forms and links are not reproduced. PDF passwords are unsupported.
 - File upload compatibility (`file`/`files`), file/media rename and generic downloads added on the PR branch are host management features. The read-only document APIs cannot reproduce them. Use the host's existing Docs management UI; this plugin adds no write privilege or undocumented endpoints.
 - Only indexed, active `GameFileItem(kind=doc)` rows are listed. Legacy disk-only files need the host Docs listing/scan to index them. No document editing, indexing, OCR or annotation is provided.
 - HTML links are disabled, a stricter navigation policy than the PR's sanitized HTML component.
-- Requires the accompanying `plugin-manager` document chunk/pagination contract and reader contribution, inline-asset delivery, scoped download and bridge context/status support. Version 1.5.0 must not be advertised as compatible with an older host just because both expose API v1.
+- Requires the accompanying `plugin-manager` document chunk/pagination contract and reader contribution, inline-asset delivery, scoped download and bridge context/status support, including the optional `max_bytes` document-read field (`0` = unlimited). Version 1.5.0 must not be advertised as compatible with an older host just because both expose API v1.
 
 ## Build and verification
 
