@@ -26,6 +26,15 @@
   ],
   "actions": [
     {
+      "id": "load-settings",
+      "label": "Load viewer settings",
+      "handler": "plugin:get_settings",
+      "capability": {
+        "name": "plugin.settings",
+        "version": 1
+      }
+    },
+    {
       "id": "list-documents",
       "label": "Refresh documents",
       "handler": "plugin:list_documents",
