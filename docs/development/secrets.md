@@ -1,5 +1,11 @@
 # Secrets
 
+## Goal and prerequisites
+
+Save a destination-bound token without returning it to the browser. Begin with
+Jellyfin's complete form/action and `plugin.settings`/`plugin.storage` grants.
+External requests additionally require live `network.outbound` approval.
+
 Keep tokens out of ordinary settings, action results, README, logs, package
 payloads, browser storage and catalogue metadata. Host secrets are distinct from
 displayable configuration.
@@ -26,3 +32,43 @@ Do not interpret a `secrets/` key convention as a separate universal secrets API
 or stronger cryptographic isolation. These are existing plugin patterns subject
 to host storage/runtime policy. Native browser privileges are powerful; keep
 secret access minimal and separate from normal read-only pages.
+
+## Minimal configuration and save result
+
+Jellyfin's UI declares a secret field separately from ordinary settings:
+
+```json
+{"id": "api_key", "label": "API key or access token", "type": "secret"}
+```
+
+Its explicit `save-token` action binds the validated value to current settings:
+
+```python
+store("secrets/api_key", {
+    "token": token, "server": config["server_url"], "user": config["user_id"],
+})
+return {"ok": True, "message": "Token saved. It will never be returned to the UI."}
+```
+
+This fragment uses `token`, `config` and `store` from the complete `save_token`
+handler in `examples/jellyfin-media-sync/plugin.py`. Include its validation and
+`stored_token`'s destination check. The key name does not create a separate secret API.
+
+## Test command
+
+```sh
+python -m pytest tests/test_jellyfin.py -k "token or outbound or http"
+node --test tests/native_frontends.test.mjs
+```
+
+## Expected result
+
+Save succeeds without returning the token; changing server/user requires a new
+save. Denied egress prevents HTTP. Native tests verify the input is cleared.
+Real host acceptance checks secret retention/deletion across lifecycle operations.
+
+## Common mistakes
+
+Echoing credentials in errors; putting them in settings or URLs; forwarding a
+token to a changed server; following redirects with authorization; claiming
+cryptographic isolation the chosen storage pattern does not establish.

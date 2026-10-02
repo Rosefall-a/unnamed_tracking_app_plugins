@@ -3,6 +3,11 @@
 Build a small **Library Summary** action. It counts the first 50 games returned
 for the authenticated caller. It does not claim to count an unbounded library.
 
+**Goal:** produce a real package and run its action in a development host.
+**Prerequisites:** Python 3.11+, Git, and an isolated Plugin Manager host build
+for installation. Node is needed for browser/native frontend tests, not for this
+Python/declarative exercise. Check the host version before claiming compatibility.
+
 ## 1. Prepare your environment
 
 Install Python 3.11+ and Git. Clone this repository into your own working directory:
@@ -145,3 +150,22 @@ Do not describe this preview as publisher-verified. Install refusal or a denied
 grant should remain a denial; follow [troubleshooting](../troubleshooting/index.md)
 instead of bypassing the host. Next, add [settings](../development/settings.md),
 [storage](../development/storage.md) or [publishing metadata](../publishing/packages.md).
+
+## Test command and expected result
+
+```sh
+python -m pytest tests/test_author_tutorial.py
+```
+
+The test extracts these exact four blocks, packages and validates them, then runs
+the packaged action and SDK. Three protocol-fixture games return `game_count: 3`.
+Installation, grants and real user ownership are checked in the actual host.
+
+## Common mistakes
+
+* Returning immediately after readiness causes an unhealthy worker.
+* Printing diagnostics to stdout corrupts the SDK protocol; use stderr.
+* Keeping the tutorial namespace in a public release risks identity collisions.
+* Editing integrity/signature fields manually does not create a valid package.
+* A denied read request must fail; do not present it as an empty library.
+* PowerShell needs explicit filenames or the [wildcard form](../publishing/packages.md).

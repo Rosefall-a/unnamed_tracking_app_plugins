@@ -1,5 +1,10 @@
 # Plugin-owned pages and browser UI
 
+## Goal and prerequisites
+
+Expose a bounded Python action on a page. Start from Library Summary; keep its
+manifest/action/page IDs consistent and approve the action's domain grant.
+
 Choose the smallest UI mode that supports your behavior:
 
 | Mode | Source | Authority |
@@ -32,3 +37,33 @@ Test actual assets in a browser, including missing bridge replies, stale
 responses, denied grants, unsupported content and disable/unmount cleanup.
 [Screenshots](../assets/screenshots/index.md) distinguish component fixtures
 from authenticated host workflow evidence.
+
+## Minimal declarative configuration
+
+```json
+{"id": "summary", "title": "Library Summary", "actions": ["summarize"]}
+```
+
+This is one `pages[]` element in `ui.json`, referring to the existing `summarize`
+action. List `summary` in `manifest.ui.pages`. The host renders the action button
+and presents the authenticated handler's result.
+
+## Test command
+
+```sh
+python -m pytest tests/test_author_tutorial.py tests/test_native_packages.py
+npm test
+```
+
+## Expected result
+
+The tutorial's real UI/action/package contract passes. Browser tests execute
+Document Viewer's actual assets with fixture bridge replies, including errors.
+In the host, Library Summary appears in the detail panel and returns a result;
+denied/disabled actions cannot execute.
+
+## Common mistakes
+
+Unsupported `pages[].components`; missing bundled assets; assuming iframe
+cookies/DOM access; uncorrelated bridge replies; reporting fixture output as
+authenticated permission enforcement evidence.

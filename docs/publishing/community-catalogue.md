@@ -4,6 +4,12 @@ You do not need official repository membership. This tutorial publishes the
 Library Summary plugin from your own repository using the existing `.utp`,
 signing registry and catalogue v1 generator.
 
+**Goal:** publish a signed independent package and an HTTPS catalogue consumed
+by Plugin Manager. **Prerequisites:** complete Library Summary, a namespace and
+hosting account you control, Python/Git, a reviewed Ed25519 signing identity and
+a disposable host for consent/update tests. The steps below preserve the existing
+package/signature/catalogue contract.
+
 ## 1. Prepare an independent source set
 
 Start from your own fork/check-out of these tools. Keep `sdk/`, `tools/`, exported
@@ -113,3 +119,26 @@ from verified immutable packages and retains their exact release records. This
 repository's generator builds local sources with one configured base URL; it is
 not a remote aggregation service. Never fabricate author signatures or assign
 your own permission risk classifications.
+
+## Test command
+
+```sh
+python -m pytest tests/test_community_catalogue.py
+python tools/distribution.py --check-source
+```
+
+Run the second command in your independent repository after signed publication.
+The test builds an actual independent signed package with a disposable identity.
+
+## Expected result
+
+Your generated list advertises immutable package URLs with exact manifests,
+archive/payload hashes, signing identity and release history. The host can browse
+the enabled endpoint, then independently review publisher trust and permissions.
+
+## Common mistakes
+
+Copying unrelated official history into a new catalogue; hashing base64 text
+rather than raw public bytes; advertising a URL before its package exists;
+overwriting old archives; hand-editing generated entries; assuming registering
+the endpoint also trusts its publishers or approves permissions.

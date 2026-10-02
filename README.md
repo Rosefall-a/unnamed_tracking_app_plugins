@@ -33,6 +33,7 @@ python -m venv .venv
 # Activate .venv for your shell, then:
 python -m pip install -r requirements-dev.txt
 python tools/check_source_layout.py
+python tools/check_docs.py
 python -m pytest
 python tools/build_packages.py
 python tools/distribution.py --root .validation --check-source
@@ -44,6 +45,11 @@ The Material/MkDocs wiki uses the same light/dark organization as the main app's
 wiki. Its sources live under `docs/`; `mkdocs serve` opens the local developer wiki
 at `http://127.0.0.1:8000`. [Testing](docs/testing/index.md) includes package,
 browser and actual host conformance/lifecycle commands and PowerShell instructions.
+
+Use the [tutorial map](docs/development/index.md) for one-feature exercises,
+[architecture](docs/architecture/index.md) for the public boundary,
+[lifecycle matrix](docs/testing/lifecycle.md) for updates/recovery, and
+[release audit](docs/publishing/release-history.md) before publication.
 
 ## Find a working example
 

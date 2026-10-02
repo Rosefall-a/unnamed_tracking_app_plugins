@@ -1,5 +1,11 @@
 # Navigation and routes
 
+## Goal and prerequisites
+
+Expose a bounded authenticated document-list handler below your plugin's URL.
+Use a complete plugin, `backend.routes.plugin` and `documents.read` v1 with
+rationales. [Navigation](navigation.md) covers sidebar discovery.
+
 Plugin pages are declared UI surfaces; host navigation and backend routes are
 separate contributions with their own grants.
 
@@ -41,3 +47,36 @@ framework response.
 
 `backend.routes.host` is exceptional authority for direct `/api/...` routes.
 Do not claim management paths or implement private authentication middleware.
+
+## Minimal route configuration
+
+Add a manifest route pointing to your real handler:
+
+```json
+{"backend_routes": [{"id": "list-documents", "scope": "plugin", "path": "documents", "methods": ["GET"], "handler": "plugin:list_documents_route", "authorization": "authenticated"}]}
+```
+
+Use Document Viewer's guarded handlers instead of deploying the sketch above
+without numeric/error validation. Query normalization and `route_response` are
+public SDK helpers. Manifest HTTP routes differ from `ui.json` browser `routes[]`;
+their grants are separate.
+
+## Test command
+
+```sh
+python -m pytest tests/test_plugin_routes.py tests/test_domain_plugins.py
+python tools/check_source_layout.py
+```
+
+## Expected result
+
+Tests validate normalized queries, bounded status codes, namespaced declarations
+and preserved gateway ownership checks. In the host,
+`GET /api/plugins/<your-plugin-id>/documents` requires an authenticated authorized
+caller and an active plugin. Admin routes additionally declare `authorization: admin`.
+
+## Common mistakes
+
+Returning a framework response; trusting query user IDs; asking for host-wide
+route authority for a plugin endpoint; absolute paths; unbounded limits or unsafe
+errors on malformed numeric inputs.
