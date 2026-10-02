@@ -17,7 +17,7 @@ The SDK wire format, all ten current manifests, declared capability names/versio
 
 ## What stages 1–4 actually require
 
-The stage names come from `plugin-system-plan-outline.md`, section 19. The host changes are:
+The stage names come from [the platform design](history/design-plan.md), section 19. The host changes are:
 
 | Stage | Host implementation | Required plugin-side response |
 | --- | --- | --- |

@@ -1,4 +1,9 @@
-# Authoring and distributing Unnamed Tracking App plugins
+# Plugin author manual and API reference
+
+New authors: start with [Create your first plugin](getting-started/first-plugin.md).
+The [wiki home](index.md) provides development recipes, lifecycle/security,
+publishing/catalogue tutorials, testing and troubleshooting. This page retains
+the detailed existing v1 reference used by those tutorials.
 
 This guide describes Plugin API v1, the existing `.utp` package format and this
 repository's generated distribution. You can develop and publish independently

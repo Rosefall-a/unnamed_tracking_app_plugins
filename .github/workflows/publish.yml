@@ -34,7 +34,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: python -m pip install --upgrade pip pytest cryptography jsonschema pydantic
+      - run: python -m pip install --upgrade pip -r requirements-dev.txt
+      - run: python tools/check_source_layout.py
+      - name: Validate developer wiki before publication
+        run: python -m mkdocs build --strict
       - run: node --test tests/session_manager_ui.test.mjs tests/native_frontends.test.mjs
       - run: node --check examples/self-service-session-manager/frontend/app.js
       - run: pytest

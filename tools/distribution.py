@@ -43,6 +43,8 @@ def git(root: Path, *args: str) -> str | None:
 
 
 def discover_plugins(root: Path) -> list[tuple[Path, dict]]:
+    if not (root / "examples").is_dir():
+        raise ValueError("no plugin source tree found under examples/")
     if (root / "examples.old").exists():
         raise ValueError("obsolete examples.old source tree; keep maintained plugins under examples/")
     for source in sorted((root / "examples").iterdir()):
