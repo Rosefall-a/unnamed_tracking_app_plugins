@@ -53,3 +53,7 @@ the host prerequisites, and pass `--browser`. Do not construct a lookalike
 Plugin Manager UI or label unit fixture output as an installation screenshot.
 The captures above were imported from a successful job and visually inspected.
 They remain dated evidence; refresh them from a successful run when the host UI changes.
+
+## Jellyfin version 3
+
+The administrator settings, user mapping, explicit library mapping, sync status and Watch Now screenshots in [Jellyfin Media Sync](../../examples/jellyfin.md) were captured with the actual signed package installed in the real host/runtime and PostgreSQL, against the disposable Jellyfin HTTP fixture. `tools/capture_jellyfin.mjs` logs in to the actual frontend and asserts the exact media destination before capture.

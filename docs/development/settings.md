@@ -27,6 +27,4 @@ distinct from contributing a new host Settings section; that uses
 Test empty values, invalid settings, restart and update preservation. Keep tokens
 out of these ordinary fields; use [secrets](secrets.md).
 
-![Actual Jellyfin configuration UI before entering a server URL](../assets/screenshots/jellyfin-native-ui.png)
-
-The empty-server validation state is intentional; see [capture provenance](../assets/screenshots/index.md).
+Jellyfin uses administrator-checked backend actions and plugin storage for its master server configuration, so an ordinary installation settings write cannot change its server credential or identity approvals. See [Jellyfin setup and screenshots](../examples/jellyfin.md).

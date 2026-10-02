@@ -13,7 +13,7 @@ The catalogue is generated from their actual packages, not this table.
 | [Discord Delivery Provider](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/main/examples/discord-delivery-provider) | Reference: core-coordinated delivery + write-only secret | domain plugins, smoke, package |
 | [UI Playground](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/main/examples/ui-playground) | Demo: iframe Vue pages/bridge; pinned CDN teaching limitation | examples, smoke, no secret echo |
 | [Help Button](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/main/examples/help-button) | Showcase: contributions, dialogs, overlays and native cleanup | help, native frontend, canonical packages |
-| [Jellyfin Media Sync](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/main/examples/jellyfin-media-sync) | Integration: queued sync, token binding, progress, native settings | Jellyfin, native frontend, full host lifecycle/browser |
+| [Jellyfin Media Sync](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/main/examples/jellyfin-media-sync) | Master server, approved user mapping, native episode completion and Watch Now | Jellyfin, native frontend, full host lifecycle/browser |
 | [Scoped Document Viewer](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/main/examples/scoped-document-viewer) | Feature demo: scoped sandboxed content reader | domain, document package, real browser, parity |
 | [Session Manager](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/main/examples/self-service-session-manager) | Privileged feature demo: own/admin session Settings/maps | session, routes, native UI, package |
 

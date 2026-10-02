@@ -60,6 +60,7 @@ nav:
   - Troubleshooting: troubleshooting/index.md
   - Examples and Screenshots:
       - Working examples: examples/index.md
+      - Jellyfin Media Sync: examples/jellyfin.md
       - Real captures: assets/screenshots/index.md
       - Document behavior comparison: scoped-document-viewer.md
   - Historical Evidence:
