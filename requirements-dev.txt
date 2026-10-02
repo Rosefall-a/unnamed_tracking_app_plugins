@@ -1,0 +1,5 @@
+pytest>=8,<10
+cryptography>=43,<47
+jsonschema>=4.23,<5
+pydantic>=2,<3
+-r wiki/docs/requirements.txt

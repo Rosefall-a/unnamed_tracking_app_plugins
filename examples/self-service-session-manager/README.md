@@ -94,6 +94,6 @@ Plugin tests exercise permissions, filters, identifier validation, confirmations
 
 Local packages are **unsigned**, requiring normal untrusted-package consent. Release CI supplies its configured reviewed signing identity. The checked-in 2.0.0 artifact is a development build, not a signed production release. Historical packages and signing identities are preserved.
 
-![Native admin component with fixture data](admin-preview.png)
+![Native admin component with fixture data](../../docs/assets/screenshots/session-manager-admin.png)
 
 Screenshot uses the actual native module with disposable fixture data in a local Vue harness, not a deployed authenticated host.

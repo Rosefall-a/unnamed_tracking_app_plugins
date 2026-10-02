@@ -1,0 +1,244 @@
+{
+  "plugin_id": "example.discord-delivery-provider",
+  "releases": [
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "1203dd488158e2a774e27679121d7079a8315528",
+        "source_committed_at": "2026-09-30T08:54:56+08:00",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": ">=1.0.0",
+        "capabilities": [
+          {
+            "name": "notification_providers.register",
+            "version": 1
+          },
+          {
+            "name": "notification_providers.deliver",
+            "version": 1
+          },
+          {
+            "name": "plugin.storage",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Registers a Discord notification destination while core retains preferences, retry state, and delivery ownership.",
+        "entrypoint": "plugin:main",
+        "frontend": {
+          "entry": "frontend/index.html"
+        },
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "8d09ac72e6c465fd72436fed964a4e6e28f29b14e6737d31d11ca24d3eb57481",
+          "signature": "dDZog+w35pK7UJ5dZo5B/G5UGjFKxdsXMPzydurasuf9H8eSJe46kGHrdEwEFPRWlCAkDMgmYkurY58zznvNCw=="
+        },
+        "manifest_version": 1,
+        "name": "External Discord Delivery Provider",
+        "permissions": [
+          {
+            "capability": {
+              "name": "notification_providers.register",
+              "version": 1
+            },
+            "rationale": "Register this plugin's namespaced Discord provider with the core notification coordinator."
+          },
+          {
+            "capability": {
+              "name": "notification_providers.deliver",
+              "version": 1
+            },
+            "rationale": "Receive only minimized delivery work that core has approved using the user's provider preference and this installation's grant."
+          },
+          {
+            "capability": {
+              "name": "plugin.storage",
+              "version": 1
+            },
+            "rationale": "Store the Discord webhook as a write-only secret in this plugin's private runtime namespace."
+          }
+        ],
+        "plugin_id": "example.discord-delivery-provider",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "deliver",
+            "check-configuration"
+          ],
+          "menus": [],
+          "pages": [
+            "provider"
+          ],
+          "settings": [
+            "destination"
+          ]
+        },
+        "version": "1.0.0"
+      },
+      "package": {
+        "filename": "example.discord-delivery-provider-1.0.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 5339
+      },
+      "package_sha256": "4b970195439d4802205f9c2b325fe30ef65b718d32e94e7b8a1d9e76c5a11759",
+      "plugin_id": "example.discord-delivery-provider",
+      "publisher": "Unnamed Tracking Official",
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "8d09ac72e6c465fd72436fed964a4e6e28f29b14e6737d31d11ca24d3eb57481",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "8d09ac72e6c465fd72436fed964a4e6e28f29b14e6737d31d11ca24d3eb57481",
+        "signature": "dDZog+w35pK7UJ5dZo5B/G5UGjFKxdsXMPzydurasuf9H8eSJe46kGHrdEwEFPRWlCAkDMgmYkurY58zznvNCw=="
+      },
+      "tags": [],
+      "version": "1.0.0"
+    },
+    {
+      "automatic_update": true,
+      "build": {
+        "builder": "tools/build_packages.py",
+        "contract_revision": "f1165fcc805e57ee428e7bc42fa6b83f4a6caf25",
+        "legacy": false,
+        "source_commit": "6b4fb8a5412e5a8138312efc4da4a1ea1dd0d0c4",
+        "source_committed_at": "2026-10-02T12:32:33+08:00",
+        "source_digest": "7d4f6400875958950e2f4e70ee5fa2e30fbd16cbe3d8e621331249eaf015e6b0",
+        "source_path": "examples/discord-delivery-provider",
+        "version_bump": "minor"
+      },
+      "icon": {
+        "path": "icon.svg",
+        "sha256": "35878a54a656772077bd25fe042f7b715432b9b6ba67ee4080d6d3f5f69f758d"
+      },
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "source",
+        "validated",
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": ">=1.0.0",
+        "capabilities": [
+          {
+            "name": "notification_providers.register",
+            "version": 1
+          },
+          {
+            "name": "notification_providers.deliver",
+            "version": 1
+          },
+          {
+            "name": "plugin.storage",
+            "version": 1
+          },
+          {
+            "name": "frontend.navigation.main",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Registers a Discord notification destination while core retains preferences, retry state, and delivery ownership.",
+        "entrypoint": "plugin:main",
+        "frontend": {
+          "entry": "frontend/index.html"
+        },
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "de431fe9f3504d2d77e9f06596414cfe6630447a04d6a0e431ff2c7d6e96d151",
+          "signature": "uqve/NoDYI6R32j++UD3grZZ92OE0IoSOR8r8J+XODd2HWLNpUmTioxAaIzhfd3GoinXlzZbBwO6/t4ENI/FAg=="
+        },
+        "manifest_version": 1,
+        "name": "External Discord Delivery Provider",
+        "permissions": [
+          {
+            "capability": {
+              "name": "notification_providers.register",
+              "version": 1
+            },
+            "rationale": "Register this plugin's namespaced Discord provider with the core notification coordinator."
+          },
+          {
+            "capability": {
+              "name": "notification_providers.deliver",
+              "version": 1
+            },
+            "rationale": "Receive only minimized delivery work that core has approved using the user's provider preference and this installation's grant."
+          },
+          {
+            "capability": {
+              "name": "plugin.storage",
+              "version": 1
+            },
+            "rationale": "Store the Discord webhook as a write-only secret in this plugin's private runtime namespace."
+          },
+          {
+            "capability": {
+              "name": "frontend.navigation.main",
+              "version": 1
+            },
+            "rationale": "Expose the declared plugin page in the main navigation."
+          }
+        ],
+        "plugin_id": "example.discord-delivery-provider",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "deliver",
+            "check-configuration"
+          ],
+          "menus": [],
+          "pages": [
+            "provider"
+          ],
+          "settings": [
+            "destination"
+          ]
+        },
+        "version": "1.1.0"
+      },
+      "package": {
+        "filename": "example.discord-delivery-provider-1.1.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 7044
+      },
+      "package_sha256": "b958b20ae77ea31063212044b68c636abe77b5e09db795bb7ff1b95136f973a4",
+      "plugin_id": "example.discord-delivery-provider",
+      "publisher": "Unnamed Tracking Official",
+      "readme": "# External Discord Delivery Provider\n\nThis reference plugin registers `example.discord-delivery-provider.discord` with the core notification coordinator. Core decides which notifications are eligible, checks the user's provider setting and active grant, owns deduplication and retry state, and sends a minimized delivery DTO to the plugin's `deliver` action.\n\nPermissions requested:\n\n- `notification_providers.register`: register and remove the namespaced provider.\n- `notification_providers.deliver`: receive eligible minimized delivery work.\n- `plugin.storage`: store a Discord webhook in private, write-only runtime storage.\n\nThe runtime accepts only HTTPS `discord.com` or `discordapp.com` `/api/webhooks/` destinations and limits message content to Discord's 2,000-character bound. The plugin never logs or returns the webhook. Set `PLUGIN_RUNTIME_DISCORD_EGRESS=true` to enable the narrowly scoped runtime sender; outbound access remains disabled otherwise.\n\nBuild all packages with `python tools/build_packages.py`. Local builds are intentionally unsigned and require the host's untrusted-package confirmation; release CI supplies the reviewed signing identity. Requires the host Plugin API v1 notification-provider capabilities introduced by the Phase 2 plugin-manager work.\n",
+      "release_notes": "Package lifecycle metadata, embedded documentation and validated Plugin API v1 contributions.",
+      "sha256": "de431fe9f3504d2d77e9f06596414cfe6630447a04d6a0e431ff2c7d6e96d151",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "de431fe9f3504d2d77e9f06596414cfe6630447a04d6a0e431ff2c7d6e96d151",
+        "signature": "uqve/NoDYI6R32j++UD3grZZ92OE0IoSOR8r8J+XODd2HWLNpUmTioxAaIzhfd3GoinXlzZbBwO6/t4ENI/FAg=="
+      },
+      "tags": [
+        "notifications",
+        "integration"
+      ],
+      "version": "1.1.0"
+    }
+  ],
+  "version": 1
+}

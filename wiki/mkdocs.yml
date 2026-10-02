@@ -1,0 +1,88 @@
+site_name: Unnamed Tracking Plugins
+site_description: Plugin API v1 developer manual, examples and publishing guide
+repo_url: https://github.com/Rosefall-a/unnamed_tracking_app_plugins
+docs_dir: docs
+site_dir: ../.validation/wiki
+strict: true
+theme:
+  name: material
+  features: [navigation.sections, navigation.top, content.code.copy]
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle: {icon: material/weather-sunny, name: Switch to dark mode}
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle: {icon: material/weather-night, name: Switch to light mode}
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+plugins: [search]
+validation:
+  links:
+    not_found: warn
+    unrecognized_links: warn
+    anchors: warn
+nav:
+  - Home: index.md
+  - Getting Started:
+      - What is a plugin?: getting-started/overview.md
+      - Repository structure: getting-started/structure.md
+      - Create your first plugin: getting-started/first-plugin.md
+  - Tutorials:
+      - Choose a tutorial: development/index.md
+      - Manifest and compatibility: development/manifest.md
+      - SDK and gateway: development/gateway.md
+      - Capabilities and permissions: development/capabilities.md
+      - Settings: development/settings.md
+      - Storage: development/storage.md
+      - Secrets: development/secrets.md
+      - Game access: development/games.md
+      - Media access: development/media.md
+      - Events: development/events.md
+      - Background tasks: development/background-tasks.md
+      - Notifications: development/notifications.md
+      - Integration recipe: development/events-tasks.md
+      - Plugin-owned UI and pages: development/ui.md
+      - Native frontend: development/native.md
+      - Navigation: development/navigation.md
+      - Routes: development/routes.md
+      - External links: development/external-links.md
+      - Error handling: development/errors.md
+      - Complete author reference: plugin-author-guide.md
+  - Architecture:
+      - Host and plugin boundary: architecture/index.md
+      - Gateway and runtime: architecture/runtime.md
+      - Capabilities and permissions: architecture/permissions.md
+      - Storage and lifecycle: architecture/storage-lifecycle.md
+  - Lifecycle:
+      - Every operation: lifecycle/operations.md
+      - Install, configure and enable: lifecycle/install.md
+      - Update, rollback and data: lifecycle/updates.md
+  - Security:
+      - Default deny and risk: security/permissions.md
+      - Signing and publisher identity: security/signing.md
+      - Runtime boundary: security/runtime.md
+  - Publishing:
+      - Build and publish: publishing/packages.md
+      - Versioning and automatic updates: publishing/versioning.md
+      - Your own catalogue: publishing/community-catalogue.md
+      - Catalogue v1 specification: catalogue-specification.md
+      - Release history audit: publishing/release-history.md
+  - Testing:
+      - Unit, package, host and CI: testing/index.md
+      - Lifecycle conformance: testing/lifecycle.md
+  - Troubleshooting: troubleshooting/index.md
+  - Examples and Screenshots:
+      - Working examples: examples/index.md
+      - Real captures: assets/screenshots/index.md
+      - Document behavior comparison: scoped-document-viewer.md
+  - Historical Evidence:
+      - Ecosystem audit and plan: history/ecosystem-audit.md
+      - Ecosystem validation: history/ecosystem-validation.md
+      - Platform design: history/design-plan.md
+      - API v1 audit: plugin-api-v1-audit.md
+      - Document validation: scoped-document-viewer-validation.md
+      - Session validation: session-manager-validation.md

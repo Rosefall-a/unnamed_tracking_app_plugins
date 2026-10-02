@@ -1,0 +1,259 @@
+"""Real builder regressions: immutable versions, signatures, policies and metadata."""
+import base64
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+import zipfile
+from pathlib import Path
+
+import pytest
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+from tools.distribution import ROOT, load_histories, validate_distribution, validate_immutable_history, validate_metadata
+from tools.validate_packages import validate_package
+
+
+@pytest.fixture
+def checkout(tmp_path):
+    shutil.copyfile(ROOT / ".gitignore", tmp_path / ".gitignore")
+    for name in ("tools", "sdk", "publishers"):
+        shutil.copytree(ROOT / name, tmp_path / name, ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(ROOT / "examples/help-button", tmp_path / "examples/help-button")
+    # Give release-simulation tests a fixed SemVer seed independently of the
+    # real plugin's automatically advancing version. Its implementation stays real.
+    manifest_path = tmp_path / "examples/help-button/manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["version"] = "2.0.0"
+    manifest_path.write_text(json.dumps(manifest))
+    # A disposable publisher is registered only inside the isolated test checkout.
+    key = Ed25519PrivateKey.generate()
+    public = key.public_key().public_bytes_raw()
+    encoded = base64.b64encode(public).decode()
+    (tmp_path / "publishers/test.public-key.b64").write_text(encoded)
+    registry = {"schema_version": 1, "publishers": [{"key_id": "test", "publisher": "Unnamed Tracking Official", "public_key_file": "test.public-key.b64", "public_key_b64": encoded, "public_key_sha256": hashlib.sha256(public).hexdigest(), "status": "active", "plugin_id_prefixes": ["example."]}]}
+    (tmp_path / "publishers/registry.json").write_text(json.dumps(registry))
+    env = {**os.environ, "PLUGIN_SIGNING_KEY_B64": base64.b64encode(key.private_bytes_raw()).decode(), "PLUGIN_SIGNING_KEY_ID": "test"}
+    subprocess.run(["git", "init", str(tmp_path)], check=True, capture_output=True)
+    subprocess.run(["git", "-C", str(tmp_path), "config", "user.name", "Test"], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "config", "user.email", "test@example.invalid"], check=True)
+    commit(tmp_path, "feat: add example")
+    return tmp_path, env
+
+
+def commit(root, message):
+    subprocess.run(["git", "-C", str(root), "add", "."], check=True, capture_output=True)
+    subprocess.run(["git", "-C", str(root), "commit", "-m", message], check=True, capture_output=True)
+
+
+def run_build(root, env, *flags, check=True):
+    result = subprocess.run([sys.executable, str(root / "tools/build_packages.py"), *flags], env=env, check=False, capture_output=True, text=True)
+    if check and result.returncode:
+        raise RuntimeError(result.stderr)
+    return result
+
+
+def records(root):
+    return json.loads((root / "releases/example.help-button.json").read_text(encoding="utf-8"))["releases"]
+
+
+def test_signed_releases_preserve_history_and_release_specific_opt_out(checkout):
+    root, env = checkout
+    metadata_path = root / "examples/help-button/release.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    metadata["automatic_update"] = False
+    metadata_path.write_text(json.dumps(metadata))
+    commit(root, "fix: require manual approval for initial release")
+    run_build(root, env, "--publish")
+    first = records(root)[0]
+    original = (root / "dist" / first["package"]["filename"]).read_bytes()
+    assert first["automatic_update"] is False
+    assert first["signing"]["signature"]
+    commit(root, "chore: publish release")
+    metadata["automatic_update"] = True
+    metadata["release_notes"] = "Allow automatic updates for this patch."
+    metadata_path.write_text(json.dumps(metadata))
+    commit(root, "fix: correct release policy")
+    run_build(root, env, "--publish")
+    history = records(root)
+    assert history[0] == first
+    assert history[1]["version"] == "2.0.1"
+    assert history[1]["automatic_update"] is True
+    assert (root / "dist" / first["package"]["filename"]).read_bytes() == original
+    commit(root, "chore: publish the policy patch")
+    before = {p.relative_to(root).as_posix(): p.read_bytes() for d in ("dist", "releases") for p in (root / d).iterdir()}
+    run_build(root, env, "--publish", "--reuse-published")
+    assert before == {p.relative_to(root).as_posix(): p.read_bytes() for d in ("dist", "releases") for p in (root / d).iterdir()}
+
+
+@pytest.mark.parametrize("message,expected,automatic", [("fix: correct behavior", "2.0.1", True), ("feat: add behavior", "2.1.0", True), ("feat!: change behavior", "3.0.0", False)])
+def test_versions_follow_conventional_commits(checkout, message, expected, automatic):
+    root, env = checkout
+    run_build(root, env, "--publish")
+    commit(root, "chore: publish package")
+    with (root / "examples/help-button/plugin.py").open("a") as stream:
+        stream.write("\n# changed behavior\n")
+    commit(root, message)
+    run_build(root, env, "--publish")
+    assert records(root)[-1]["version"] == expected
+    assert records(root)[-1]["automatic_update"] is automatic
+
+
+def test_missing_signer_and_changed_historical_artifact_fail_without_writes(checkout):
+    root, env = checkout
+    run_build(root, env, "--publish")
+    commit(root, "chore: publish package")
+    before = (root / "list.json").read_bytes()
+    no_signer = {k: v for k, v in env.items() if not k.startswith("PLUGIN_SIGNING_KEY")}
+    result = run_build(root, no_signer, "--publish", check=False)
+    assert result.returncode != 0 and "requires" in result.stderr
+    package = next((root / "dist").glob("*.utp"))
+    package.write_bytes(package.read_bytes() + b"modified")
+    result = run_build(root, env, "--publish", check=False)
+    assert result.returncode != 0 and "historical package changed" in result.stderr
+    assert (root / "list.json").read_bytes() == before
+
+
+@pytest.mark.parametrize("defect", ["package_hash", "missing_package", "release_policy", "version", "scope", "readme", "tag", "url"])
+def test_generated_metadata_corruption_is_rejected(built_distribution, tmp_path, defect):
+    shutil.copytree(built_distribution, tmp_path / "candidate")
+    root = tmp_path / "candidate"
+    path = root / "list.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    entry = data["plugins"][0]
+    if defect == "missing_package":
+        (root / "dist" / entry["package"]["filename"]).unlink()
+    elif defect == "package_hash": entry["package_sha256"] = "0" * 64
+    elif defect == "release_policy": entry["releases"][-1]["automatic_update"] = not entry["automatic_update"]
+    elif defect == "version": entry["version"] = "99.0.0"
+    elif defect == "scope": entry["permissions"] = []
+    elif defect == "readme": entry["readme"] = "Wrong documentation"
+    elif defect == "tag": entry["tags"] = ["Fake Category"]
+    else: entry["url"] = "https://wrong.invalid/package.utp"
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError):
+        validate_distribution(root)
+
+
+@pytest.mark.parametrize("values", [{"tags": ["Invalid tag"]}, {"tags": ["games", "games"]}, {"automatic_update": "false"}, {"risk": "low"}])
+def test_invalid_tags_policies_and_plugin_defined_risk_are_rejected(values):
+    metadata = {"schema_version": 1, "publisher": "Developer", "tags": [], "icon": None, "automatic_update": None, "release_notes": ""}
+    with pytest.raises(ValueError):
+        validate_metadata({**metadata, **values})
+
+
+def test_preview_build_never_overwrites_published_distribution(built_distribution):
+    history = load_histories(built_distribution)
+    original = load_histories(ROOT)
+    for plugin_id, releases in original.items():
+        assert history[plugin_id][:len(releases)] == releases
+        for release in releases:
+            filename = release["package"]["filename"]
+            assert (built_distribution / "dist" / filename).read_bytes() == (ROOT / "dist" / filename).read_bytes()
+
+
+@pytest.mark.parametrize("plugin_id", ["example.ui-api", "example.playtime-report", "example.recently-played-notifier", "example.metadata-curator"])
+def test_packaged_workers_report_ready_and_remain_alive(current_packages, tmp_path, plugin_id):
+    with zipfile.ZipFile(current_packages[plugin_id]) as archive:
+        for name in archive.namelist():
+            if name.startswith("payload/"):
+                path = tmp_path / name.removeprefix("payload/")
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(archive.read(name))
+    worker = subprocess.Popen([sys.executable, "-c", "import plugin; plugin.main()"], cwd=tmp_path,
+                              stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    try:
+        with pytest.raises(subprocess.TimeoutExpired):
+            worker.communicate(input=json.dumps({"payload": {}}) + "\n", timeout=0.5)
+        assert worker.poll() is None
+    finally:
+        worker.terminate()
+        output, error = worker.communicate(timeout=5)
+    assert not error
+    assert json.loads(output.splitlines()[0])["method"] == "lifecycle.ready"
+
+
+@pytest.mark.parametrize("defect", ["handler", "ui_shape", "risk", "range", "metadata_version", "missing_readme"])
+def test_incompatible_new_packages_are_rejected(current_packages, tmp_path, defect):
+    with zipfile.ZipFile(current_packages["example.playtime-report"]) as archive:
+        members = {name: archive.read(name) for name in archive.namelist()}
+    manifest = json.loads(members["manifest.json"])
+    document = json.loads(members["payload/ui.json"])
+    metadata = json.loads(members["payload/distribution.json"])
+    if defect == "handler": document["actions"][0]["handler"] = "plugin:missing"
+    elif defect == "ui_shape": document["pages"][0]["components"] = []
+    elif defect == "risk": manifest["permissions"][0]["risk"] = "low"
+    elif defect == "range": manifest["sdk_version_range"] = ">=1.0.0 <2.0.0"
+    elif defect == "metadata_version": metadata["version"] = "99.0.0"
+    else: members.pop("payload/README.md")
+    members["manifest.json"] = json.dumps(manifest).encode()
+    members["payload/ui.json"] = json.dumps(document).encode()
+    members["payload/distribution.json"] = json.dumps(metadata).encode()
+    candidate = tmp_path / "invalid.utp"
+    with zipfile.ZipFile(candidate, "w") as archive:
+        for name, data in members.items(): archive.writestr(name, data)
+    # Schema failures are jsonschema.ValidationError; cross-field failures are
+    # ValueError. Both must reject the package rather than silently strip fields.
+    from jsonschema import ValidationError
+    with pytest.raises((ValueError, ValidationError)):
+        validate_package(candidate, full=True)
+
+
+def test_early_release_tag_and_dirty_publish_are_rejected(checkout):
+    root, env = checkout
+    result = run_build(root, env, "--publish", "--reuse-published", check=False)
+    assert result.returncode != 0 and "already published" in result.stderr
+    with (root / "examples/help-button/plugin.py").open("a") as stream:
+        stream.write("\n# not committed\n")
+    result = run_build(root, env, "--publish", check=False)
+    assert result.returncode != 0 and "commit source" in result.stderr
+
+
+def test_ci_rejects_rewriting_historical_release_metadata(checkout):
+    root, env = checkout
+    run_build(root, env, "--publish")
+    commit(root, "chore: publish release")
+    validate_immutable_history(root, root, "HEAD")
+    history_path = root / "releases/example.help-button.json"
+    data = json.loads(history_path.read_text(encoding="utf-8"))
+    data["releases"][0]["release_notes"] = "Changed historical notes"
+    history_path.write_text(json.dumps(data))
+    with pytest.raises(ValueError, match="historical release metadata"):
+        validate_immutable_history(root, root, "HEAD")
+
+
+def test_ci_rejects_source_and_catalogue_removal_even_with_retained_history(checkout):
+    root, env = checkout
+    run_build(root, env, "--publish")
+    commit(root, "chore: publish release")
+    shutil.rmtree(root / "examples/help-button")
+    catalogue = json.loads((root / "list.json").read_bytes())
+    catalogue["plugins"] = []
+    (root / "list.json").write_text(json.dumps(catalogue), encoding="utf-8")
+    with pytest.raises(ValueError, match="disappeared from catalogue"):
+        validate_immutable_history(root, root, "HEAD")
+
+
+@pytest.mark.parametrize("field", ["sha256", "package_sha256", "manifest", "signing",
+                                    "publisher", "version", "readme", "tags",
+                                    "automatic_update", "release_notes"])
+def test_every_release_metadata_field_is_checked_against_package(built_distribution, tmp_path, field):
+    root = tmp_path / "candidate"
+    shutil.copytree(built_distribution, root)
+    path = root / "releases/example.help-button.json"
+    document = json.loads(path.read_bytes())
+    document["releases"][-1][field] = None
+    path.write_text(json.dumps(document), encoding="utf-8")
+    with pytest.raises((ValueError, TypeError, KeyError)):
+        validate_distribution(root)
+
+
+def test_package_generation_rejects_unindexed_output(built_distribution, tmp_path):
+    root = tmp_path / "candidate"
+    shutil.copytree(built_distribution, root)
+    original = next((root / "dist").glob("*.utp"))
+    shutil.copyfile(original, root / "dist/unindexed.utp")
+    with pytest.raises(ValueError, match="untracked packages"):
+        validate_distribution(root)

@@ -1,12 +1,27 @@
 {
-  "manifest_version": 1,
-  "plugin_id": "example.scoped-document-viewer",
-  "name": "Scoped Document Viewer",
-  "version": "1.6.0",
-  "description": "Game Docs reader with configurable, optionally unlimited preview size, new-tab previews, original downloads, PDF, text, safe HTML and Office/OpenDocument reading views.",
-  "entrypoint": "plugin:main",
-  "sdk_version_range": "^1.0.0",
   "application_version_range": ">=1.0.0",
+  "backend_routes": [
+    {
+      "authorization": "authenticated",
+      "handler": "plugin:list_documents_route",
+      "id": "list-documents-api",
+      "methods": [
+        "GET"
+      ],
+      "path": "documents",
+      "scope": "plugin"
+    },
+    {
+      "authorization": "authenticated",
+      "handler": "plugin:read_document_route",
+      "id": "read-document-api",
+      "methods": [
+        "GET"
+      ],
+      "path": "documents/{document_id}",
+      "scope": "plugin"
+    }
+  ],
   "capabilities": [
     {
       "name": "documents.read",
@@ -25,6 +40,20 @@
       "version": 1
     }
   ],
+  "dependencies": [],
+  "description": "Game Docs reader with configurable, optionally unlimited preview size, new-tab previews, original downloads, PDF, text, safe HTML and Office/OpenDocument reading views.",
+  "entrypoint": "plugin:main",
+  "frontend": {
+    "entry": "frontend/index.html",
+    "inline_assets": true
+  },
+  "integrity": {
+    "key_id": null,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null
+  },
+  "manifest_version": 1,
+  "name": "Scoped Document Viewer",
   "permissions": [
     {
       "capability": {
@@ -52,55 +81,26 @@
         "name": "plugin.settings",
         "version": 1
       },
-      "rationale": "Persist the viewer's per-plugin preview-size setting, including an unlimited option; no document content or host paths are stored."
+      "rationale": "Persist the viewer preview-size setting; zero means unlimited. Document content and host paths are never stored."
     }
   ],
-  "backend_routes": [
-    {
-      "id": "list-documents-api",
-      "scope": "plugin",
-      "path": "documents",
-      "methods": [
-        "GET"
-      ],
-      "handler": "plugin:list_documents_route",
-      "authorization": "authenticated"
-    },
-    {
-      "id": "read-document-api",
-      "scope": "plugin",
-      "path": "documents/{document_id}",
-      "methods": [
-        "GET"
-      ],
-      "handler": "plugin:read_document_route",
-      "authorization": "authenticated"
-    }
-  ],
-  "dependencies": [],
+  "plugin_id": "example.scoped-document-viewer",
+  "sdk_version_range": "^1.0.0",
+  "storage": {
+    "quota_mb": 1
+  },
   "ui": {
-    "settings": [
-      "viewer-settings"
-    ],
     "actions": [
       "list-documents",
       "read-document"
     ],
+    "menus": [],
     "pages": [
       "documents"
     ],
-    "menus": []
+    "settings": [
+      "viewer-settings"
+    ]
   },
-  "storage": {
-    "quota_mb": 1
-  },
-  "integrity": {
-    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "signature": null,
-    "key_id": null
-  },
-  "frontend": {
-    "entry": "frontend/index.html",
-    "inline_assets": true
-  }
+  "version": "1.7.0"
 }

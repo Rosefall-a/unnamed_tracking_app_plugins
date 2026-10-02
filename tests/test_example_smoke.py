@@ -65,11 +65,14 @@ def test_all_real_plugins_execute_their_main_logic(monkeypatch) -> None:
         calls.append((method, capability, payload))
         return responses.get(method, {})
 
-    for name in PLUGINS[:4]:
+    for name, action in (("ui-api", "refresh"), ("playtime-report", "refresh"), ("recently-played-notifier", "run"), ("metadata-curator", "search")):
         module = _load_plugin(name)
         monkeypatch.setattr(module, "request", fake_request)
-        module.main()
-        assert any(method == "lifecycle.ready" for method, _, _ in calls)
+        result = getattr(module, action)({"_plugin_context": {"user_id": "test-user"}})
+        assert isinstance(result, dict)
+        assert any(method == "games.list" or method == "games.metadata.search" for method, _, _ in calls)
+        if name != "ui-api":
+            assert any(method == "storage.put" and payload["key"].startswith("users/test-user/") for method, _, payload in calls)
         calls.clear()
 
 
@@ -126,7 +129,7 @@ def test_ui_playground_frontend_entry_is_complete() -> None:
 
 def test_every_example_package_source_has_safe_paths_and_valid_frontend() -> None:
     for name in ("ui-api", *PLUGINS):
-        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
         frontend = manifest.get("frontend")
         if frontend:
             entry = frontend["entry"]

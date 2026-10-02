@@ -1,12 +1,77 @@
 {
-  "manifest_version": 1,
-  "plugin_id": "example.self-service-session-manager",
-  "name": "Self-Service Session Manager",
-  "version": "2.0.0",
-  "description": "Manage account and administrator browser sessions inside Settings, with GeoIP, anomaly context, filters, and confirmed revocation.",
-  "entrypoint": "plugin:main",
-  "sdk_version_range": "^1.0.0",
   "application_version_range": ">=1.0.0",
+  "backend_routes": [
+    {
+      "authorization": "authenticated",
+      "handler": "plugin:list_sessions_route",
+      "id": "list-sessions-api",
+      "methods": [
+        "GET"
+      ],
+      "path": "sessions",
+      "scope": "plugin"
+    },
+    {
+      "authorization": "authenticated",
+      "handler": "plugin:revoke_session_route",
+      "id": "revoke-session-api",
+      "methods": [
+        "DELETE"
+      ],
+      "path": "sessions/{session_id}",
+      "scope": "plugin"
+    },
+    {
+      "authorization": "admin",
+      "handler": "plugin:list_admin_sessions_route",
+      "id": "list-admin-sessions-api",
+      "methods": [
+        "GET"
+      ],
+      "path": "admin/sessions",
+      "scope": "plugin"
+    },
+    {
+      "authorization": "admin",
+      "handler": "plugin:revoke_admin_session_route",
+      "id": "revoke-admin-session-api",
+      "methods": [
+        "DELETE"
+      ],
+      "path": "admin/sessions/{session_id}",
+      "scope": "plugin"
+    },
+    {
+      "authorization": "admin",
+      "handler": "plugin:revoke_all_admin_sessions_route",
+      "id": "revoke-all-admin-sessions-api",
+      "methods": [
+        "DELETE"
+      ],
+      "path": "admin/sessions",
+      "scope": "plugin"
+    },
+    {
+      "authorization": "authenticated",
+      "handler": "plugin:revoke_all_sessions_route",
+      "id": "revoke-all-own-api",
+      "methods": [
+        "DELETE"
+      ],
+      "path": "sessions",
+      "scope": "plugin"
+    },
+    {
+      "authorization": "admin",
+      "handler": "plugin:revoke_user_sessions_route",
+      "id": "revoke-user-api",
+      "methods": [
+        "DELETE"
+      ],
+      "path": "admin/users/{user_id}/sessions",
+      "scope": "plugin"
+    }
+  ],
   "capabilities": [
     {
       "name": "sessions.read",
@@ -45,6 +110,25 @@
       "version": 1
     }
   ],
+  "dependencies": [],
+  "description": "Manage account and administrator browser sessions inside Settings, with GeoIP, anomaly context, filters, and confirmed revocation.",
+  "entrypoint": "plugin:main",
+  "frontend": {
+    "entry": "frontend/index.html"
+  },
+  "integrity": {
+    "key_id": null,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null
+  },
+  "manifest_version": 1,
+  "name": "Self-Service Session Manager",
+  "native_frontend": {
+    "entry": "native/index.js",
+    "styles": [
+      "native/style.css"
+    ]
+  },
   "permissions": [
     {
       "capability": {
@@ -110,81 +194,12 @@
       "rationale": "DESTRUCTIVE, HIGH RISK: allow administrators to upload and replace host GeoIP databases after explicit confirmation."
     }
   ],
-  "backend_routes": [
-    {
-      "id": "list-sessions-api",
-      "scope": "plugin",
-      "path": "sessions",
-      "methods": [
-        "GET"
-      ],
-      "handler": "plugin:list_sessions_route",
-      "authorization": "authenticated"
-    },
-    {
-      "id": "revoke-session-api",
-      "scope": "plugin",
-      "path": "sessions/{session_id}",
-      "methods": [
-        "DELETE"
-      ],
-      "handler": "plugin:revoke_session_route",
-      "authorization": "authenticated"
-    },
-    {
-      "id": "list-admin-sessions-api",
-      "scope": "plugin",
-      "path": "admin/sessions",
-      "methods": [
-        "GET"
-      ],
-      "handler": "plugin:list_admin_sessions_route",
-      "authorization": "admin"
-    },
-    {
-      "id": "revoke-admin-session-api",
-      "scope": "plugin",
-      "path": "admin/sessions/{session_id}",
-      "methods": [
-        "DELETE"
-      ],
-      "handler": "plugin:revoke_admin_session_route",
-      "authorization": "admin"
-    },
-    {
-      "id": "revoke-all-admin-sessions-api",
-      "scope": "plugin",
-      "path": "admin/sessions",
-      "methods": [
-        "DELETE"
-      ],
-      "handler": "plugin:revoke_all_admin_sessions_route",
-      "authorization": "admin"
-    },
-    {
-      "id": "revoke-all-own-api",
-      "scope": "plugin",
-      "path": "sessions",
-      "methods": [
-        "DELETE"
-      ],
-      "handler": "plugin:revoke_all_sessions_route",
-      "authorization": "authenticated"
-    },
-    {
-      "id": "revoke-user-api",
-      "scope": "plugin",
-      "path": "admin/users/{user_id}/sessions",
-      "methods": [
-        "DELETE"
-      ],
-      "handler": "plugin:revoke_user_sessions_route",
-      "authorization": "admin"
-    }
-  ],
-  "dependencies": [],
+  "plugin_id": "example.self-service-session-manager",
+  "sdk_version_range": "^1.0.0",
+  "storage": {
+    "quota_mb": 1
+  },
   "ui": {
-    "settings": [],
     "actions": [
       "list-sessions",
       "revoke-session",
@@ -195,27 +210,12 @@
       "revoke-user-sessions",
       "geoip-status"
     ],
+    "menus": [],
     "pages": [
       "sessions",
       "admin-sessions"
     ],
-    "menus": []
+    "settings": []
   },
-  "storage": {
-    "quota_mb": 1
-  },
-  "integrity": {
-    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "signature": null,
-    "key_id": null
-  },
-  "frontend": {
-    "entry": "frontend/index.html"
-  },
-  "native_frontend": {
-    "entry": "native/index.js",
-    "styles": [
-      "native/style.css"
-    ]
-  }
+  "version": "2.2.0"
 }

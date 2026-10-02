@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "publisher": "Unnamed Tracking Official",
+  "tags": [
+    "account",
+    "administration"
+  ],
+  "icon": "icon.svg",
+  "automatic_update": null,
+  "release_notes": "Package lifecycle metadata, embedded documentation and validated Plugin API v1 contributions."
+}

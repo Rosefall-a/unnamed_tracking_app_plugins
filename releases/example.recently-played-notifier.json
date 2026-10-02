@@ -1,0 +1,230 @@
+{
+  "plugin_id": "example.recently-played-notifier",
+  "releases": [
+    {
+      "automatic_update": false,
+      "build": {
+        "legacy": true,
+        "source_commit": "3591d068d6a404290ef495d6ba90b76977375c31",
+        "source_committed_at": "2026-09-30T04:58:01Z",
+        "source_digest": null,
+        "source_path": null
+      },
+      "icon": null,
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": "*",
+        "capabilities": [
+          {
+            "name": "games.read",
+            "version": 1
+          },
+          {
+            "name": "notifications.send",
+            "version": 1
+          },
+          {
+            "name": "plugin.storage",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Creates a small notification from the most recently played games.",
+        "entrypoint": "plugin:main",
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "a97d6334ca9898aebe061e416089731a6da122d77d9c174e1035159ab8442632",
+          "signature": "GZ18l8f0yd/flF/F0qmz6lNgcUEm+A6bEgBTsd586x91VKvV/Qhu0c7VL2eurQnDZAuoB80/+LK3+QTZL1HuCA=="
+        },
+        "manifest_version": 1,
+        "name": "Recently Played Notifier",
+        "permissions": [
+          {
+            "capability": {
+              "name": "games.read",
+              "version": 1
+            },
+            "rationale": "Read recent game activity."
+          },
+          {
+            "capability": {
+              "name": "notifications.send",
+              "version": 1
+            },
+            "rationale": "Notify the user about recent activity."
+          },
+          {
+            "capability": {
+              "name": "plugin.storage",
+              "version": 1
+            },
+            "rationale": "Remember the last generated notification."
+          }
+        ],
+        "plugin_id": "example.recently-played-notifier",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "run"
+          ],
+          "pages": [
+            "main"
+          ],
+          "settings": []
+        },
+        "version": "1.0.0"
+      },
+      "package": {
+        "filename": "example.recently-played-notifier-1.0.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 2490
+      },
+      "package_sha256": "1d019cc939c4ff0cfa793eaaeb4d5df74df5ac62726ebb4eab68db854cf5fdd2",
+      "plugin_id": "example.recently-played-notifier",
+      "publisher": "Unnamed Tracking Official",
+      "readme": null,
+      "release_notes": "Legacy distributed package; automatic-update approval was not recorded.",
+      "sha256": "a97d6334ca9898aebe061e416089731a6da122d77d9c174e1035159ab8442632",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "a97d6334ca9898aebe061e416089731a6da122d77d9c174e1035159ab8442632",
+        "signature": "GZ18l8f0yd/flF/F0qmz6lNgcUEm+A6bEgBTsd586x91VKvV/Qhu0c7VL2eurQnDZAuoB80/+LK3+QTZL1HuCA=="
+      },
+      "tags": [],
+      "version": "1.0.0"
+    },
+    {
+      "automatic_update": true,
+      "build": {
+        "builder": "tools/build_packages.py",
+        "contract_revision": "f1165fcc805e57ee428e7bc42fa6b83f4a6caf25",
+        "legacy": false,
+        "source_commit": "6b4fb8a5412e5a8138312efc4da4a1ea1dd0d0c4",
+        "source_committed_at": "2026-10-02T12:32:33+08:00",
+        "source_digest": "ff6f9764835fc906be6d0690462f0a11d9c3da4c5e6e3a3e30f9de0fc76c6d7c",
+        "source_path": "examples/recently-played-notifier",
+        "version_bump": "minor"
+      },
+      "icon": {
+        "path": "icon.svg",
+        "sha256": "78e2d50e8b691423ff7bd29f3499a420f4ef00f1854f2b2d0a241c24ed96e4e0"
+      },
+      "lifecycle": "published",
+      "lifecycle_stages": [
+        "source",
+        "validated",
+        "built",
+        "catalogued",
+        "published",
+        "downloadable"
+      ],
+      "manifest": {
+        "application_version_range": "*",
+        "capabilities": [
+          {
+            "name": "games.read",
+            "version": 1
+          },
+          {
+            "name": "notifications.send",
+            "version": 1
+          },
+          {
+            "name": "plugin.storage",
+            "version": 1
+          },
+          {
+            "name": "frontend.navigation.main",
+            "version": 1
+          }
+        ],
+        "dependencies": [],
+        "description": "Creates a small notification from the most recently played games.",
+        "entrypoint": "plugin:main",
+        "integrity": {
+          "key_id": "non-secret-testkey",
+          "sha256": "26fb6d6b29b744e7185b8e126360190dc63efc587cabec5b262c8456ce1bf2b4",
+          "signature": "vO47M9W76lkgvrlRs6javeTAaMG13dJjH8eb+kgASpTZppAqtPVxbQWldf81myB9WGvh0je3NZEXR72dYKsLBw=="
+        },
+        "manifest_version": 1,
+        "name": "Recently Played Notifier",
+        "permissions": [
+          {
+            "capability": {
+              "name": "games.read",
+              "version": 1
+            },
+            "rationale": "Read recent game activity."
+          },
+          {
+            "capability": {
+              "name": "notifications.send",
+              "version": 1
+            },
+            "rationale": "Notify the user about recent activity."
+          },
+          {
+            "capability": {
+              "name": "plugin.storage",
+              "version": 1
+            },
+            "rationale": "Remember the last generated notification."
+          },
+          {
+            "capability": {
+              "name": "frontend.navigation.main",
+              "version": 1
+            },
+            "rationale": "Expose the declared plugin page in the main navigation."
+          }
+        ],
+        "plugin_id": "example.recently-played-notifier",
+        "sdk_version_range": "^1.0.0",
+        "storage": {
+          "quota_mb": 1
+        },
+        "ui": {
+          "actions": [
+            "run"
+          ],
+          "pages": [
+            "main"
+          ],
+          "settings": []
+        },
+        "version": "1.1.0"
+      },
+      "package": {
+        "filename": "example.recently-played-notifier-1.1.0.utp",
+        "format": "utp-v1",
+        "size_bytes": 4128
+      },
+      "package_sha256": "4ad387ed1210653a51826bd693d5a317279a05466bf9ef9c3d918adf99666aa0",
+      "plugin_id": "example.recently-played-notifier",
+      "publisher": "Unnamed Tracking Official",
+      "readme": "# Recently Played Notifier\n\nThe **Send notification** action reads the signed-in user's recent games,\nformats a notification, returns the result and stores a small execution record\nunder `users/<host-injected-user-id>/last-run`. It requests `games.read`,\n`notifications.send`, `plugin.storage` and `frontend.navigation.main` for its\nsidebar page. The supervised entrypoint reports ready and stays alive; restarting\nit does not send duplicate notifications automatically.\n\nIt is intentionally application-level behavior. The host owns the notification service and game data; the plugin only consumes those capabilities.\n\nBuild/test and release instructions are in the [author guide](../../docs/plugin-author-guide.md).\nREADME, tags, icon and resolved release policy are included in each new package.\n",
+      "release_notes": "Package lifecycle metadata, embedded documentation and validated Plugin API v1 contributions.",
+      "sha256": "26fb6d6b29b744e7185b8e126360190dc63efc587cabec5b262c8456ce1bf2b4",
+      "signing": {
+        "key_id": "non-secret-testkey",
+        "sha256": "26fb6d6b29b744e7185b8e126360190dc63efc587cabec5b262c8456ce1bf2b4",
+        "signature": "vO47M9W76lkgvrlRs6javeTAaMG13dJjH8eb+kgASpTZppAqtPVxbQWldf81myB9WGvh0je3NZEXR72dYKsLBw=="
+      },
+      "tags": [
+        "games",
+        "notifications"
+      ],
+      "version": "1.1.0"
+    }
+  ],
+  "version": 1
+}

@@ -29,12 +29,12 @@ def packages(tmp_path):
             tmp_path / "examples" / name,
             ignore=shutil.ignore_patterns("__pycache__"),
         )
-    build = [sys.executable, str(tmp_path / "tools/build_packages.py")]
+    build = [sys.executable, str(tmp_path / "tools/build_packages.py"), "--output-root", str(tmp_path / "build")]
     subprocess.run(build, check=True, capture_output=True)
-    first = {x.name: x.read_bytes() for x in (tmp_path / "dist").glob("*.utp")}
+    first = {x.name: x.read_bytes() for x in (tmp_path / "build/dist").glob("*.utp")}
     subprocess.run(build, check=True, capture_output=True)
-    assert first == {x.name: x.read_bytes() for x in (tmp_path / "dist").glob("*.utp")}
-    return list((tmp_path / "dist").glob("*.utp"))
+    assert first == {x.name: x.read_bytes() for x in (tmp_path / "build/dist").glob("*.utp")}
+    return list((tmp_path / "build/dist").glob("*.utp"))
 
 
 def test_native_assets_manifest_and_integrity_in_real_packages(packages):
@@ -49,7 +49,8 @@ def test_native_assets_manifest_and_integrity_in_real_packages(packages):
                 for name in archive.namelist()
                 if name.startswith("payload/")
             }
-        expected_version = "2.0.1" if "jellyfin-media-sync" in path.name else "2.0.0"
+        source_name = "jellyfin-media-sync" if "jellyfin-media-sync" in path.name else "help-button"
+        expected_version = json.loads((ROOT / "examples" / source_name / "manifest.json").read_text(encoding="utf-8"))["version"]
         assert manifest["version"] == expected_version
         assert manifest["integrity"]["signature"] is None
         assert manifest["integrity"]["sha256"] == canonical_payload_digest(

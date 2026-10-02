@@ -21,7 +21,7 @@ PLUGINS = (
 def test_manifests_are_v1_and_unique():
     ids = []
     for name in PLUGINS:
-        data = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        data = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
         assert data["manifest_version"] == 1
         assert data["version"].count(".") == 2
         assert data["entrypoint"] == "plugin:main"
@@ -33,7 +33,7 @@ def test_manifests_are_v1_and_unique():
 
 def test_plugins_do_not_import_application_source():
     for name in PLUGINS:
-        source = (ROOT / "examples" / name / "plugin.py").read_text()
+        source = (ROOT / "examples" / name / "plugin.py").read_text(encoding="utf-8")
         assert "src.plugin_api" not in source and "ValidationGateway" not in source
 
 
@@ -44,7 +44,7 @@ def test_real_plugins_contain_application_logic():
         "metadata-curator",
         "ui-playground",
     ):
-        source = (ROOT / "examples" / name / "plugin.py").read_text()
+        source = (ROOT / "examples" / name / "plugin.py").read_text(encoding="utf-8")
         assert len(source.splitlines()) >= 30
 
 
@@ -62,7 +62,7 @@ def test_real_plugin_manifests_declare_required_capabilities():
         "jellyfin-media-sync": {"media.read", "media.write", "plugin.settings", "plugin.storage", "tasks.background", "events.subscribe"},
     }
     for name, capabilities in expected.items():
-        data = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        data = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
         declared = {item["name"] for item in data["capabilities"]}
         granted = {item["capability"]["name"] for item in data["permissions"]}
         assert capabilities <= declared
@@ -76,14 +76,14 @@ def test_demo_manifests_do_not_claim_fake_signatures():
         "metadata-curator",
         "ui-playground",
     ):
-        data = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        data = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
         assert data["integrity"]["signature"] is None
         assert data["integrity"]["key_id"] is None
 
 
 def test_ui_playground_manifest_points_to_real_frontend_entry():
     data = json.loads(
-        (ROOT / "examples" / "ui-playground" / "manifest.json").read_text()
+        (ROOT / "examples" / "ui-playground" / "manifest.json").read_text(encoding="utf-8")
     )
     assert data["frontend"]["entry"] == "frontend/index.html"
     assert (ROOT / "examples" / "ui-playground" / "frontend" / "index.html").is_file()
@@ -91,7 +91,7 @@ def test_ui_playground_manifest_points_to_real_frontend_entry():
 
 def test_every_example_has_an_executable_entrypoint_source():
     for name in PLUGINS:
-        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
         module, function = manifest["entrypoint"].split(":")
         assert module == "plugin"
         assert function == "main"
@@ -100,7 +100,7 @@ def test_every_example_has_an_executable_entrypoint_source():
 
 def test_permissions_are_declared_capabilities():
     for name in PLUGINS:
-        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
         capabilities = {
             (item["name"], item["version"]) for item in manifest.get("capabilities", [])
         }
@@ -113,7 +113,7 @@ def test_permissions_are_declared_capabilities():
 
 def test_ui_playground_has_every_required_runtime_capability():
     manifest = json.loads(
-        (ROOT / "examples" / "ui-playground" / "manifest.json").read_text()
+        (ROOT / "examples" / "ui-playground" / "manifest.json").read_text(encoding="utf-8")
     )
     capability_names = {item["name"] for item in manifest["capabilities"]}
     assert {"notifications.send", "plugin.storage"} <= capability_names
@@ -153,7 +153,7 @@ def test_package_validator_rejects_undeclared_permission(tmp_path):
 
 
 def test_help_button_declares_global_overlay_and_home_extension() -> None:
-    data = json.loads((ROOT / "examples" / "help-button" / "ui.json").read_text())
+    data = json.loads((ROOT / "examples" / "help-button" / "ui.json").read_text(encoding="utf-8"))
     slots = {item["slot"] for item in data["extensions"]}
     assert slots == {"home.after-widgets"}
     assert data["overlays"] == [{"id": "floating-help", "page_id": "floating", "order": 900}]
@@ -163,8 +163,8 @@ def test_help_button_declares_global_overlay_and_home_extension() -> None:
 
 
 def test_jellyfin_declares_secret_storage_and_background_capabilities() -> None:
-    manifest = json.loads((ROOT / "examples" / "jellyfin-media-sync" / "manifest.json").read_text())
+    manifest = json.loads((ROOT / "examples" / "jellyfin-media-sync" / "manifest.json").read_text(encoding="utf-8"))
     capabilities = {item["name"] for item in manifest["capabilities"]}
     assert {"media.read", "media.write", "plugin.storage", "tasks.background", "events.subscribe"} <= capabilities
-    ui = json.loads((ROOT / "examples" / "jellyfin-media-sync" / "ui.json").read_text())
+    ui = json.loads((ROOT / "examples" / "jellyfin-media-sync" / "ui.json").read_text(encoding="utf-8"))
     assert any(action["id"] == "list-media" for action in ui["actions"])

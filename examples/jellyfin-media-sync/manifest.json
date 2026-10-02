@@ -1,11 +1,4 @@
 {
-  "manifest_version": 1,
-  "plugin_id": "example.jellyfin-media-sync",
-  "name": "Jellyfin Media Sync",
-  "version": "2.0.1",
-  "description": "A supervised, paginated Jellyfin media sync for films, TV shows and anime with write-only tokens, native configuration and persistent progress.",
-  "entrypoint": "plugin:main",
-  "sdk_version_range": "^1.0.0",
   "application_version_range": "^1.0.0",
   "capabilities": [
     {
@@ -57,6 +50,22 @@
       "version": 1
     }
   ],
+  "dependencies": [],
+  "description": "A supervised, paginated Jellyfin media sync for films, TV shows and anime with write-only tokens, native configuration and persistent progress.",
+  "entrypoint": "plugin:main",
+  "integrity": {
+    "key_id": null,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null
+  },
+  "manifest_version": 1,
+  "name": "Jellyfin Media Sync",
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": [
+      "native/style.css"
+    ]
+  },
   "permissions": [
     {
       "capability": {
@@ -143,11 +152,12 @@
       "rationale": "Expose the plugin-owned Jellyfin sync route."
     }
   ],
-  "dependencies": [],
+  "plugin_id": "example.jellyfin-media-sync",
+  "sdk_version_range": "^1.0.0",
+  "storage": {
+    "quota_mb": 32
+  },
   "ui": {
-    "settings": [
-      "jellyfin"
-    ],
     "actions": [
       "save-token",
       "get-config",
@@ -156,25 +166,15 @@
       "refresh-status",
       "list-media"
     ],
+    "menus": [
+      "sync"
+    ],
     "pages": [
       "sync"
     ],
-    "menus": [
-      "sync"
+    "settings": [
+      "jellyfin"
     ]
   },
-  "storage": {
-    "quota_mb": 32
-  },
-  "integrity": {
-    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "signature": null,
-    "key_id": null
-  },
-  "native_frontend": {
-    "entry": "native/app.js",
-    "styles": [
-      "native/style.css"
-    ]
-  }
+  "version": "2.1.1"
 }

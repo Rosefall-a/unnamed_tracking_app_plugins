@@ -14,15 +14,14 @@ from tools.validate_packages import validate_package
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "examples/scoped-document-viewer"
-PACKAGE = ROOT / "dist/example.scoped-document-viewer-1.6.0.utp"
 
 
-def test_document_package_contains_current_source_and_pinned_libraries():
-    subprocess.run([sys.executable, "tools/build_packages.py"], cwd=ROOT, check=True)
-    lock = json.loads((SOURCE / "vendor-lock.json").read_text())
-    with zipfile.ZipFile(PACKAGE) as archive:
+def test_document_package_contains_current_source_and_pinned_libraries(current_packages):
+    package = current_packages["example.scoped-document-viewer"]
+    lock = json.loads((SOURCE / "vendor-lock.json").read_text(encoding="utf-8"))
+    with zipfile.ZipFile(package) as archive:
         manifest = json.loads(archive.read("manifest.json"))
-        assert manifest["version"] == "1.6.0"
+        assert package.name == f"{manifest['plugin_id']}-{manifest['version']}.utp"
         assert (
             manifest["integrity"]["signature"] is None
             or manifest["integrity"]["key_id"]
@@ -48,8 +47,8 @@ def test_document_package_contains_current_source_and_pinned_libraries():
                 assert hashlib.sha256(content).hexdigest() == expected_hash
 
 
-def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path):
-    with zipfile.ZipFile(PACKAGE) as archive:
+def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path, current_packages):
+    with zipfile.ZipFile(current_packages["example.scoped-document-viewer"]) as archive:
         for name in archive.namelist():
             if name.startswith("payload/") and not name.endswith("/"):
                 path = tmp_path / name.removeprefix("payload/")
@@ -86,9 +85,9 @@ def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path):
     assert "user_id" not in wire["payload"]
 
 
-def test_package_validator_rejects_a_non_boolean_inline_asset_flag(tmp_path):
+def test_package_validator_rejects_a_non_boolean_inline_asset_flag(tmp_path, current_packages):
     destination = tmp_path / "invalid-inline.utp"
-    with zipfile.ZipFile(PACKAGE) as source, zipfile.ZipFile(destination, "w") as output:
+    with zipfile.ZipFile(current_packages["example.scoped-document-viewer"]) as source, zipfile.ZipFile(destination, "w") as output:
         for name in source.namelist():
             data = source.read(name)
             if name == "manifest.json":

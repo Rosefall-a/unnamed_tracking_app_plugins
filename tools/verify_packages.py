@@ -18,7 +18,7 @@ except ImportError:  # Direct script execution keeps tools independently usable.
     from package_format import canonical_payload_digest
 
 
-def verify_package(path: Path) -> None:
+def verify_package(path: Path, *, require_signature: bool = False) -> None:
     with zipfile.ZipFile(path) as archive:
         manifest = json.loads(archive.read("manifest.json"))
         files = {
@@ -33,7 +33,9 @@ def verify_package(path: Path) -> None:
     # Local demo artifacts are deliberately unsigned. The host presents an
     # explicit untrusted-install confirmation before accepting them. Release
     # verification still requires a registered publisher signature.
-    if integrity.get("signature") is None and manifest["plugin_id"].startswith("example."):
+    if integrity.get("signature") is None:
+        if require_signature or integrity.get("key_id") is not None:
+            raise PublisherRegistryError("release package requires a publisher signature")
         return
     record = load_registry().get(integrity.get("key_id"))
     if record is None or not record.allows_plugin(manifest["plugin_id"]):

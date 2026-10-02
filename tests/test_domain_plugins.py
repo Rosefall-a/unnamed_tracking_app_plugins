@@ -47,12 +47,13 @@ def load_plugin(name: str):
                 "notification_providers.register",
                 "notification_providers.deliver",
                 "plugin.storage",
+                "frontend.navigation.main",
             },
         ),
     ],
 )
 def test_domain_manifests_are_minimally_scoped(name: str, expected: set[str]) -> None:
-    manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+    manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
     declared = {item["name"] for item in manifest["capabilities"]}
     requested = {item["capability"]["name"] for item in manifest["permissions"]}
 
@@ -90,7 +91,7 @@ def test_document_viewer_uses_opaque_public_document_methods(monkeypatch) -> Non
             },
         ),
     ]
-    source = (ROOT / "examples" / "scoped-document-viewer" / "frontend" / "app.js").read_text()
+    source = (ROOT / "examples" / "scoped-document-viewer" / "frontend" / "app.js").read_text(encoding="utf-8")
     assert "textContent = text" in source
     assert "DOMPurify.sanitize" in source
     assert "text/plain" in source
@@ -154,7 +155,7 @@ def test_session_manager_separates_read_and_revoke_capabilities(monkeypatch) -> 
         "sessions.revoke",
         {"session_id": "00000000-0000-0000-0000-000000000001", "confirmed": True},
     )
-    ui = json.loads((ROOT / "examples" / "self-service-session-manager" / "ui.json").read_text())
+    ui = json.loads((ROOT / "examples" / "self-service-session-manager" / "ui.json").read_text(encoding="utf-8"))
     revoke = next(action for action in ui["actions"] if action["id"] == "revoke-session")
     assert revoke["confirmation"]
 
@@ -199,7 +200,7 @@ def test_session_manager_routes_preserve_self_service_and_admin_capabilities(
         ),
     ]
     manifest = json.loads(
-        (ROOT / "examples" / "self-service-session-manager" / "manifest.json").read_text()
+        (ROOT / "examples" / "self-service-session-manager" / "manifest.json").read_text(encoding="utf-8")
     )
     admin_routes = [
         route for route in manifest["backend_routes"] if route["path"].startswith("admin/")
@@ -266,7 +267,7 @@ def test_reference_frontends_use_only_the_host_bridge() -> None:
         "self-service-session-manager",
         "discord-delivery-provider",
     ):
-        script = (ROOT / "examples" / name / "frontend" / "app.js").read_text()
+        script = (ROOT / "examples" / name / "frontend" / "app.js").read_text(encoding="utf-8")
         assert "plugin-api-request" in script
         assert "window.parent.postMessage" in script
         assert "fetch(" not in script

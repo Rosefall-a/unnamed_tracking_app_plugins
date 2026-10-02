@@ -26,7 +26,7 @@ def test_route_query_reads_only_normalized_values() -> None:
 
 def test_reference_backend_routes_are_namespaced_and_capability_declared() -> None:
     for name in ("scoped-document-viewer", "self-service-session-manager"):
-        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text())
+        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
         capabilities = {item["name"] for item in manifest["capabilities"]}
         assert "backend.routes.plugin" in capabilities
         assert manifest["backend_routes"]
@@ -38,7 +38,7 @@ def test_reference_backend_routes_are_namespaced_and_capability_declared() -> No
 
 def test_plugins_remain_independent_of_host_source() -> None:
     for name in ("scoped-document-viewer", "self-service-session-manager"):
-        source = (ROOT / "examples" / name / "plugin.py").read_text()
+        source = (ROOT / "examples" / name / "plugin.py").read_text(encoding="utf-8")
         assert "src." not in source
         assert "sqlalchemy" not in source
         assert "fastapi" not in source

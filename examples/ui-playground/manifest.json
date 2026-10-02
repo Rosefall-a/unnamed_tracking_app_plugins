@@ -1,11 +1,4 @@
 {
-  "manifest_version": 1,
-  "plugin_id": "example.ui-playground",
-  "name": "Plugin UI Playground",
-  "version": "1.0.0",
-  "description": "Vue UI smoke test with four visible pages, filter controls, private Discord storage, and page announcements.",
-  "entrypoint": "plugin:main",
-  "sdk_version_range": "^1.0.0",
   "application_version_range": "*",
   "capabilities": [
     {
@@ -15,8 +8,25 @@
     {
       "name": "plugin.storage",
       "version": 1
+    },
+    {
+      "name": "plugin.settings",
+      "version": 1
     }
   ],
+  "dependencies": [],
+  "description": "Vue UI smoke test with four visible pages, filter controls, private Discord storage, and page announcements.",
+  "entrypoint": "plugin:main",
+  "frontend": {
+    "entry": "frontend/index.html"
+  },
+  "integrity": {
+    "key_id": null,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null
+  },
+  "manifest_version": 1,
+  "name": "Plugin UI Playground",
   "permissions": [
     {
       "capability": {
@@ -31,33 +41,40 @@
         "version": 1
       },
       "rationale": "Store the Discord webhook in the plugin's private persistent data directory; the secret is never saved as ordinary UI settings."
+    },
+    {
+      "capability": {
+        "name": "plugin.settings",
+        "version": 1
+      },
+      "rationale": "Save the ordinary plugin-owned filter controls through the host settings API."
     }
   ],
-  "dependencies": [],
+  "plugin_id": "example.ui-playground",
+  "sdk_version_range": "^1.0.0",
+  "storage": {
+    "quota_mb": 1
+  },
   "ui": {
-    "settings": [
-      "filters",
-      "discord"
-    ],
     "actions": [
       "announce-page"
+    ],
+    "menus": [
+      "overview",
+      "library",
+      "details",
+      "diagnostics"
     ],
     "pages": [
       "overview",
       "library",
       "details",
       "diagnostics"
+    ],
+    "settings": [
+      "filters",
+      "discord"
     ]
   },
-  "storage": {
-    "quota_mb": 1
-  },
-  "integrity": {
-    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-    "signature": null,
-    "key_id": null
-  },
-  "frontend": {
-    "entry": "frontend/index.html"
-  }
+  "version": "1.1.0"
 }

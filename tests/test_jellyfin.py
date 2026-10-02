@@ -21,7 +21,7 @@ def service(monkeypatch):
     grants = {
         x["name"]
         for x in json.loads(
-            (ROOT / "examples/jellyfin-media-sync/manifest.json").read_text()
+            (ROOT / "examples/jellyfin-media-sync/manifest.json").read_text(encoding="utf-8")
         )["capabilities"]
     }
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import time
+
 from sdk.plugin_protocol import request
 
 
@@ -14,7 +16,10 @@ def _number(game: dict, *keys: str) -> float:
     return 0.0
 
 
-def main() -> None:
+def refresh(values: dict) -> dict:
+    user_id = (values.get("_plugin_context") or {}).get("user_id")
+    if not user_id:
+        raise ValueError("An authenticated action context is required.")
     result = request("games.list", "games.read", {"limit": 500})
     games = list(result.get("games", result.get("items", [])))
 
@@ -40,7 +45,7 @@ def main() -> None:
         "storage.put",
         "plugin.storage",
         {
-            "key": "latest-report",
+            "key": f"users/{user_id}/latest-report",
             "value": __import__("json").dumps(
                 {
                     "game_count": len(games),
@@ -51,11 +56,13 @@ def main() -> None:
             ),
         },
     )
-    request(
-        "lifecycle.ready",
-        "plugin.storage",
-        {"state": "ready", "game_count": len(games), "total_minutes": int(total_minutes)},
-    )
+    return {"game_count": len(games), "total_minutes": int(total_minutes), "top_games": top_games}
+
+
+def main() -> None:
+    request("lifecycle.ready", "lifecycle.ready", {})
+    while True:
+        time.sleep(3600)
 
 
 if __name__ == "__main__":
