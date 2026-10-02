@@ -69,7 +69,7 @@ try {
   await dialog.getByRole("button", { name: "Settings", exact: true }).click();
   await dialog.getByRole("button", { name: "Roll back", exact: true }).first().waitFor();
   await capture("retained-versions.png", "Actual retained predecessors and automatic-update controls from real lifecycle acceptance.");
-  await dialog.getByRole("button", { name: "Close", exact: true }).click();
+  await dialog.getByRole("button", { name: "Close plugin settings", exact: true }).click();
   await page.goto(origin + "/plugins/example.jellyfin-media-sync");
   await page.getByText("Jellyfin server URL", { exact: true }).waitFor();
   await capture("plugin-settings.png", "Actual configured Jellyfin native settings/UI; saved token is not returned to the input.");

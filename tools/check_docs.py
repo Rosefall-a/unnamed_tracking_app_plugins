@@ -71,8 +71,7 @@ def check(root: Path = ROOT) -> None:
             for target in re.findall(r"(?<![/\w])(tests/[\w./-]+\.py)\b", command):
                 if not (root / target).is_file():
                     errors.append(f"{page.relative_to(root)}: missing test command source {target}")
-    provenance = docs / "assets/screenshots/host-components.json"
-    if provenance.exists():
+    for provenance in sorted((docs / "assets/screenshots").glob("*.json")):
         for capture in json.loads(provenance.read_bytes())["captures"]:
             asset = provenance.parent / capture["filename"]
             if (not asset.resolve().is_relative_to(provenance.parent.resolve())

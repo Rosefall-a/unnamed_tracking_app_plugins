@@ -47,12 +47,13 @@ def test_examples_remote_links_and_escaped_paths_are_handled(tmp_path):
     check(tmp_path)
 
 
-def test_screenshot_provenance_detects_changed_bytes(tmp_path):
+@pytest.mark.parametrize("manifest", ["host-components.json", "workflow-captures.json"])
+def test_screenshot_provenance_detects_changed_bytes(tmp_path, manifest):
     documentation(tmp_path, "# Home")
     assets = tmp_path / "docs/assets/screenshots"
     assets.mkdir(parents=True)
     (assets / "capture.png").write_bytes(b"original")
-    (assets / "host-components.json").write_text(json.dumps({"captures": [{
+    (assets / manifest).write_text(json.dumps({"captures": [{
         "filename": "capture.png", "sha256": hashlib.sha256(b"original").hexdigest(),
     }]}), encoding="utf-8")
     check(tmp_path)
