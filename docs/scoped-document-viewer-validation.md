@@ -43,10 +43,12 @@ python tools/check_document_parity.py --reference /path/to/pr241-checkout --host
 
 The standard builder can regenerate unsigned examples. Run it in an isolated checkout when preserving existing signed release artifacts; do not overwrite a signed release with an unsigned rebuild. The new 1.4.0 package was built in isolation and verified against current source and pinned vendor hashes. Existing signed artifacts were preserved.
 
-In the updated host's `src/backend`, with the normal test database/environment configuration:
+In the updated host's `src/backend`, with the normal test database/environment
+configuration. Set `HOST_BACKEND` to the absolute backend directory of that host
+checkout; these tests are external to the plugin repository:
 
 ```sh
-python -m pytest -q tests/test_plugin_documents.py tests/test_plugin_domain_gateway.py tests/test_plugin_authorization_http.py tests/test_plugin_backend_routes.py tests/test_plugin_route_capabilities.py tests/test_plugin_ui_extensions.py tests/test_plugin_ui_contracts.py tests/test_plugin_api_contracts.py tests/test_plugin_manifest.py tests/test_plugin_lifecycle.py tests/test_plugin_contribution_lifecycle_e2e.py tests/test_plugin_repository_trust.py
+python -m pytest -q "$HOST_BACKEND/tests/test_plugin_documents.py" "$HOST_BACKEND/tests/test_plugin_domain_gateway.py" "$HOST_BACKEND/tests/test_plugin_authorization_http.py" "$HOST_BACKEND/tests/test_plugin_backend_routes.py" "$HOST_BACKEND/tests/test_plugin_route_capabilities.py" "$HOST_BACKEND/tests/test_plugin_ui_extensions.py" "$HOST_BACKEND/tests/test_plugin_ui_contracts.py" "$HOST_BACKEND/tests/test_plugin_api_contracts.py" "$HOST_BACKEND/tests/test_plugin_manifest.py" "$HOST_BACKEND/tests/test_plugin_lifecycle.py" "$HOST_BACKEND/tests/test_plugin_contribution_lifecycle_e2e.py" "$HOST_BACKEND/tests/test_plugin_repository_trust.py"
 python -m mypy src
 python -m pylint src
 python -m ruff check src/plugin_api/documents.py src/plugin_api/gateway.py src/plugin_api/contracts.py tests/test_plugin_documents.py

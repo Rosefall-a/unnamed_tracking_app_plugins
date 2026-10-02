@@ -222,3 +222,38 @@ def test_ci_rejects_rewriting_historical_release_metadata(checkout):
     history_path.write_text(json.dumps(data))
     with pytest.raises(ValueError, match="historical release metadata"):
         validate_immutable_history(root, root, "HEAD")
+
+
+def test_ci_rejects_source_and_catalogue_removal_even_with_retained_history(checkout):
+    root, env = checkout
+    run_build(root, env, "--publish")
+    commit(root, "chore: publish release")
+    shutil.rmtree(root / "examples/help-button")
+    catalogue = json.loads((root / "list.json").read_bytes())
+    catalogue["plugins"] = []
+    (root / "list.json").write_text(json.dumps(catalogue), encoding="utf-8")
+    with pytest.raises(ValueError, match="disappeared from catalogue"):
+        validate_immutable_history(root, root, "HEAD")
+
+
+@pytest.mark.parametrize("field", ["sha256", "package_sha256", "manifest", "signing",
+                                    "publisher", "version", "readme", "tags",
+                                    "automatic_update", "release_notes"])
+def test_every_release_metadata_field_is_checked_against_package(built_distribution, tmp_path, field):
+    root = tmp_path / "candidate"
+    shutil.copytree(built_distribution, root)
+    path = root / "releases/example.help-button.json"
+    document = json.loads(path.read_bytes())
+    document["releases"][-1][field] = None
+    path.write_text(json.dumps(document), encoding="utf-8")
+    with pytest.raises((ValueError, TypeError, KeyError)):
+        validate_distribution(root)
+
+
+def test_package_generation_rejects_unindexed_output(built_distribution, tmp_path):
+    root = tmp_path / "candidate"
+    shutil.copytree(built_distribution, root)
+    original = next((root / "dist").glob("*.utp"))
+    shutil.copyfile(original, root / "dist/unindexed.utp")
+    with pytest.raises(ValueError, match="untracked packages"):
+        validate_distribution(root)
