@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   lifecycle:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     services:
       postgres:
@@ -28,20 +28,21 @@ jobs:
       SECRET_KEY: XJVqc8r7Uj801VzGUYhlQV8A2tZTBepjOYEiP2pTzFk=
       PYTHONPATH: ${{ github.workspace }}/.validation/host/src/backend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: Rosefall-a/unnamed_tracking_app
           ref: plugin-manager
           path: .validation/host
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
+          package-manager-cache: false
       - name: Install host and builder dependencies
         run: |
           python -m pip install -r .validation/host/src/backend/requirements.txt jsonschema
@@ -72,7 +73,7 @@ jobs:
           # supervisor still probes and reports isolation; nothing is mocked.
           NONBUBBLE_ENV: 'true'
         run: python tools/check_reference_lifecycle.py --host-root .validation/host
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: plugin-manager-integration-evidence

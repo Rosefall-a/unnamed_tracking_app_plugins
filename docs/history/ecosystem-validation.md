@@ -55,3 +55,14 @@ those official artifacts without the configured signing identity.
 The strict documentation build is required in both development and publication
 CI. Existing package/signature/history/browser/host checks remain required. CI
 must pass on the final PR head, and implementation review is required before merge.
+
+CI annotations exposed deprecated Node 20 Actions relying on a forced runtime
+upgrade and an upcoming `ubuntu-latest` image change. Workflows now use verified
+Node 24 Actions: [checkout v7](https://github.com/actions/checkout/blob/v7/action.yml),
+[setup-python v6](https://github.com/actions/setup-python/blob/v6/action.yml),
+[setup-node v6](https://github.com/actions/setup-node/blob/v6/action.yml), and
+[upload-artifact v7](https://github.com/actions/upload-artifact/blob/v7/action.yml).
+They pin the tested Ubuntu 24.04 image. Automatic package-manager caching is
+explicitly disabled to retain the previous behavior, including the secret-bearing
+publication job. Full checkout history, signing, artifact paths and all checks
+remain intact. Reference configuration uses each plugin's actual declared fields.

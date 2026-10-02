@@ -126,7 +126,10 @@ def main() -> None:
                     registry.finish_activation(plugin_id, operation, commit=True)
 
                 install(package)
-                settings = {"display_mode": "compact", "query": "Acceptance"}
+                configured = {"display_mode": "compact", "query": "Acceptance"}
+                settings = {field["id"]: configured.get(field["id"], field.get("default"))
+                            for section in registry.ui(plugin_id).get("settings", [])
+                            for field in section.get("fields", [])}
                 registry.settings(plugin_id, settings)
                 registry.storage_put(plugin_id, "users/acceptance-user/sentinel", "persisted")
                 storage = work / "runtime/.storage" / plugin_id
@@ -176,7 +179,7 @@ def main() -> None:
                 registry.delete(plugin_id)
                 assert not storage.exists()
                 assert all(p["plugin_id"] != plugin_id for p in registry.list())
-                print(f"{plugin_id}: real install/configure/start/restart/disable/update/permission transaction/rollback/reinstall/purge/uninstall passed")
+                print(f"{plugin_id}: real install/configure/start/restart/disable/update/permission transaction/rollback/reinstall/purge/uninstall passed", flush=True)
         finally:
             supervisor.stop_all()
 
