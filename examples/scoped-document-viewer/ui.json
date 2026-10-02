@@ -2,7 +2,28 @@
   "schema_version": "v1",
   "plugin_id": "example.scoped-document-viewer",
   "title": "Scoped Document Viewer",
-  "settings": [],
+  "settings": [
+    {
+      "id": "viewer-settings",
+      "title": "Viewer settings",
+      "description": "Choose how much data the host will allow this reader to preview. Set the limit to 0 for no fixed preview-size limit.",
+      "fields": [
+        {
+          "id": "max_preview_mb",
+          "label": "Maximum preview size (MiB)",
+          "type": "number",
+          "description": "0 means unlimited. This controls the host-side preview limit; browser memory and renderer limits still apply.",
+          "required": true,
+          "secret": false,
+          "default": 0,
+          "options": [],
+          "validation": {
+            "minimum": 0
+          }
+        }
+      ]
+    }
+  ],
   "actions": [
     {
       "id": "list-documents",
@@ -31,7 +52,9 @@
       "id": "documents",
       "title": "Documents",
       "description": "Game manuals, UTF-8 notes and sanitized HTML/XHTML, safely scoped to your account.",
-      "settings": [],
+      "settings": [
+        "viewer-settings"
+      ],
       "actions": [
         "list-documents",
         "read-document"
