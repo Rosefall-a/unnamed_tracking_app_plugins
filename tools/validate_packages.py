@@ -145,6 +145,8 @@ def validate_package(path: Path) -> None:
     if frontend is None:
         return
     entry = frontend.get("entry") if isinstance(frontend, dict) else None
+    if isinstance(frontend, dict) and type(frontend.get("inline_assets", False)) is not bool:
+        raise ValueError(f"{path.name}: frontend.inline_assets must be a boolean")
     if not isinstance(entry, str) or not entry:
         raise ValueError(f"{path.name}: frontend.entry must be a non-empty string")
     if entry not in payload_names:

@@ -6,6 +6,10 @@ const path = require("node:path");
 const crypto = require("node:crypto");
 const { chromium } = require("playwright");
 const { PDFDocument, StandardFonts } = require("pdf-lib");
+const {
+  zipSync,
+  strToU8,
+} = require("../examples/scoped-document-viewer/frontend/vendor/fflate.min.js");
 const root = path.resolve(
   __dirname,
   "../examples/scoped-document-viewer/frontend",
@@ -18,11 +22,21 @@ const gameId = "c9119470-90d5-477e-97c7-3bd8dba22222";
 let active;
 before(async () => {
   server = http.createServer((req, res) => {
-    if (req.url === "/") {
+    const url = new URL(req.url, "http://local");
+    if (url.pathname === "/") {
       res.setHeader("Content-Type", "text/html");
-      res.end(
-        '<!doctype html><iframe title="Plugin" sandbox="allow-scripts" src="/frontend/index.html" style="width:100%;height:950px;border:0"></iframe>',
+      res.setHeader(
+        "Set-Cookie",
+        "session=fixture; HttpOnly; SameSite=Lax; Path=/",
       );
+      res.end(
+        `<!doctype html><iframe title="Plugin" sandbox="allow-scripts" src="/frontend/index.html?inline=${url.searchParams.get("plain") ? "0" : "1"}" style="width:100%;height:950px;border:0"></iframe>`,
+      );
+      return;
+    }
+    if (!(req.headers.cookie || "").includes("session=fixture")) {
+      res.writeHead(401);
+      res.end("Authentication required");
       return;
     }
     const pathname = decodeURIComponent(
@@ -37,7 +51,31 @@ before(async () => {
       res.end();
       return;
     }
-    res.setHeader("Content-Security-Policy", csp);
+    let content = fs.readFileSync(target);
+    let policy = csp;
+    if (
+      target.endsWith("index.html") &&
+      url.searchParams.get("inline") === "1"
+    ) {
+      // Mirrors the documented host response; host tests exercise the actual inliner and scope checks.
+      content = content
+        .toString()
+        .replace(
+          /<link rel="stylesheet" href="\.\/([^"]+)"\s*\/>/g,
+          (_, file) =>
+            `<style nonce="fixture">${fs.readFileSync(path.join(root, file), "utf8")}</style>`,
+        )
+        .replace(
+          /<script src="\.\/([^"]+)"><\/script>/g,
+          (_, file) =>
+            `<script nonce="fixture">${fs.readFileSync(path.join(root, file), "utf8").replace(/<\/script/gi, "<\\/script")}</script>`,
+        );
+      policy = policy.replace(
+        "script-src 'self'",
+        "script-src 'nonce-fixture' 'self'",
+      );
+    }
+    res.setHeader("Content-Security-Policy", policy);
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("Cache-Control", "private, no-store");
     res.setHeader(
@@ -48,7 +86,7 @@ before(async () => {
           ? "text/css"
           : "text/html",
     );
-    res.end(fs.readFileSync(target));
+    res.end(content);
   });
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   base = `http://127.0.0.1:${server.address().port}`;
@@ -70,6 +108,9 @@ async function openFixture({
   empty = false,
   legacyCrypto = false,
   timeout = false,
+  context = {},
+  plainAssets = false,
+  noWait = false,
 } = {}) {
   const page = await browser.newPage({
     viewport: { width: 1280, height: 1000 },
@@ -92,6 +133,9 @@ async function openFixture({
   const calls = [];
   await page.exposeFunction("bridge", async (envelope) => {
     calls.push(envelope);
+    if (envelope.method === "plugin.context") return context;
+    if (envelope.method === "plugin.download-document")
+      return { download_started: true };
     if (envelope.payload.actionId === "list-documents")
       return { documents: empty ? [] : [item], next_offset: null };
     if (delay) await new Promise((resolve) => setTimeout(resolve, delay));
@@ -150,9 +194,11 @@ async function openFixture({
       );
     });
   });
-  await page.goto(base);
+  await page.goto(base + (plainAssets ? "/?plain=1" : "/"));
   const frame = page.frameLocator("iframe");
-  if (empty) await frame.locator("#documents .state").waitFor();
+  if (noWait) await frame.locator("body").waitFor();
+  else if (context.document_id) await frame.locator("#download").waitFor();
+  else if (empty) await frame.locator("#documents .state").waitFor();
   else {
     await frame.locator("#documents button").waitFor();
     await frame.locator("#documents button").click();
@@ -184,7 +230,11 @@ test("text is literal UTF-8; iframe stays opaque and uses only the declared brid
     }
   });
   assert.equal(isolated, "isolated");
-  assert.equal(calls[1].payload.values.chunk_bytes, 24576);
+  assert.equal(
+    calls.find((call) => call.payload.actionId === "read-document").payload
+      .values.chunk_bytes,
+    24576,
+  );
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -404,6 +454,258 @@ test("refresh cancels a pending open and does not render a stale response", asyn
   assert.equal(
     await frame.locator("#document-title").textContent(),
     "Your game documents",
+  );
+  await page.close();
+});
+
+test("authenticated opaque sandbox reproduces missing CSS; inline package assets restore it", async () => {
+  const broken = await openFixture({ plainAssets: true, noWait: true });
+  await broken.page.waitForTimeout(150);
+  assert.notEqual(
+    await broken.frame
+      .locator("body")
+      .evaluate((node) => getComputedStyle(node).margin),
+    "0px",
+  );
+  assert.equal(await broken.frame.locator("#documents button").count(), 0);
+  await broken.page.close();
+  const fixed = await openFixture();
+  await fixed.frame.locator("#viewer pre").waitFor();
+  assert.equal(
+    await fixed.frame
+      .locator("body")
+      .evaluate((node) => getComputedStyle(node).margin),
+    "0px",
+  );
+  assert.equal(
+    await fixed.frame
+      .locator(".document-panel")
+      .evaluate((node) => getComputedStyle(node).borderTopStyle),
+    "solid",
+  );
+  assert.equal(
+    fixed.requests.some((url) => url.endsWith(".css") || url.endsWith(".js")),
+    false,
+  );
+  assert.deepEqual(fixed.errors, []);
+  await fixed.page.close();
+});
+
+test("game document context opens directly without listing; download uses only the host bridge", async () => {
+  const { page, frame, calls } = await openFixture({
+    context: { document_id: id, game_id: gameId },
+  });
+  await frame.locator("#viewer pre").waitFor();
+  assert.equal(
+    calls.some((call) => call.payload.actionId === "list-documents"),
+    false,
+  );
+  assert.equal(
+    await frame
+      .locator("body")
+      .evaluate((node) => node.classList.contains("single-document")),
+    true,
+  );
+  assert.equal(
+    await frame.locator("#document-title").textContent(),
+    "notes.txt",
+  );
+  await frame.locator("#download").click();
+  await frame
+    .locator("#status")
+    .filter({ hasText: "Original download started" })
+    .waitFor();
+  assert.deepEqual(
+    calls.find((call) => call.method === "plugin.download-document").payload,
+    { document_id: id },
+  );
+  await frame.locator("#refresh").click();
+  await frame.locator("#documents button").waitFor();
+  assert.equal(
+    await frame
+      .locator("body")
+      .evaluate((node) => node.classList.contains("single-document")),
+    false,
+  );
+  await page.close();
+});
+
+const W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+const P = "http://schemas.openxmlformats.org/presentationml/2006/main";
+const A = "http://schemas.openxmlformats.org/drawingml/2006/main";
+const R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+const O = "urn:oasis:names:tc:opendocument:xmlns:office:1.0";
+const T = "urn:oasis:names:tc:opendocument:xmlns:text:1.0";
+const D = "urn:oasis:names:tc:opendocument:xmlns:drawing:1.0";
+function officeFixture(format, additions = {}) {
+  let files = { "[Content_Types].xml": "<Types/>" };
+  if (format === "docx")
+    files["word/document.xml"] =
+      `<w:document xmlns:w="${W}"><w:body><w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>Manual heading</w:t></w:r></w:p><w:p><w:r><w:rPr><w:b/></w:rPr><w:t>café &lt;script&gt;literal&lt;/script&gt;</w:t></w:r></w:p><w:tbl><w:tr><w:tc><w:p><w:r><w:t>Table cell</w:t></w:r></w:p></w:tc></w:tr></w:tbl></w:body></w:document>`;
+  else if (format === "pptx") {
+    files["ppt/presentation.xml"] =
+      `<p:presentation xmlns:p="${P}" xmlns:r="${R}"><p:sldIdLst><p:sldId id="1" r:id="second"/><p:sldId id="2" r:id="first"/></p:sldIdLst></p:presentation>`;
+    files["ppt/_rels/presentation.xml.rels"] =
+      '<Relationships><Relationship Id="first" Target="slides/slide1.xml"/><Relationship Id="second" Target="slides/slide2.xml"/></Relationships>';
+    for (const number of [1, 2])
+      files[`ppt/slides/slide${number}.xml`] =
+        `<p:sld xmlns:p="${P}" xmlns:a="${A}"><p:cSld><p:spTree><p:sp><p:txBody><a:p><a:r><a:t>Slide text ${number}</a:t></a:r></a:p></p:txBody></p:sp></p:spTree></p:cSld></p:sld>`;
+  } else {
+    files.mimetype =
+      format === "odt"
+        ? "application/vnd.oasis.opendocument.text"
+        : "application/vnd.oasis.opendocument.presentation";
+    files["content.xml"] =
+      `<office:document-content xmlns:office="${O}" xmlns:text="${T}" xmlns:draw="${D}"><office:body>${format === "odt" ? "<office:text><text:h>OpenDocument heading</text:h><text:p>café &lt;script&gt;literal&lt;/script&gt;</text:p></office:text>" : "<office:presentation><draw:page><text:p>OpenDocument slide one</text:p></draw:page><draw:page><text:p>OpenDocument slide two</text:p></draw:page></office:presentation>"}</office:body></office:document-content>`;
+  }
+  files = { ...files, ...additions };
+  return Buffer.from(
+    zipSync(
+      Object.fromEntries(
+        Object.entries(files).map(([name, text]) => [
+          name,
+          typeof text === "string" ? strToU8(text) : text,
+        ]),
+      ),
+      { level: 0 },
+    ),
+  );
+}
+const OFFICE_TYPES = {
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  odt: "application/vnd.oasis.opendocument.text",
+  odp: "application/vnd.oasis.opendocument.presentation",
+};
+for (const format of ["docx", "pptx", "odt", "odp"])
+  test(`${format} displays a local reading preview safely`, async () => {
+    const { page, frame, errors, requests } = await openFixture({
+      context: { document_id: id, game_id: gameId },
+      filename: `abcdefgh_manual.${format}`,
+      bytes: officeFixture(format),
+      format,
+      mediaType: OFFICE_TYPES[format],
+    });
+    await frame.locator(".office-document").waitFor();
+    const text = await frame.locator(".office-document").textContent();
+    if (format === "docx") {
+      assert.ok(
+        text.includes("Manual heading") &&
+          text.includes("café <script>literal</script>") &&
+          text.includes("Table cell"),
+      );
+      assert.equal(await frame.locator(".office-document table td").count(), 1);
+      assert.equal(await frame.locator(".office-bold").count(), 1);
+      if (process.env.OFFICE_VIEWER_SCREENSHOT)
+        await page.screenshot({ path: process.env.OFFICE_VIEWER_SCREENSHOT });
+    } else if (format === "odt")
+      assert.ok(
+        text.includes("OpenDocument heading") &&
+          text.includes("café <script>literal</script>"),
+      );
+    else {
+      assert.equal(await frame.locator(".office-slide").count(), 2);
+      if (format === "pptx")
+        assert.ok(text.indexOf("Slide text 2") < text.indexOf("Slide text 1"));
+    }
+    assert.equal(
+      await frame
+        .locator(".office-document script, .office-document iframe")
+        .count(),
+      0,
+    );
+    assert.equal(
+      requests.some((url) => !url.startsWith(base)),
+      false,
+    );
+    assert.deepEqual(errors, []);
+    await page.close();
+  });
+
+for (const [label, addition] of [
+  ["traversal", { "../escape.xml": "<evil/>" }],
+  ["macros", { "word/vbaProject.bin": "macro" }],
+  [
+    "DTD",
+    {
+      "word/document.xml":
+        '<!DOCTYPE x [<!ENTITY evil SYSTEM "https://evil.test/x">]><x>&evil;</x>',
+    },
+  ],
+  ["malformed XML", { "word/document.xml": "<broken" }],
+])
+  test(`office ${label} is rejected without active rendering`, async () => {
+    const { page, frame, requests } = await openFixture({
+      filename: "manual.docx",
+      bytes: officeFixture("docx", addition),
+      format: "docx",
+      mediaType: OFFICE_TYPES.docx,
+    });
+
+    await frame.locator("#viewer .error").waitFor();
+    assert.equal(await frame.locator(".office-document").count(), 0);
+    assert.equal(
+      requests.some((url) => !url.startsWith(base)),
+      false,
+    );
+    await page.close();
+  });
+
+test("Word embeds bounded raster images and never fetches external relationships", async () => {
+  const png = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jXioAAAAASUVORK5CYII=",
+    "base64",
+  );
+  const bytes = officeFixture("docx", {
+    "word/document.xml": `<w:document xmlns:w="${W}" xmlns:a="${A}" xmlns:r="${R}"><w:body><w:p><w:r><w:t>Picture</w:t></w:r><a:blip r:embed="local"/><a:blip r:embed="remote"/></w:p></w:body></w:document>`,
+    "word/_rels/document.xml.rels":
+      '<Relationships><Relationship Id="local" Target="media/image.png"/><Relationship Id="remote" Target="https://evil.test/private" TargetMode="External"/></Relationships>',
+    "word/media/image.png": png,
+  });
+  const { page, frame, requests } = await openFixture({
+    filename: "manual.docx",
+    bytes,
+    format: "docx",
+    mediaType: OFFICE_TYPES.docx,
+  });
+  await frame.locator(".office-document img").waitFor();
+  assert.equal(await frame.locator(".office-document img").count(), 1);
+  assert.ok(
+    (
+      await frame.locator(".office-document img").getAttribute("src")
+    ).startsWith("data:image/png;base64,"),
+  );
+  assert.equal(
+    requests.some((url) => url.startsWith("https://evil.test")),
+    false,
+  );
+  await page.close();
+});
+
+test("a document from the wrong game context is rejected before rendering", async () => {
+  const { page, frame } = await openFixture({
+    context: { document_id: id, game_id: "other-game" },
+  });
+  await frame.locator("#viewer .error").waitFor();
+  assert.equal(await frame.locator("#viewer pre").count(), 0);
+  await page.close();
+});
+
+test("unsupported preview retains an original download in the direct reader", async () => {
+  const { page, frame, calls } = await openFixture({
+    context: { document_id: id, game_id: gameId },
+    error: { error: { kind: "unsupported", message: "Unsupported preview" } },
+  });
+  await frame.locator("#viewer .error").waitFor();
+  await frame.locator("#download").click();
+  await frame
+    .locator("#status")
+    .filter({ hasText: "Original download started" })
+    .waitFor();
+  assert.equal(
+    calls.find((call) => call.method === "plugin.download-document").payload
+      .document_id,
+    id,
   );
   await page.close();
 });

@@ -17,7 +17,7 @@ from urllib.request import urlopen
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "examples/scoped-document-viewer/frontend/vendor"
 LOCK = ROOT / "examples/scoped-document-viewer/vendor-lock.json"
-VERSIONS = {"dompurify": "3.4.14", "pdfjs-dist": "5.6.205", "js-sha256": "0.11.1"}
+VERSIONS = {"dompurify": "3.4.14", "pdfjs-dist": "5.6.205", "js-sha256": "0.11.1", "fflate": "0.8.3"}
 
 
 def main():
@@ -49,6 +49,8 @@ def main():
                     "build/sha256.min.js": "sha256.min.js",
                     "LICENSE.txt": "sha256.LICENSE",
                 }
+            elif name == "fflate":
+                sources = {"umd/index.js": "fflate.min.js", "LICENSE": "fflate.LICENSE"}
             else:
                 sources = {
                     "build/pdf.mjs": "pdf.js",

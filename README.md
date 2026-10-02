@@ -36,7 +36,7 @@ Three security-focused reference plugins exercise the scoped Phase 2 domain APIs
 | `example.ui-api` | Reference | Declarative UI and gateway requests |
 | `example.help-button` | Showcase | Labelled native capability cards and first-class host contributions |
 | `example.jellyfin-media-sync` | Integration | Native configuration, secrets, supervised movie sync and progress |
-| `example.scoped-document-viewer` | Official feature example | PR #241 scoped game document viewer: sandbox PDF, UTF-8 text, sanitized HTML/XHTML ([guide](examples/scoped-document-viewer/README.md), [behavior comparison](docs/scoped-document-viewer.md)) |
+| `example.scoped-document-viewer` | Official feature example | PR #241 scoped game document viewer: game Docs links, original download, sandbox PDF, UTF-8 text, sanitized HTML/XHTML and Office/OpenDocument reading previews ([guide](examples/scoped-document-viewer/README.md), [behavior comparison](docs/scoped-document-viewer.md)) |
 | `example.self-service-session-manager` | High-risk reference | PR #248 parity: native account/admin Settings, rich metadata/maps, scoped revocation, GeoIP configuration |
 | `example.discord-delivery-provider` | Reference | Core-coordinated external delivery and write-only secrets |
 
@@ -68,7 +68,7 @@ Use the real demos as templates:
 - Use **recently-played-notifier** for a plugin that combines core data with a side effect.
 - Use **metadata-curator** for configurable integration logic.
 - Use **ui-api** when learning the declarative UI/gateway contract in isolation.
-- Use **Scoped Document Viewer** for a sandboxed sidebar frontend that calls a read-only domain API.
+- Use **Scoped Document Viewer** for a sandboxed game Docs reader that calls a read-only domain API and scoped download bridge.
 - Use **[Self-Service Session Manager](examples/self-service-session-manager/README.md)** for full native Settings integration, separate read/destructive grants, scoped admin APIs, maps, and GeoIP configuration. Its native browser permission is Critical and requires appropriate review.
 - Use **External Discord Delivery Provider** for provider registration, write-only secrets, and core-owned delivery state.
 

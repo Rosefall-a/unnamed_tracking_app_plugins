@@ -2,7 +2,7 @@
 
 The official plugin implementation of [application PR #241](https://github.com/Rosefall-a/unnamed_tracking_app/pull/241), inspected at `a9b7d3102c1efec08a5bf11a919c6d2204376ebc`. The PR's current code supports sanitized HTML/XHTML, despite its older summary describing only PDF/text.
 
-Version **1.4.0** provides a plugin-owned Documents page with game/file metadata, paginated listing, loading and explicit error states, PDF pages and zoom, literal UTF-8 text, and sanitized HTML with a source toggle. It reuses the host's `GameFileItem` rows and `games/<folder>/docs` storage through public document DTOs and opaque IDs. Upload files in the host game's Docs tab; the plugin does not create a separate document store.
+Version **1.5.0** opens game Docs entries in a new browser tab through a declared reader contribution. The optional library remains available through Browse library. It provides a plugin-owned reader with game/file metadata, paginated listing, loading and explicit error states, PDF pages and zoom, literal UTF-8 text, and sanitized HTML with a source toggle. It reuses the host's `GameFileItem` rows and `games/<folder>/docs` storage through public document DTOs and opaque IDs. Upload files in the host game's Docs tab; the plugin does not create a separate document store.
 
 ## Permissions
 
@@ -10,9 +10,9 @@ Version **1.4.0** provides a plugin-owned Documents page with game/file metadata
 | --- | --- |
 | `documents.read` v1 | List/read documents belonging to the current caller's games. |
 | `backend.routes.plugin` v1 | Publish authenticated JSON handlers under this plugin's namespace. |
-| `frontend.navigation.main` v1 | Display the Documents page in main navigation. |
+| `frontend.context.documents` v1 | Register the reader for game Docs entries; the host opens an owned document ID in a new tab. |
 
-No native frontend, full API, host route, network, filesystem, credential, or persistent-storage permission is requested. The backend imports only the public SDK. Updates require normal host consent for the added navigation grant.
+No native frontend, full API, host route, network, filesystem, credential, or persistent-storage permission is requested. The backend imports only the public SDK. Updates require normal host consent for the document-context grant. There is no mandatory Documents sidebar section.
 
 ## Security model
 
@@ -20,7 +20,7 @@ The host checks the current installation, lifecycle, active user and live grants
 
 Paths remain host-owned. Stored names containing separators, encoded separators, dot traversal, NUL or Windows drive syntax are rejected. Resolved paths and game folders must stay within the caller's game/document root; escaping symlinks are rejected. The host reads at most 5 MiB plus one sentinel byte before returning any content, validates the complete representation, and transports 24 KiB chunks as base64 JSON. Every continuation repeats authorization and content validation; SHA-256 detects replacement or mixed chunks. The frontend also validates IDs, MIME/format, byte counts, offsets, UTF-8 and final digest. No limits or sandbox flags were relaxed.
 
-The custom frontend runs under the host's `sandbox="allow-scripts"` and CSP. It gets no cookies or host DOM access. Requests use the correlated parent bridge, with cancellation and timeouts. User data responses carry `nosniff` and `private, no-store`; document bytes are never served as an uploaded HTML page. PDF.js, DOMPurify and the SHA-256 fallback are packaged offline, pinned and integrity checked; no CDN/runtime download is used.
+The host serves verified package CSS and classic scripts in the authenticated entry response (`frontend.inline_assets: true`), authorizing only the bundled scripts with a fresh CSP nonce. Opaque iframe subresource requests do not need login cookies; no asset endpoint is made public and no same-origin permission is granted. The custom frontend runs under the host's `sandbox="allow-scripts"` and CSP. It gets no cookies or host DOM access. Requests use the correlated parent bridge, with cancellation and timeouts. User data responses carry `nosniff` and `private, no-store`; document bytes are never served as an uploaded HTML page. PDF.js, DOMPurify and the SHA-256 fallback are packaged offline, pinned and integrity checked; no CDN/runtime download is used.
 
 PDF.js renders canvas pages with evaluation, XFA, form/annotation interaction, external resource fetching and font downloads disabled. HTML uses DOMPurify's HTML profile and PR #241's forbidden tags/attributes, with additional restrictions on navigation/ping. SVG/MathML, scripts, images, forms, frames, styles and active URLs are removed. All remaining links are inert. Plain text always uses `textContent`.
 
@@ -29,7 +29,15 @@ PDF.js renders canvas pages with evaluation, XFA, form/annotation interaction, e
 - PDF identified by `%PDF-`, including PDFs with an incorrect extension. Malformed/encrypted PDFs produce a renderer error.
 - Strict UTF-8: `.cfg`, `.conf`, `.csv`, `.ini`, `.json`, `.log`, `.md`, `.nfo`, `.properties`, `.toml`, `.txt`, `.xml`, `.yaml`, `.yml`; the PR's conservative text MIME allowlist also applies. Existing platform `.markdown` and `.rst` support remains.
 - `.html`, `.htm`, `.xhtml`: transported as `text/plain` with `format: html`, then sanitized. A source view shows literal text.
-- Empty text is supported. Binary controls and invalid UTF-8 are rejected. SVG, office/archive and other unsupported files remain listed with metadata and fail explicitly when opened.
+- `.docx`, `.pptx`, `.odt`, `.odp`: local reading previews show text, basic tables and embedded PNG/JPEG images. Slides retain presentation order. Office styles, charts, animations, equations and complex layout are not reproduced. The original remains downloadable.
+- Office containers are limited to 1,024 entries, 20 MiB expanded total, 2 MiB per XML part, 5 MiB per other part and 100:1 compression (a 1 KiB floor allows tiny compressed parts). XML DTDs/entities, macros, ActiveX, embedded objects, encryption and escaping/duplicate archive paths are rejected. XML trees are capped at 50,000 nodes; presentations at 500 slides. External links/resources are inert; SVG images and unknown raster types are not rendered.
+- Empty text is supported. Binary controls and invalid UTF-8 are rejected. SVG, legacy `.doc`/`.ppt`, macro-enabled Office, arbitrary archives and other unsupported files remain listed with metadata and fail explicitly when opened.
+
+## Opening and downloading
+
+In a game's **Docs** tab, click a filename to open the registered reader in a new browser tab. The host passes only `document_id` and `game_id` through `plugin.context`; the reader opens that ID directly without fetching the whole library. If no authorized reader is active, the filename retains its normal download behavior. Readers are selected by declared extension and deterministic order. A separate Download link remains on every game document row.
+
+**Download original** in the reader calls `plugin.download-document`. The parent checks the scoped attachment endpoint using authenticated HEAD, then starts the download. GET repeats live authorization and ownership; unsupported/malformed/oversized previews can still be downloaded as inert originals. The download endpoint is `/api/plugins/<plugin-id>/capabilities/documents/<document-id>/download`, uses opaque IDs and safe stored-path resolution, and always sends attachment disposition, octet-stream, nosniff and private/no-store. Downloads stream independently of the 5 MiB preview cap. The sandbox gets neither a raw URL nor cookies and requires no download/native privilege.
 
 ## Dedicated plugin API
 
@@ -39,12 +47,12 @@ The UI invokes the equivalent declared actions; it never fetches host data endpo
 
 ## Differences and restrictions relative to PR #241
 
-- **PDFs also have the platform's 5 MiB cap.** PR #241 limits text to 5 MiB but streams PDFs without a viewer size cap. Large PDFs require a future authorized streaming API; this plugin does not bypass the current bounded domain API.
-- The browser-native PDF iframe cannot reliably load in an opaque sandbox. Bundled PDF.js supplies page/zoom controls. Native print, download, text search/selection, interactive forms and links are not reproduced. PDF passwords are unsupported.
-- File upload compatibility (`file`/`files`), file/media rename and generic downloads added on the PR branch are host management features. The read-only document APIs cannot reproduce them. Use the host's existing Docs management/download UI; this plugin adds no write privilege or undocumented endpoints.
+- **PDFs also have the platform's 5 MiB cap.** PR #241 limits text to 5 MiB but streams PDFs without a viewer size cap. Large PDFs can be downloaded, but their inline preview requires a future authorized streaming API; this plugin does not bypass the current bounded domain API.
+- The browser-native PDF iframe cannot reliably load in an opaque sandbox. Bundled PDF.js supplies page/zoom controls. Native print, PDF text search/selection, interactive forms and links are not reproduced. PDF passwords are unsupported.
+- File upload compatibility (`file`/`files`), file/media rename and generic downloads added on the PR branch are host management features. The read-only document APIs cannot reproduce them. Use the host's existing Docs management UI; this plugin adds no write privilege or undocumented endpoints.
 - Only indexed, active `GameFileItem(kind=doc)` rows are listed. Legacy disk-only files need the host Docs listing/scan to index them. No document editing, indexing, OCR or annotation is provided.
 - HTML links are disabled, a stricter navigation policy than the PR's sanitized HTML component.
-- Requires the accompanying `plugin-manager` document chunk/pagination contract and bridge HTTP status support. Version 1.4.0 must not be advertised as compatible with an older host just because both expose API v1.
+- Requires the accompanying `plugin-manager` document chunk/pagination contract and reader contribution, inline-asset delivery, scoped download and bridge context/status support. Version 1.5.0 must not be advertised as compatible with an older host just because both expose API v1.
 
 ## Build and verification
 
@@ -59,7 +67,7 @@ python tools/verify_packages.py dist/*.utp
 python tools/validate_packages.py dist/*.utp
 ```
 
-Browser tests run the actual assets in the host's opaque sandbox/CSP and verify PDF pixels/page controls, sanitization, UTF-8, explicit errors, malformed payloads/documents, integrity and stale responses. Host tests cover persisted ownership, live grants/revocation, deletion, traversal, limits and transport size. For a direct comparison to the actual PR source:
+Browser tests run the actual assets in the host's opaque sandbox/CSP and verify PDF pixels/page controls, sanitization, UTF-8, explicit errors, malformed payloads/documents, integrity and stale responses. They also reproduce the original authenticated sandbox CSS failure, exercise direct game links/downloads, and render actual OOXML/OpenDocument archives. Host tests cover persisted ownership, live grants/revocation, deletion, traversal, limits and transport size. For a direct comparison to the actual PR source:
 
 ```sh
 python tools/check_document_parity.py --reference /path/to/pr241-checkout --host /path/to/updated-host
@@ -67,10 +75,12 @@ python tools/check_document_parity.py --reference /path/to/pr241-checkout --host
 
 See the [validation report](../../docs/scoped-document-viewer-validation.md) for recorded results, baseline static-check failures, and environment limitations.
 
-`tools/vendor_document_libraries.py` reproducibly downloads the pinned upstream libraries (PDF.js 5.6.205, DOMPurify 3.4.14, js-sha256 0.11.1), checks npm SHA-512 archive integrity against `vendor-lock.json`, and records packaged-file SHA-256 hashes and licenses. Classic-script wrappers allow the libraries to run in an opaque origin without module CORS or worker/network privileges. PDF.js uses its in-process worker implementation.
+`tools/vendor_document_libraries.py` reproducibly downloads the pinned upstream libraries (PDF.js 5.6.205, DOMPurify 3.4.14, js-sha256 0.11.1, fflate 0.8.3), checks npm SHA-512 archive integrity against `vendor-lock.json`, and records packaged-file SHA-256 hashes and licenses. Classic-script wrappers allow the libraries to run in an opaque origin without module CORS or worker/network privileges. PDF.js uses its in-process worker implementation.
 
 The new checked-in `.utp` is a valid **unsigned local build**, requiring the host's explicit untrusted-package install confirmation. Existing signed releases are preserved. Trusted release signing must use the repository's reviewed publisher workflow; no private key or fabricated signature is included.
 
 Digest verification and secure request correlation also work on HTTP deployments: Web Crypto is used when available, with bundled SHA-256 and `getRandomValues` fallbacks otherwise. Browser tests verify this path. See the [Web Crypto context rules](https://developer.mozilla.org/en-US/docs/Web/API/Window/crypto), [PDF.js API](https://mozilla.github.io/pdf.js/api/) and [native PDF sandbox restriction](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe).
 
 ![Sandboxed PDF preview](../../docs/screenshots/scoped-document-viewer.png)
+
+![Direct game document reading preview](../../docs/screenshots/scoped-document-reader-office.png)

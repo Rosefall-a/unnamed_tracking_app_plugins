@@ -5,6 +5,8 @@ const heading = document.querySelector("#document-title");
 const metadata = document.querySelector("#document-meta");
 const refreshButton = document.querySelector("#refresh");
 const moreButton = document.querySelector("#more");
+const downloadButton = document.querySelector("#download");
+let currentDocument = null;
 let generation = 0;
 let controller = null;
 let pdfTask = null;
@@ -142,7 +144,11 @@ function validateChunk(result, item, offset, previous) {
     result.encoding !== "base64" ||
     !doc ||
     doc.id !== item.id ||
-    doc.game_id !== item.game_id ||
+    (item.game_id && doc.game_id !== item.game_id) ||
+    !/^[a-f0-9-]{36}$/i.test(doc.game_id) ||
+    typeof doc.filename !== "string" ||
+    typeof doc.game_title !== "string" ||
+    typeof doc.media_type !== "string" ||
     !Number.isSafeInteger(doc.size_bytes) ||
     doc.size_bytes < 0 ||
     doc.size_bytes > MAX_BYTES ||
@@ -184,7 +190,8 @@ function validateChunk(result, item, offset, previous) {
   if (!(
     (doc.media_type === "application/pdf" && result.format === "pdf") ||
     (doc.media_type === "text/plain" &&
-      ["text", "html"].includes(result.format))
+      ["text", "html"].includes(result.format)) ||
+    OfficeDocumentViewer.types[result.format] === doc.media_type
   ))
     throw new DocumentError(
       "unsupported",
@@ -207,6 +214,9 @@ async function loadDocument(item, token) {
     );
     if (token !== generation) throw new DOMException("Cancelled", "AbortError");
     chunks.push(validateChunk(result, item, offset, previous));
+    currentDocument = result.document;
+    heading.textContent = displayName(currentDocument.filename);
+    metadata.textContent = `${currentDocument.game_title} · ${sizeLabel(currentDocument.size_bytes)} · ${currentDocument.media_type}`;
     offset = result.next_offset;
     previous = result;
     status.textContent = `Loading ${displayName(item.filename)} · ${sizeLabel(offset)} / ${sizeLabel(result.document.size_bytes)}`;
@@ -393,6 +403,8 @@ async function renderPdf(bytes, token) {
 
 async function openDocument(item) {
   const token = clearViewer();
+  currentDocument = item;
+  downloadButton.hidden = false;
   heading.textContent = displayName(item.filename);
   metadata.textContent = `${item.game_title} · ${sizeLabel(item.size_bytes)} · ${item.media_type}`;
   state("Loading document…");
@@ -403,9 +415,18 @@ async function openDocument(item) {
     const { bytes, format } = await loadDocument(item, token);
     if (token !== generation) return;
     if (format === "pdf") await renderPdf(bytes, token);
-    else renderText(bytes, format === "html");
+    else if (OfficeDocumentViewer.types[format]) {
+      try {
+        OfficeDocumentViewer.render(bytes, format, viewer);
+      } catch (error) {
+        throw new DocumentError(
+          "unsupported",
+          error.message || "Malformed office document.",
+        );
+      }
+    } else renderText(bytes, format === "html");
     if (token === generation)
-      status.textContent = `${displayName(item.filename)} opened${format === "html" ? " · sanitized HTML, links disabled" : ""}.`;
+      status.textContent = `${displayName(currentDocument.filename)} opened${format === "html" ? " · sanitized HTML, links disabled" : ""}.`;
   } catch (error) {
     if (token !== generation || error.name === "AbortError") return;
     const labels = {
@@ -437,6 +458,8 @@ async function loadList(reset = false) {
     metadata.textContent = "Choose a document to open it.";
     state("Select a document from the library.");
     nextOffset = 0;
+    currentDocument = null;
+    downloadButton.hidden = true;
   }
   refreshButton.disabled = moreButton.disabled = true;
   status.textContent = "Loading documents…";
@@ -510,10 +533,52 @@ async function loadList(reset = false) {
   }
 }
 refreshButton.onclick = () => {
+  document.body.classList.remove("single-document");
+  refreshButton.textContent = "Refresh library";
   void loadList(true);
+};
+downloadButton.onclick = async () => {
+  if (!currentDocument) return;
+  downloadButton.disabled = true;
+  try {
+    await pluginRequest("plugin.download-document", {
+      document_id: currentDocument.id,
+    });
+    status.textContent = "Original download started.";
+  } catch (error) {
+    status.textContent = error.message || "Download could not be started.";
+  } finally {
+    downloadButton.disabled = false;
+  }
 };
 moreButton.onclick = () => {
   void loadList();
 };
 window.addEventListener("beforeunload", clearViewer);
-void loadList(true);
+async function initialize() {
+  try {
+    const context = await pluginRequest("plugin.context");
+    if (context.document_id) {
+      if (
+        !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(
+          context.document_id,
+        )
+      )
+        throw new DocumentError("invalid", "Invalid document identifier.");
+      document.body.classList.add("single-document");
+      refreshButton.textContent = "Browse library";
+      await openDocument({
+        id: context.document_id,
+        game_id: context.game_id,
+        filename: "Document",
+        game_title: "Loading…",
+        size_bytes: 0,
+        media_type: "",
+      });
+    } else await loadList(true);
+  } catch (error) {
+    state(error.message || "Unable to initialize document reader.", true);
+    status.textContent = "Reader unavailable.";
+  }
+}
+void initialize();

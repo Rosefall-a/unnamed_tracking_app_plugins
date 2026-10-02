@@ -39,10 +39,21 @@
       "tables": [],
       "dialogs": [],
       "navigation": {
-        "sidebar": true,
+        "sidebar": false,
         "label": "Documents",
         "order": 40
       }
+    }
+  ],
+  "document_readers": [
+    {
+      "id": "game-documents",
+      "page_id": "documents",
+      "label": "Document reader",
+      "extensions": [
+        "*"
+      ],
+      "order": 0
     }
   ]
 }
