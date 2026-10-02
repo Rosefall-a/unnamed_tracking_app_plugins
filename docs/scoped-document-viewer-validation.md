@@ -66,14 +66,14 @@ The direct comparison loads the reference helper from the supplied PR checkout. 
 
 ## Delivery restrictions
 
-See the [feature comparison](scoped-document-viewer.md) and [plugin README](../examples/scoped-document-viewer/README.md) for the explicit PR behavior differences: the platform's 5 MiB PDF cap, sandbox PDF controls, disabled HTML navigation, indexed-document requirement, and unavailable read-only upload/rename operations. The host contract update must accompany the plugin.
+See the [feature comparison](scoped-document-viewer.md) and [plugin README](../examples/scoped-document-viewer/README.md) for the explicit PR behavior differences: the platform's configurable preview ceiling (5 MiB legacy default; 0 = unlimited) PDF cap, sandbox PDF controls, disabled HTML navigation, indexed-document requirement, and unavailable read-only upload/rename operations. The host contract update must accompany the plugin.
 
 The 1.4.0 artifact is an **unsigned local build**, not a trusted signed release. Trusted release signing requires the existing publisher workflow and its private credentials. No signatures or keys were fabricated. The independent plugin GitHub wiki was unavailable (`Repository not found`); a wiki-ready guide is committed in this repository instead.
 
 Before pushing, both commits were rebased onto concurrent session-management updates (`6f58e609` in the host and `489fb2b` in the plugin repository). The combined code preserves host-owned action confirmation and the new session/GeoIP APIs. Integration checks passed: 208 relevant host backend tests (1 symlink skip), 67 host frontend tests, 60 plugin Python tests, 6 session-manager UI tests, Vue TypeScript, ESLint, and package integrity/validation. The document browser assets and package content remain unchanged from the 21-test sandbox run above.
 
 
-## Version 1.5.0 game Docs reader fix (2026-10-02)
+## Version 1.6.0 game Docs reader fix (2026-10-02)
 
 Host baseline: `e1a208cc`; plugin baseline: `5b5babf`. The original authenticated sandbox defect was reproduced: SameSite=Lax login cookies do not accompany opaque iframe CSS/script subrequests. The browser fixture now requires the login cookie instead of serving assets publicly. Authenticated entry responses inline verified package CSS/classic scripts with a fresh nonce; the sandbox keeps `allow-scripts` alone. Actual host HTTP tests verify authorization, nonce CSP, MIME handling and bounded package delivery.
 
@@ -92,13 +92,13 @@ Game Docs now provides indexed document IDs and opens a declared reader in a new
 | Full host Pylint | 9.18, above unchanged CI threshold 9.0 |
 | Changed document Python Ruff / frontend formatting / JavaScript syntax | Passed |
 | Package build, integrity and package validation | All fresh builds and checked-in artifacts passed |
-| Real host package and UI contract inspection | Passed; 1.5.0 correctly classified as unsigned |
+| Real host package and UI contract inspection | Passed; 1.6.0 correctly classified as unsigned |
 | Direct comparison to actual PR #241 helper | 28 document cases and 6 traversal cases passed |
 
 The runtime failures are `test_plugin_storage_files_are_owner_only` (Windows does not implement POSIX mode 0600) and `test_action_handler_can_use_the_mediated_plugin_gateway` (`preexec_fn` is unsupported on Windows). Both fail identically in an untouched runtime snapshot from the baseline (58 passed, the same two failures). New inline-asset manifest validation and descriptor tests pass. Tests and CI remain unchanged in strength; neither failure was skipped or relaxed.
 
 Full host Prettier reports 181 files on this Windows checkout. After read-only newline normalization, baseline and updated sources have the same 23 content-formatting failures, with none introduced. Changed frontend files pass. The package validator retains three pre-existing Ruff TRY004 suggestions for its established ValueError contract; the changed document test/tool code passes. Full Pylint still emits existing/style diagnostics; its score meets the configured CI gate. Docker is unavailable here, so production PostgreSQL and Linux bubblewrap end-to-end checks remain unverified. SQLite tests exercise actual SQL ownership and HTTP boundaries.
 
-The 1.5.0 artifact was built with the standard builder in isolation, then copied individually so existing signed releases remain intact. It is an unsigned local artifact pending the repository's normal signing workflow. The host and plugin updates must be deployed together, and existing installations must approve `frontend.context.documents` to register the game reader. PR restrictions remain explicit in the README: PDF previews retain the platform 5 MiB cap, native PDF/password controls remain unavailable in the sandbox, and upload/rename stay host management operations. Large/unsupported originals can now be downloaded.
+The 1.6.0 artifact was built with the standard builder in isolation, then copied individually so existing signed releases remain intact. It is an unsigned local artifact pending the repository's normal signing workflow. The host and plugin updates must be deployed together, and existing installations must approve `frontend.context.documents` to register the game reader. PR restrictions remain explicit in the README: PDF previews retain the platform configurable preview ceiling (5 MiB legacy default; 0 = unlimited) cap, native PDF/password controls remain unavailable in the sandbox, and upload/rename stay host management operations. Large/unsupported originals can now be downloaded.
 
 Before pushing, the host fix was rebased onto concurrent native-page remount fix `17a184c1`. The combined Vue TypeScript check and all 71 frontend tests passed; focused ESLint passed. Both fixes are preserved.
