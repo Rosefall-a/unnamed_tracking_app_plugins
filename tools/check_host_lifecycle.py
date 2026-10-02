@@ -71,14 +71,19 @@ def main() -> None:
         return response
 
     previous_arguments = sys.argv
+    previous_path = sys.path[:]
     httpx.Client.request = request
     sys.argv = [str(script), *host_arguments]
+    # Match direct execution: host-owned sibling conformance modules must be
+    # importable without copying them into the plugin repository.
+    sys.path.insert(0, str(script.parent))
     try:
         runpy.run_path(str(script), run_name="__main__")
         assert len(denials) == 1, "host suite did not exercise exactly one staged permission denial"
     finally:
         httpx.Client.request = original
         sys.argv = previous_arguments
+        sys.path[:] = previous_path
 
 
 if __name__ == "__main__":
