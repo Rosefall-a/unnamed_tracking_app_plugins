@@ -330,18 +330,22 @@ is a validated, packaged Python/static-asset distribution.
 `integrity.sha256` is SHA-256 over sorted payload paths and bytes, with a NUL after
 each path and file. The manifest is excluded by the unchanged v1 contract.
 `package_sha256` separately hashes the entire final ZIP, including the manifest.
-Signatures are Ed25519 over ASCII `plugin-package-v1:<payload-sha256>`. They cover
-the payload (including README and release policy); they do not sign arbitrary
-catalogue fields or the manifest itself. Catalogue HTTPS plus the archive hash
-provides the full-package correspondence check. Never mutate a signed package.
+New signatures are Ed25519 over ASCII `plugin-package-v2:<payload-sha256>`.
+The payload includes `package-signature-v2.json`, binding the complete manifest
+without integrity and the signer key ID. The signature string is prefixed `v2:`.
+Verifiers compare signed and outer manifests. Catalogue fields remain separate;
+the final archive hash verifies download correspondence. Historical v1 manifests
+require reviewed pins. Never mutate a signed package.
 
 Register your publisher's public Ed25519 key in your repository's `publishers/`
 registry with its reviewed identity, key ID, base64 public bytes, SHA-256 of the
 public bytes, status and allowed plugin-ID prefixes. The builder requires the
 private key to match an **active** registered public key covering every built
 plugin, and the packaged publisher label must match the registered identity.
-The private key is supplied only through `PLUGIN_SIGNING_KEY_B64` (base64 of the
-32-byte private seed) and `PLUGIN_SIGNING_KEY_ID`, normally CI secrets:
+Generic keys use `PLUGIN_SIGNING_KEY_B64` (base64 raw 32-byte private seed) and
+`PLUGIN_SIGNING_KEY_ID` in protected CI secrets. Official and example folders use
+the `PLUGIN_OFFICIAL_SIGNING_*` and `PLUGIN_EXAMPLES_SIGNING_*` pairs respectively.
+See [signing](security/signing.md) for fallback and channel rules:
 
 ```bash
 python tools/build_packages.py --require-signing

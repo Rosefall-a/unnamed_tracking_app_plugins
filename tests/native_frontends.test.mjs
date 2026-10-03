@@ -53,35 +53,57 @@ test("Help surfaces, actions, toast and lifecycle cleanup", async () => {
   } finally { f.close(); }
 });
 
-test("Jellyfin loads settings, saves typed values and clears the secret", async () => {
+test("Jellyfin administrator configuration clears credential and keeps profile separate", async () => {
   const f = await fixture("jellyfin-media-sync", id => id === "get-config"
-    ? { server_url: "https://jf.example", user_id: "a".repeat(32), background_sync: true, sync_interval_minutes: 30 }
-    : id === "status" ? { phase: "syncing", processed: 100, total: 205 }
-    : { ok: true, message: "Saved", media: [] });
+    ? { is_admin: true, host_user_id: "host-user", master: { server_url: "https://jf.example", sync_interval_minutes: 30, libraries: [], users: [] }, profile: { user_id: "a".repeat(32) }, users: [] }
+    : id === "status" ? { phase: "syncing", processed: 100, conflicts: 2 }
+    : { ok: true, message: "Saved" });
   try {
     const render = f.components.sync.setup({ host: f.host });
     await flush();
     const find = id => all(render()).find(x => x.props.id === id);
     assert.equal(find("jf-server_url").props.value, "https://jf.example");
     find("jf-token").props.onInput({ target: { value: "SECRET-token" } });
-    await all(render()).find(x => x.tag === "button" && x.children === "Save configuration and token").props.onClick();
-    assert.deepEqual(f.calls.find(x => x[0] === "save-token"), ["save-token", { api_key: "SECRET-token" }]);
-    assert(!("api_key" in f.calls.find(x => x[0] === "settings")[1]));
+    await all(render()).find(x => x.tag === "button" && x.children === "Save server").props.onClick();
+    const saved = f.calls.find(x => x[0] === "save-master")[1];
+    assert.equal(saved.api_key, "SECRET-token");
+    assert(!("user_id" in saved));
     assert.equal(find("jf-token").props.value, "");
-    const progress = all(render()).find(x => x.tag === "progress");
-    assert.equal(progress.props.value, 100); assert.equal(progress.props.max, 205);
-    assert.equal(progress.props["aria-label"], "Movies processed");
+    assert(JSON.stringify(render()).includes("2 conflicts"));
     f.close(); assert.equal(f.timers.size, 0);
   } finally { f.close(); }
 });
 
-test("Jellyfin denied gateway operation shows useful UI failure", async () => {
+test("Jellyfin regular user has identity controls and no server credential input", async () => {
+  const f = await fixture("jellyfin-media-sync", id => id === "get-config" ? { is_admin: false, profile: {}, users: [], host_user_id: "host-user" } : {});
+  try {
+    const render = f.components.sync.setup({ host: f.host }); await flush();
+    assert(!all(render()).some(x => x.props.id === "jf-token" || x.props.id === "jf-server_url"));
+    assert(JSON.stringify(render()).includes("approve your identity"));
+  } finally { f.close(); }
+});
+
+test("Jellyfin Watch Now renders exact token-free destination and handles missing mapping", async () => {
+  const f = await fixture("jellyfin-media-sync", () => ({ ok: true, url: "https://jf.example/web/index.html#!/details?id=123" }));
+  try {
+    const render = f.components.watch.setup({ host: f.host }); await flush();
+    const link = all(render()).find(x => x.tag === "a");
+    assert.equal(link.props.href, "https://jf.example/web/index.html#!/details?id=123");
+    assert.equal(link.props.rel, "noopener noreferrer");
+  } finally { f.close(); }
+  const missing = await fixture("jellyfin-media-sync", () => ({ ok: false, error: "No mapping" }));
+  try {
+    const render = missing.components.watch.setup({ host: missing.host }); await flush();
+    assert(!all(render()).some(x => x.tag === "a"));
+    assert(JSON.stringify(render()).includes("No mapping"));
+  } finally { missing.close(); }
+});
+
+test("Jellyfin denied operation shows useful failure and cleans up timers", async () => {
   const f = await fixture("jellyfin-media-sync", () => { throw new Error("denied"); });
   try {
-    const render = f.components.sync.setup({ host: f.host });
-    await flush();
-    const queue = all(render()).find(x => x.tag === "button" && x.children === "Queue sync now");
-    await queue.props.onClick();
+    const render = f.components.sync.setup({ host: f.host }); await flush();
+    await all(render()).find(x => x.tag === "button" && x.children === "Sync now").props.onClick();
     assert(all(render()).some(x => x.props.role === "status" && String(x.children).includes("Operation failed")));
     f.close(); assert.equal(f.timers.size, 0);
   } finally { f.close(); }

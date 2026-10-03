@@ -2,108 +2,96 @@ export function activate(context) {
   const { h, ref, reactive, defineComponent } = context.vue;
   let disposed = false;
   const timers = new Set();
-  const progress = ref({ phase: "idle" });
-  context.onCleanup(() => {
-    disposed = true;
-    for (const timer of timers) clearTimeout(timer);
-    timers.clear();
-  });
-  async function poll() {
-    try {
-      const result = await context.host.runAction("status");
-      if (!disposed) progress.value = result;
-    } catch {
-      if (!disposed) progress.value = { phase: "unavailable", error: "Progress unavailable. Check plugin permissions and runtime diagnostics." };
-    }
-    if (disposed) return;
-    const timer = setTimeout(() => { timers.delete(timer); poll(); }, 5000);
-    timers.add(timer);
-  }
-  poll();
+  context.onCleanup(() => { disposed = true; for (const timer of timers) clearTimeout(timer); timers.clear(); });
+  context.registerComponent("watch", defineComponent({
+    props: ["host", "context"],
+    setup(props) {
+      const result = ref(null);
+      props.host.runAction("watch-now").then(value => { if (!disposed) result.value = value; }).catch(() => {
+        if (!disposed) result.value = { error: "Jellyfin mapping unavailable. Check your linked identity and permissions." };
+      });
+      return () => h("div", { class: "jf-watch" }, result.value?.ok
+        ? [h("a", { href: result.value.url, target: "_blank", rel: "noopener noreferrer", class: "jf-watch-link" }, "▶ Watch Now"), h("span", "Opens this exact item in Jellyfin")]
+        : [h("span", result.value?.error || "Finding your Jellyfin item…")]);
+    },
+  }));
   context.registerComponent("sync", defineComponent({
     props: ["host"],
     setup(props) {
-      const form = reactive({ server_url: "", user_id: "", sync_interval_minutes: 15, background_sync: false });
-      const token = ref("");
-      const busy = ref(false);
-      const message = ref("");
-      const movies = ref([]);
+      const config = ref({ profile: {}, users: [], master: {} });
+      const progress = ref({ phase: "idle" });
+      const form = reactive({ server_url: "", sync_interval_minutes: 15, user_id: "", background_sync: false, host_user_id: "", approved_user_id: "" });
+      const token = ref(""); const mappings = reactive({}); const busy = ref(false); const message = ref("");
       const run = (id, values = {}) => props.host.runAction(id, values);
-      run("get-config").then(result => {
-        if (!disposed) Object.assign(form, result);
-      }).catch(() => { if (!disposed) message.value = "Configuration unavailable. Check plugin.settings permission."; });
-      async function perform(callback) {
+      async function refresh() {
+        const value = await run("get-config");
+        if (disposed) return;
+        config.value = value;
+        Object.assign(form, value.profile || {});
+        if (value.master) {
+          form.server_url = value.master.server_url || "";
+          form.sync_interval_minutes = value.master.sync_interval_minutes || 15;
+          Object.assign(mappings, value.master.mappings || {});
+        }
+      }
+      refresh().catch(() => { if (!disposed) message.value = "Configuration unavailable. Check plugin permissions."; });
+      async function poll() {
+        try { const value = await run("status"); if (!disposed) {
+          const changed = progress.value.phase === "syncing" && value.phase !== "syncing";
+          progress.value = value;
+          if (changed) { const latest = await run("get-config"); if (!disposed) config.value.reviews = latest.reviews || []; }
+        } }
+        catch { if (!disposed) progress.value = { phase: "unavailable", error: "Status unavailable. Check permissions." }; }
+        if (!disposed) { const timer = setTimeout(() => { timers.delete(timer); poll(); }, 5000); timers.add(timer); }
+      }
+      poll();
+      async function perform(id, values) {
         busy.value = true;
-        try { await callback(); }
-        catch { if (!disposed) message.value = "Operation failed. Check plugin grants and runtime diagnostics."; }
+        try { const result = await run(id, values); if (!disposed) { message.value = result.message || result.error || "Saved."; await refresh(); } }
+        catch { if (!disposed) message.value = "Operation failed. Check configuration, administrator approval and runtime diagnostics."; }
         finally { if (!disposed) busy.value = false; }
       }
-      async function save() {
-        let url;
-        try { url = new URL(form.server_url); }
-        catch { message.value = "Enter a valid Jellyfin server URL."; return; }
-        if (!["http:", "https:"].includes(url.protocol) || url.username || url.password || url.search || url.hash) {
-          message.value = "Use an HTTP(S) server URL without credentials, query or fragment.";
-          return;
-        }
-        if (!/^[a-f0-9]{32}$/i.test(form.user_id.replaceAll("-", ""))) {
-          message.value = "Use the Jellyfin user's 32-character ID, not a username.";
-          return;
-        }
-        if (!Number.isFinite(form.sync_interval_minutes) || form.sync_interval_minutes < 5 || form.sync_interval_minutes > 1440) {
-          message.value = "Choose a sync interval between 5 and 1440 minutes.";
-          return;
-        }
-        await context.host.saveSettings({ ...form });
-        message.value = "Configuration saved.";
-        if (token.value) {
-          const value = token.value;
-          token.value = "";
-          const result = await run("save-token", { api_key: value });
-          message.value = result.ok ? result.message : result.error;
-        }
-      }
-      const button = (label, action) => h("button", { type: "button", disabled: busy.value, onClick: () => perform(action) }, label);
-      const input = (id, label, type = "text") => h("label", { for: `jf-${id}` }, [
-        h("span", label), h("input", {
-          id: `jf-${id}`, type, value: form[id], disabled: busy.value,
-          ...(type === "number" ? { min: 5, max: 1440, step: 1 } : {}),
-          onInput: event => { form[id] = type === "number" ? Number(event.target.value) : event.target.value; },
-        }),
-      ]);
+      const button = (label, id, values = () => ({})) => h("button", { type: "button", disabled: busy.value, onClick: () => perform(id, values()) }, label);
+      const input = (id, label, type = "text") => h("label", [h("span", label), h("input", { id: `jf-${id}`, type, value: form[id], disabled: busy.value, onInput: event => { form[id] = type === "number" ? Number(event.target.value) : event.target.value; } })]);
+      const select = (label, value, choices, update) => h("label", [h("span", label), h("select", { value, disabled: busy.value, onChange: event => update(event.target.value) }, [h("option", { value: "" }, "Choose…"), ...choices.map(x => h("option", { value: x.id }, x.name))])]);
       return () => h("section", { class: "jf-sync" }, [
-        h("p", { class: "jf-badge" }, "JELLYFIN · NATIVE PLUGIN INTEGRATION"),
-        h("h2", "Your movie library, in sync"),
-        h("p", "Imports into the host account that enabled this installation. Use that same account to configure it. Tokens are write-only and bound to the saved server and Jellyfin user."),
-        h("form", { onSubmit: event => { event.preventDefault(); perform(save); } }, [
-          input("server_url", "Jellyfin server URL"),
-          input("user_id", "Jellyfin user ID (32 hexadecimal characters)"),
-          input("sync_interval_minutes", "Sync interval in minutes", "number"),
-          h("label", { for: "jf-token" }, [h("span", "API key or access token (blank keeps existing token)"), h("input", {
-            id: "jf-token", type: "password", autocomplete: "new-password", value: token.value, disabled: busy.value,
-            onInput: event => { token.value = event.target.value; },
-          })]),
-          h("label", { class: "jf-switch" }, [h("input", {
-            type: "checkbox", checked: form.background_sync, disabled: busy.value,
-            onChange: event => { form.background_sync = event.target.checked; },
-          }), "Enable periodic sync"]),
-          button("Save configuration and token", save),
+        h("p", { class: "jf-badge" }, "JELLYFIN MEDIA SYNC"), h("h2", "Your films, shows and anime"),
+        h("p", "Link your approved Jellyfin identity. Watched episodes and film completion sync into your tracking library; local watch-state changes are reported for review."),
+        config.value.is_admin ? h("div", { class: "jf-panel", "data-testid": "jf-admin" }, [
+          h("h3", "Installation server"), h("p", "Configure once for everyone. Use a Jellyfin server API key with access to users and libraries."),
+          input("server_url", "Jellyfin server URL"), input("sync_interval_minutes", "Sync interval (5–1440 minutes)", "number"),
+          h("label", [h("span", "Server credential · blank keeps existing"), h("input", { id: "jf-token", type: "password", autocomplete: "new-password", value: token.value, onInput: e => { token.value = e.target.value; } })]),
+          button("Save server", "save-master", () => { const api_key = token.value; token.value = ""; return { server_url: form.server_url, sync_interval_minutes: form.sync_interval_minutes, api_key }; }),
+          button("Test connection & discover", "test-connection"), h("p", `Connection: ${config.value.connection || "untested"}`),
+          config.value.master?.error ? h("p", { class: "jf-error" }, config.value.master.error) : null,
+          h("h3", "Library mapping"), ...(config.value.master?.libraries || []).map(library => select(library.name, mappings[library.id] || "", [
+            { id: "movie", name: "Movies" }, { id: "tv_show", name: "TV" }, { id: "anime", name: "Anime" }, { id: "auto", name: "Automatic metadata detection" }, { id: "ignore", name: "Ignore" },
+          ], value => { mappings[library.id] = value; })), button("Save library mappings", "save-mappings", () => ({ mappings: { ...mappings } })),
+          h("h3", "Approve an account"), h("p", "Give each host user access only to their own Jellyfin identity. They can copy their host user ID from the panel below."),
+          input("host_user_id", "Host user ID"), select("Jellyfin identity", form.approved_user_id, config.value.master?.users || [], value => { form.approved_user_id = value; }),
+          button("Approve identity", "authorize-identity", () => ({ host_user_id: form.host_user_id, user_id: form.approved_user_id })),
+        ]) : null,
+        h("div", { class: "jf-panel", "data-testid": "jf-user" }, [h("h3", "Your Jellyfin account"),
+          h("p", ["Your host user ID: ", h("code", config.value.host_user_id || "Loading…")]),
+          select("Approved Jellyfin identity", form.user_id, config.value.users || [], value => { form.user_id = value; }),
+          !config.value.users?.length ? h("p", "Ask your administrator to approve your identity using the host user ID above.") : null,
+          h("label", { class: "jf-switch" }, [h("input", { type: "checkbox", checked: form.background_sync, onChange: e => { form.background_sync = e.target.checked; } }), "Enable periodic sync for my account"]),
+          button("Link my account", "save-user", () => ({ user_id: form.user_id, background_sync: form.background_sync })), button("Unlink account", "unlink-user"),
         ]),
-        h("div", { class: "jf-status", role: "status", "aria-live": "polite" }, [
-          h("strong", `Sync: ${progress.value.phase || "idle"}`),
-          h("p", `${progress.value.processed || 0} / ${progress.value.total || 0} movies processed · ${progress.value.skipped || 0} skipped`),
-          h("progress", { value: progress.value.processed || 0, max: Math.max(progress.value.total || 0, 1), "aria-label": "Movies processed" }),
+        h("div", { class: "jf-status", "data-testid": "jf-status", role: "status", "aria-live": "polite" }, [
+          h("h3", `Sync: ${progress.value.phase || "idle"}`), h("p", `${progress.value.processed || 0} records checked · ${progress.value.skipped || 0} skipped · ${progress.value.conflicts || 0} conflicts`),
           progress.value.finished_at ? h("p", `Last attempt: ${new Date(progress.value.finished_at * 1000).toLocaleString()}`) : null,
+          progress.value.retry_at ? h("p", `Retry: ${new Date(progress.value.retry_at * 1000).toLocaleString()}`) : null,
           progress.value.error ? h("p", { class: "jf-error" }, progress.value.error) : null,
-        ]),
-        h("div", { class: "jf-actions" }, [
-          button("Queue sync now", async () => { const result = await run("sync-now"); message.value = result.message; }),
-          button("Poll host activity", async () => { const result = await run("refresh-status"); message.value = `${result.event_count} host activity events observed. This is independent of Jellyfin polling.`; }),
-          button("Preview your host movies", async () => { const result = await run("list-media"); movies.value = result.media || []; }),
-        ]),
-        message.value ? h("p", { role: "status" }, message.value) : null,
-        movies.value.length ? h("ul", movies.value.map(movie => h("li", { key: movie.id }, `${movie.title} · ${movie.status}`))) : null,
-        h("p", { class: "jf-limit" }, "Current platform limits: default sandbox HTTP requires a generic broker; movie imports match titles, apply watched flags, and do not yet persist full Jellyfin playback history. Artwork URLs contain no token and may require public server access."),
+          button("Sync now", "sync-now"),
+        ]), (config.value.reviews || []).length ? h("div", { class: "jf-panel" }, [
+          h("h3", "Watch-state conflicts"), ...(config.value.reviews || []).map(review => h("div", [
+            h("p", `${review.title}: ${review.reason.replaceAll("_", " ")}`),
+            review.reason === "local_watch_state_changed" ? button("Use Jellyfin watched state", "resolve-conflict", () => ({ external_id: review.external_id }))
+              : h("p", "Review this item in your media library; its category or deletion is protected."),
+          ])),
+        ]) : null, message.value ? h("p", { role: "status" }, message.value) : null,
+        h("p", { class: "jf-limit" }, "Jellyfin supplies watched state and unlocked metadata. Host ratings, notes and local watch changes are preserved. Conflicts need review; playback changes are not sent back to Jellyfin."),
       ]);
     },
   }));

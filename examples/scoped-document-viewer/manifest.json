@@ -34,10 +34,14 @@
     {
       "name": "frontend.context.documents",
       "version": 1
+    },
+    {
+      "name": "plugin.settings",
+      "version": 1
     }
   ],
   "dependencies": [],
-  "description": "Game Docs reader with new-tab previews, original downloads, PDF, text, safe HTML and Office/OpenDocument reading views.",
+  "description": "Game Docs reader with configurable, optionally unlimited preview size, new-tab previews, original downloads, PDF, text, safe HTML and Office/OpenDocument reading views.",
   "entrypoint": "plugin:main",
   "frontend": {
     "entry": "frontend/index.html",
@@ -71,6 +75,13 @@
         "version": 1
       },
       "rationale": "Open game document rows in this sandboxed reader in a new tab; retain the optional library page."
+    },
+    {
+      "capability": {
+        "name": "plugin.settings",
+        "version": 1
+      },
+      "rationale": "Persist the viewer preview-size setting; zero means unlimited. Document content and host paths are never stored."
     }
   ],
   "plugin_id": "example.scoped-document-viewer",
@@ -80,6 +91,7 @@
   },
   "ui": {
     "actions": [
+      "load-settings",
       "list-documents",
       "read-document"
     ],
@@ -87,7 +99,9 @@
     "pages": [
       "documents"
     ],
-    "settings": []
+    "settings": [
+      "viewer-settings"
+    ]
   },
-  "version": "1.6.0"
+  "version": "1.7.0"
 }

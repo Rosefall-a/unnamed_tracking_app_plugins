@@ -1,0 +1,67 @@
+{
+  "application_version_range": "*",
+  "capabilities": [
+    {
+      "name": "games.read",
+      "version": 1
+    },
+    {
+      "name": "plugin.settings",
+      "version": 1
+    },
+    {
+      "name": "frontend.navigation.main",
+      "version": 1
+    }
+  ],
+  "dependencies": [],
+  "description": "Reference native declarative UI and gateway API plugin.",
+  "entrypoint": "plugin:main",
+  "integrity": {
+    "key_id": null,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null
+  },
+  "manifest_version": 1,
+  "name": "UI and API Example",
+  "permissions": [
+    {
+      "capability": {
+        "name": "games.read",
+        "version": 1
+      },
+      "rationale": "Read games requested by the user."
+    },
+    {
+      "capability": {
+        "name": "plugin.settings",
+        "version": 1
+      },
+      "rationale": "Persist native UI settings."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.main",
+        "version": 1
+      },
+      "rationale": "Expose the declared plugin page in the main navigation."
+    }
+  ],
+  "plugin_id": "example.ui-api",
+  "sdk_version_range": "^1.0.0",
+  "storage": {
+    "quota_mb": 1
+  },
+  "ui": {
+    "actions": [
+      "refresh"
+    ],
+    "pages": [
+      "games"
+    ],
+    "settings": [
+      "settings"
+    ]
+  },
+  "version": "1.1.0"
+}

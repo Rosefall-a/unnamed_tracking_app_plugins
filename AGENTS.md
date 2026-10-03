@@ -28,12 +28,14 @@ Do not duplicate host infrastructure here.
 
 # 1. Repository Structure
 
-Maintained source lives in one intentional tree:
+Maintained source is split by product purpose and signing identity:
 
 ```text
-examples/<plugin-name>/  # complete official reference and demo sources
+examples/<plugin-name>/  # complete reference/demo sources (demo signers)
+official/<plugin-name>/  # maintained user-facing plugins (official signers)
+plugins/<plugin-name>/   # independent sources (generic signers, optional)
 sdk/                    # public Plugin API v1 protocol helper
-docs/                   # Material/MkDocs developer manual and dated history
+wiki/docs/              # Material/MkDocs developer manual and dated history
 tests/                  # source, package, browser and release contract tests
 tools/                  # existing builder, validators and host conformance tools
 publishers/             # reviewed public keys; never private keys
@@ -41,7 +43,7 @@ dist/                   # immutable installable .utp versions
 releases/               # append-only generated release histories
 catalogue.json          # authored catalogue hosting configuration
 list.json               # generated catalogue
-mkdocs.yml              # strict wiki navigation
+wiki/mkdocs.yml         # strict wiki navigation
 ```
 
 `examples.old/` and README-only plugin directories are invalid. Discovery and CI
@@ -376,7 +378,7 @@ The package builder includes plugin source, the SDK, UI/assets, README, declared
 icon and generated release metadata in the existing package payload. Signed main
 publication uses `--require-signing`, writes `dist/`, `list.json`, `releases/` and
 resolved source versions together, and preserves immutable historical packages.
-Read `docs/plugin-author-guide.md` and the tutorial wiki configured in `mkdocs.yml` and `docs/catalogue-specification.md` before
+Read `wiki/docs/plugin-author-guide.md` and the tutorial wiki configured in `mkdocs.yml` and `wiki/docs/catalogue-specification.md` before
 changing distribution or release behavior.
 
 The package digest is calculated from canonical sorted payload paths and bytes.

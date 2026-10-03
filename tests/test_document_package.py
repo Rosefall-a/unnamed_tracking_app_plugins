@@ -30,6 +30,7 @@ def test_document_package_contains_current_source_and_pinned_libraries(current_p
             "documents.read",
             "backend.routes.plugin",
             "frontend.context.documents",
+            "plugin.settings",
         }
         for path in (SOURCE / "frontend").rglob("*"):
             if path.is_file():
@@ -60,23 +61,13 @@ def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path, cur
             "import json, plugin; print(json.dumps(plugin.read_document_route({'path_parameters': {'document_id': 'opaque-id'}, 'query': {'offset': ['24576'], 'content_sha256': ['digest']}})))",
         ],
         cwd=tmp_path,
-        input=json.dumps(
-            {
-                "payload": {
-                    "error": {
-                        "kind": "missing",
-                        "message": "Document not found.",
-                        "status_code": 404,
-                    }
-                }
-            }
-        )
-        + "\n",
+        input="\n".join([json.dumps({"payload": {"value": 0}}), json.dumps({"payload": {"error": {"kind": "missing", "message": "Document not found.", "status_code": 404}}})]) + "\n",
         text=True,
         capture_output=True,
         check=True,
     )
-    wire, response = map(json.loads, result.stdout.splitlines())
+    settings_wire, wire, response = map(json.loads, result.stdout.splitlines())
+    assert settings_wire == {"api_version": "v1", "method": "settings.get", "capability": "plugin.settings", "payload": {"key": "max_preview_mb"}}
     assert wire == {
         "api_version": "v1",
         "method": "documents.read",
@@ -84,6 +75,7 @@ def test_actual_packaged_sdk_emits_bounded_scoped_document_request(tmp_path, cur
         "payload": {
             "document_id": "opaque-id",
             "chunk_bytes": 24576,
+            "max_bytes": 0,
             "offset": 24576,
             "content_sha256": "digest",
         },

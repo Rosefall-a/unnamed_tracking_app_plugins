@@ -8,9 +8,9 @@ from tools.check_source_layout import check
 from tools.distribution import ROOT, discover_plugins
 
 
-def test_all_maintained_sources_have_full_contracts():
+def test_all_maintained_sources_have_full_contracts(built_distribution):
     check()
-    current = json.loads((ROOT / "list.json").read_text(encoding="utf-8"))
+    current = json.loads((built_distribution / "list.json").read_text(encoding="utf-8"))
     assert {m["plugin_id"] for _, m in discover_plugins(ROOT)} == {
         p["plugin_id"] for p in current["plugins"]
     }

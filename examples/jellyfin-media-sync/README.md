@@ -1,143 +1,176 @@
 # Jellyfin Media Sync
 
-This is the persistent integration example for Plugin API v1 on the completed
-`plugin-manager` platform. It bundles a privileged native Vue interface without
-CDN dependencies. It synchronizes **films, TV shows, and anime** for the host user that enabled the
-installation. Jellyfin movies and series are paginated together, and anime is
-identified from Jellyfin genre/tag metadata without requiring a separate library. It has no plugin dependencies.
+An installation-wide Jellyfin integration for Movies, TV and Anime, using the
+existing Plugin API v1 gateway, secure plugin storage and supervised worker.
+The native plugin page handles setup and sync status; its media-page contribution
+opens the exact Jellyfin item with **Watch Now**.
 
-## Configuration
+## Administrator setup
 
-1. Install the `.utp` in Settings → Plugins and review the narrow permissions below.
-2. Enable it from the host account whose media library should receive imports.
-3. Use the **same account** to configure it in the Jellyfin Sync sidebar page or
-   native Settings section. Save the HTTP(S) server URL (including a proxy base
-   path if applicable), Jellyfin user ID (32 hex characters), interval (5–1440
-   minutes), and optional periodic-sync switch.
-4. Enter a Jellyfin API key or user access token. Do not enter a password or a
-   username. Save configuration and token. Blank token entry preserves the token.
-5. Queue a sync. The supervised worker handles it and the native progress panel
-   refreshes every five seconds. Periodic sync is disabled by default.
+1. Install the built `.utp` on the host branch containing the generic `media.sync`,
+   background subscription and `network.request` additions. Review permissions
+   before enabling. Version 3 requires those additions; older hosts are unsupported.
+2. Open **Jellyfin Sync** in Settings or the sidebar. Enter the server URL, including
+   any reverse-proxy base path, and a **server API key** created in Jellyfin's
+   administration dashboard. Use HTTPS outside a trusted local network.
+3. Save the server, then **Test connection & discover**. The plugin discovers
+   Jellyfin users and virtual libraries, and persists the connection result.
+4. Map each included library. For example, Movies → Movies, TV Shows → TV,
+   Anime → Anime. Choose Ignore to exclude a library. Save the mappings.
+5. Approve each host user's corresponding Jellyfin identity. Users provide the host
+   user ID shown in their account panel; select their discovered Jellyfin identity
+   and press **Approve identity**. Approval prevents another user selecting an
+   account they do not own. Users never need the server URL or credential.
 
-Token entry is a declared secret field. Ordinary settings contain no credential.
-The explicit `save-token` action writes into reserved `secrets/api_key` storage;
-only plugin backend code reads that namespace. The token is never returned by
-configuration, status, media, event or action responses. It is bound to the saved
-server and Jellyfin user: changing either requires saving a token again, preventing
-an old credential being forwarded to a new destination. No credentials belong in
-source, catalogue, artwork URLs, logs or packages. There is no password-login flow.
+![Administrator server settings](https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/docs/assets/screenshots/jellyfin-admin-settings.png)
+![Explicit library mapping](https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/docs/assets/screenshots/jellyfin-library-mapping.png)
 
-This is an installation-owned integration, not per-user Jellyfin account linking.
-Queued work always imports for the enabling host account, not the person pressing
-Queue sync. Grant backend data capabilities only to that intended account. The
-host currently lacks a public background identity/profile contract, so configure
-and enable consistently; multi-user account linking is not claimed.
+## User setup
 
-## Permissions and behavior
+Open Jellyfin Sync, choose your approved Jellyfin identity, optionally enable
+periodic synchronization, and press **Link my account**. Press **Sync now** to
+queue a sync for your account. Without administrator approval the panel shows
+instructions and your host user ID, rather than exposing other users' accounts.
+Unlinking stops your subscription and retains imported media. Disabling the plugin
+stops all workers; enabling it resumes durable work and subscribed periodic syncs.
 
-| Permission | Why it is needed |
+![User account mapping](https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/docs/assets/screenshots/jellyfin-user-mapping.png)
+
+## Library mapping and supported media
+
+Explicit mapping always wins over genre/tag detection. Automatic mode retains
+metadata-based anime detection as a fallback. Movies and Series roots are imported;
+TV and anime episodes retain season/episode numbers and watched flags. Anime films
+use a single native episode so their completion has the same model semantics.
+Unsupported/malformed items, including episodes without usable numbering, are
+counted as skipped. Specials with season number zero are supported.
+
+An existing item changing category is flagged for manual review instead of
+creating a duplicate or discarding notes/list references. Changing mappings
+restarts the bounded census. A server or approved identity change requires
+relinking; a server change also invalidates the destination-bound credential and
+requires discovery and mapping again.
+
+## Identity and completion
+
+Identity is scoped by plugin ID, host user, server, Jellyfin user and Jellyfin item
+ID. The host creates a deterministic existing-media primary key; the plugin stores
+that host ID, remote ID and last watch-state revision. Renames update unlocked
+metadata without creating another row. Equal titles with different IDs remain
+separate. Plugin code never imports host modules or accesses the host database.
+
+| Field | Authority and behavior |
 | --- | --- |
-| `media.read` | Preview 100 media items in the current user's host library |
-| `media.write` | Import paginated normalized movies for the enabling user |
-| `plugin.settings` | Read non-secret integration configuration |
-| `plugin.storage` | Reserved secret token, queued requests, progress and event cursor |
-| `tasks.background` | Supervised worker, queued manual and periodic synchronization |
-| `events.subscribe` | Poll host activity after sync or on demand, retaining only a cursor |
-| `network.outbound` | HTTP only to the configured Jellyfin server, checked before every request |
-| `frontend.native` | **Privileged** native Vue configuration and progress in the host realm |
-| `frontend.navigation.main` | Jellyfin Sync sidebar entry |
-| `frontend.navigation.settings` | Settings sidebar link |
-| `frontend.settings` | Native integration Settings section |
-| `frontend.routes` | `/plugins/example.jellyfin-media-sync/sync` |
+| Film completion | Jellyfin `Played=true` → WATCHED; false → WATCHLIST, or IN_PROGRESS when a playback position exists. A partial position never means completed. |
+| TV/anime episodes | Jellyfin supplies each episode's watched boolean, including watched reversals. Native episode flags and season counters update together. |
+| Season/show completion | WATCHED only after a successful complete episode inventory with a nonempty episode set and every episode watched. Partial sets stay IN_PROGRESS or WATCHLIST. A Series object's existence/Played flag never completes the show. |
+| Titles, genres, artwork | Jellyfin supplies unlocked metadata. Host `locked_fields` are respected. Artwork URLs contain no credential. |
+| Ratings, notes, favorites, rewatches | Host-owned; synchronization does not replace them. |
+| Local watch edits | Optimistic revision comparison detects changes since the previous import and reports a conflict. It does not silently replace them. |
 
-No parent subtree, full API, host routes, game read or notification permission is
-requested. Configuration and native Settings contributions are distinct: the
-same fields/actions also remain available in generated Plugins configuration
-when native mode is denied. Save ordinary fields first, then press Save token
-separately. Runtime grants remain authoritative for all gateway calls.
+Use **Use Jellyfin watched state** on a reported watch-state conflict to explicitly
+accept the remote state. The host checks the revision again, so a newer edit still
+produces a conflict. Category changes and local deletions require manual review.
+Two-way playback synchronization is **not enabled**: the public host API does not
+provide a complete provider-neutral local playback change stream. This integration
+writes no watched/progress changes back to Jellyfin.
 
-The worker uses bounded 100-item Jellyfin pages containing both Movie and Series items, a 4 MiB response limit, 15-second
-HTTP timeout, JSON validation, and a live outbound grant check for **each** request.
-It uses the standard Authorization header, refuses all redirects, and uses default
-TLS verification. Server URLs cannot carry credentials/query/fragment. Progress
-is persisted after each import page. Unique queued request keys survive restart;
-only the worker writes progress, avoiding concurrent manual/background syncs.
-A new request arriving during sync is processed next. Partial imports are retained
-on error and a retry starts from the beginning to refresh remote watched state.
+## Watch Now
 
-Errors distinguish credential rejection, HTTP failure, rate limiting, response
-size/shape, incomplete pagination and connection/TLS/egress failure. Raw exception
-text and Jellyfin response bodies are never persisted. Failed periodic work waits
-the configured interval; manual queue requests can retry sooner. Disabling the
-plugin terminates the host-supervised worker; native polling timers are cleaned up.
+On an imported film, TV or anime detail page, the plugin contributes Watch Now
+through `media.detail.after-header` and the existing contextual action mechanism.
+The destination is `<server>/web/index.html#!/details?id=<Jellyfin item ID>`.
+Series pages open the series; anime films open the film. No token is included,
+playback is not proxied, and Jellyfin may ask you to sign in. Missing, removed or
+other-user mappings show an unavailable message. The host button uses declared
+external-navigation behavior; the native panel also offers a normal safe link.
 
-Host event polling observes host activity; Jellyfin polling reads the remote
-library. These are separate integrations. No Jellyfin webhook subscription or
-bidirectional playback update is claimed.
+![Watch Now on the real media page](https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/docs/assets/screenshots/jellyfin-watch-now.png)
 
-## Generic platform gaps discovered
+## Sync behavior
 
-These limits are in the platform, not solved with plugin-specific host paths:
+A worker handles users in round-robin order. Each tick processes at most four
+100-record remote pages, with persisted library/phase/offset checkpoints. Root
+metadata is normalized and compared before sending host writes; unchanged items
+are not reimported. Episodes are checked separately so watched changes and
+unwatched reversals are detected even when show metadata has not changed.
+Finalization processes at most 25 mapped roots per tick. A completed census marks
+removed roots unavailable for Watch Now while retaining host media and local data;
+missing remote episodes are removed through the public API after inventory checks.
 
-* **Brokered outbound HTTP:** `network.outbound` can be checked, but no generic
-  gateway HTTP method or host allowlist contract exists. The default bubblewrap
-  runtime unshares networking, so direct HTTP cannot reach Jellyfin. The example
-  reports an actionable connection error there. Direct requests work only in an
-  already configured runtime permitting egress (for example its documented
-  nonbubble mode). This plugin does not switch isolation modes. A host-owned,
-  permission-enforced HTTP broker with server allowlisting, bounded responses,
-  redirect policy and secret references is the required generic contract.
-* **Provider-neutral import identity and playback:** `media.import` currently
-  hard-codes source `jellyfin` and upserts Jellyfin media by title. It accepts external IDs
-  but does not persist/use them for deduplication. Different movies sharing a title
-  can merge; renamed items can duplicate. Runtime, genres, poster URL and a true
-  watched flag are applied; release year, play count, last-played date and watched
-  reversals are not persisted. The plugin normalizes and sends these fields but
-  does not claim complete playback parity. A generic provider/external-ID upsert
-  and versioned playback DTO are required. It never accesses the host database.
-* **Background identity:** workers inherit the enabling user's host scope. A
-  public authenticated worker identity and per-user integration/secret namespace
-  are required before automatic account linking can be implemented safely.
+Jellyfin does not expose a reliable universal timestamp filter for watched
+reversals. The plugin therefore uses a bounded rolling census with incremental
+host writes, rather than claiming an unreliable timestamp-only sync. Large
+libraries take multiple ticks. No unbounded remote full-library request is made.
+Manual requests arriving during work survive for a later tick. Retry checkpoints
+survive runtime restart and errors use exponential delay up to one hour. Manual
+Sync now permits an earlier retry. Default periodic interval is 15 minutes
+(minimum 5, maximum 1440); periodic sync is opt-in per user.
 
-Token-free artwork URLs may require public/proxy access; embedding the secret in
-host-visible URLs is intentionally avoided. No generic authenticated artwork
-proxy is currently exposed to plugins.
+![Synchronization status](https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main/docs/assets/screenshots/jellyfin-sync-status.png)
 
-## Test, build and release
+## Credentials and security
 
-Upgrading from 1.x changes the UI to native mode and configuration to token + user
-ID. Save the token again to bind it to the destination; legacy raw tokens produce
-an explicit upgrade message. Old password login is unsupported. The host must
-review newly requested permissions during this major update.
+One server credential is stored in the existing reserved `secrets/master_token`
+namespace and bound to the exact normalized server URL. It is never returned by
+configuration/status/actions, placed in URLs, or stored per user. The administrator
+alone can change the server, token, library mapping and account approval. User
+identity comes from the host's authenticated action context, never a caller's
+claimed host user ID. Background subscriptions are host-owned and each delegated
+write rechecks both background and media grants for the target user.
 
-From the repository root:
+The host's generic outbound JSON operation runs outside the isolated worker and
+checks the live `network.outbound` grant before HTTP. It refuses redirects, checks
+TLS normally, caps responses at 4 MiB and uses an 8-second timeout. The server
+credential travels only in an Authorization header. Error/status messages omit
+remote response bodies and arbitrary gateway exception details.
+
+Permissions: `media.write`, `plugin.storage`, `tasks.background`,
+`network.outbound`, native frontend, navigation, settings/routes, media contexts
+and page extension. No database, full API, games, documents or session access is
+requested. Native frontend remains a privileged permission under existing review.
+
+## Troubleshooting and upgrade
+
+* **No approved identities:** copy your host user ID to the administrator and ask
+  them to approve your own discovered Jellyfin identity.
+* **Connection/credential error:** verify the final server URL, base path, TLS,
+  API key access and host egress. A redirect requires configuring its final URL.
+* **Permission error:** review both installation and target-user grants. Revoked
+  grants stop imports; the plugin never substitutes the enabling user's scope.
+* **Partial completion:** inspect skipped items and episode numbering. Completion
+  waits for a complete inventory; ongoing shows may become incomplete as new
+  episodes arrive.
+* **Watch-state conflict:** review your host edit and explicitly accept Jellyfin
+  state only if desired. Ratings/notes remain local.
+* **Watch Now unavailable:** relink the account, check its approved identity and
+  library mappings, and complete a sync. Deleted remote roots retain host history.
+* **Updating from 2.x:** configure a master server credential and approve/link users
+  explicitly. Old user-bound credentials are never promoted to installation-wide
+  authority and are removed when a replacement master credential is saved.
+  Legacy title-matched imports lack durable remote identity; review/archive those
+  legacy records before initial version-3 import. Automatic title matching would
+  risk merging unrelated films, so this upgrade does not guess their identity.
+
+## Testing, build and release
 
 ```sh
 pytest
 python tools/build_packages.py
-python tools/verify_packages.py dist/*.utp
-python tools/validate_packages.py dist/*.utp
+python tools/verify_packages.py .validation/dist/*.utp
+python tools/validate_packages.py .validation/dist/*.utp
+python -m mkdocs build --strict
 ```
 
-Behavior tests cover paging beyond 200 items, watched data normalization, queued
-work, persistent progress, event cursors, retries, invalid configuration, secret
-redaction, credential destination binding, outbound grant denial and redirect
-rejection. Native tests exercise loading, saving, secret clearing, progress and
-cleanup. Package tests check assets, deterministic digests, invalid native assets
-and corruption rejection.
+Version 3.0.0 is a major configuration migration. Release artifacts and metadata
+are generated together by the existing publisher tooling; historical `dist/`
+packages are immutable. Development previews are unsigned in `.validation/dist`.
+Production signing uses the existing reviewed publisher workflow. Acceptance uses
+a disposable signing key and never commits private signing material.
 
-Development builds `example.jellyfin-media-sync-<version>.utp` under `.validation/dist`
-unsigned. The resolved version comes from the builder and release history. The
-existing release workflow signs with the configured reviewed publisher key.
-Publisher keys/signing rules and package validation are unchanged. Installation
-of an unsigned native package requires the normal elevated-consent/password flow.
-
-Manual integration: install the actual package on `plugin-manager`, configure a
-test Jellyfin library with more than 200 mixed films and TV shows, including anime, sync in an egress-enabled runtime,
-verify progress and host imports, change watched state and repeat. Try invalid
-credentials, a renamed movie, equal titles, an unreachable URL, a revoked outbound
-grant, disabled periodic sync, restart during a queued sync and plugin disable.
-In the default isolated runtime, verify the documented HTTP limitation is visible.
-
-Protocol references: [Jellyfin GetItems](https://api.jellyfin.org/#tag/Items/operation/GetItems)
-and the [official Python API client](https://github.com/jellyfin/jellyfin-apiclient-python/blob/master/jellyfin_apiclient_python/api.py).
+Cross-repository verification runs the actual built, signed `.utp` against the
+host/runtime, PostgreSQL and a Jellyfin HTTP fixture: master setup, identity
+approval/link, Movies/TV/Anime import, remote watched changes, native completion,
+repeat sync, exact Watch Now, restart, disable/enable, update, rollback and
+preserving reinstall. See host `tools/check_plugin_repository_lifecycle.py`.
+Screenshots are captured from that real installation using disposable fixture data.

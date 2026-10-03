@@ -25,7 +25,7 @@ def load_plugin(name: str):
     [
         (
             "scoped-document-viewer",
-            {"documents.read", "backend.routes.plugin", "frontend.context.documents"},
+            {"documents.read", "backend.routes.plugin", "frontend.context.documents", "plugin.settings"},
         ),
         (
             "self-service-session-manager",
@@ -61,7 +61,8 @@ def test_document_viewer_uses_opaque_public_document_methods(monkeypatch) -> Non
         plugin,
         "request",
         lambda method, capability, payload: (
-            calls.append((method, capability, payload)) or {"documents": []}
+            calls.append((method, capability, payload))
+            or ({"value": 0} if method == "settings.get" else {"documents": []})
         ),
     )
 
@@ -70,10 +71,15 @@ def test_document_viewer_uses_opaque_public_document_methods(monkeypatch) -> Non
 
     assert calls == [
         ("documents.list", "documents.read", {"limit": 32}),
+        ("settings.get", "plugin.settings", {"key": "max_preview_mb"}),
         (
             "documents.read",
             "documents.read",
-            {"document_id": "opaque-document-id", "chunk_bytes": 24 * 1024},
+            {
+                "document_id": "opaque-document-id",
+                "chunk_bytes": 24 * 1024,
+                "max_bytes": 0,
+            },
         ),
     ]
     source = (ROOT / "examples" / "scoped-document-viewer" / "frontend" / "app.js").read_text(encoding="utf-8")
@@ -102,10 +108,15 @@ def test_document_viewer_namespaced_routes_keep_gateway_ownership_checks(
     assert opened["status_code"] == 200
     assert calls == [
         ("documents.list", "documents.read", {"limit": 25, "offset": 0}),
+        ("settings.get", "plugin.settings", {"key": "max_preview_mb"}),
         (
             "documents.read",
             "documents.read",
-            {"document_id": "opaque-document-id", "chunk_bytes": 24 * 1024},
+            {
+                "document_id": "opaque-document-id",
+                "chunk_bytes": 24 * 1024,
+                "max_bytes": 0,
+            },
         ),
     ]
 

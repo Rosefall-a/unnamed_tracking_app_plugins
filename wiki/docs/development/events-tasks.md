@@ -6,7 +6,7 @@ Start with [events](events.md), [background tasks](background-tasks.md) or
 **Prerequisites:** a complete Jellyfin-style plugin with approved background,
 event, storage and domain capabilities actually used.
 
-Jellyfin is the working example for `events.subscribe`, `tasks.background`,
+Jellyfin is the working example for `tasks.background`, opt-in user subscriptions,
 durable progress and a single supervised worker. Recently Played Notifier is a
 small example of a user-triggered host notification.
 
@@ -24,7 +24,7 @@ small example of a user-triggered host notification.
    work and disable before the next operation.
 
 `tasks.background` is the existing host capability; this repository does not
-introduce a second scheduler. Jellyfin's source/README describes current broker,
+introduce a second scheduler. Jellyfin uses the additive public `tasks.subscribe`, `tasks.subscribers` and `tasks.request` operations to synchronize opted-in users through their live media grants. Jellyfin's source/README describes current broker,
 import identity, playback and background identity limitations.
 
 ## Send a notification

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import ast
+import hashlib
 import re
 import sys
 import zipfile
@@ -150,6 +151,47 @@ def validate_package(path: Path, *, full: bool = False) -> None:
                 or asset not in payload_names
             ):
                 raise ValueError(f"{path.name}: native asset is unsafe or missing")
+
+    pwa = manifest.get("pwa")
+    if pwa is not None:
+        if not isinstance(pwa, dict) or ("frontend.pwa", 1) not in capabilities:
+            raise ValueError("PWA requires frontend.pwa v1")
+        granted = {(p["capability"]["name"], p["capability"]["version"]) for p in manifest["permissions"]}
+        if ("frontend.pwa", 1) not in granted:
+            raise ValueError("PWA requires an explicit permission declaration")
+        declaration_path = pwa.get("manifest", "pwa/manifest.webmanifest")
+        if declaration_path != "pwa/manifest.webmanifest" or declaration_path not in files:
+            raise ValueError("PWA manifest is missing or unsafe")
+        webmanifest = json.loads(files[declaration_path])
+        for field in ("name", "short_name", "theme_color", "background_color"):
+            if webmanifest.get(field) != pwa.get(field, "#0f1117"):
+                raise ValueError("PWA metadata does not match declaration")
+        for field, value in {"id": "/", "scope": "/", "start_url": "/?pwa=1", "display": "standalone"}.items():
+            if webmanifest.get(field) != value:
+                raise ValueError("PWA must launch the complete root application")
+        for size in (192, 512):
+            data = files.get(f"pwa/icon-{size}.png", b"")
+            if (len(data) > 256 * 1024 or len(data) < 24 or data[:8] != b"\x89PNG\r\n\x1a\n"
+                    or int.from_bytes(data[16:20], "big") != size or int.from_bytes(data[20:24], "big") != size):
+                raise ValueError("PWA icon is missing, oversized or has invalid dimensions")
+        if manifest["plugin_id"] == "official.pwa":
+            version = json.loads(files.get("pwa/version.json", b"{}"))
+            if version.get("version") != manifest["version"] or not manifest["version"].startswith("0.0."):
+                raise ValueError("PWA source/package versions must match and remain 0.0.x")
+            provenance = json.loads(files.get("pwa/provenance.json", b"{}"))
+            expected_assets = {"manifest.webmanifest", "service-worker.js", "offline.html", "pwa-icon.svg",
+                               "icon-192.png", "icon-512.png", "version.json", "README.md"}
+            if (provenance.get("repository") != "Rosefall-a/unnamed-tracking-mobile-app"
+                    or provenance.get("source_path") != "pwa"
+                    or provenance.get("version") != manifest["version"]
+                    or set(provenance.get("sha256", {})) != expected_assets):
+                raise ValueError("PWA provenance identity/version/assets do not match")
+            for asset, digest in provenance["sha256"].items():
+                data = files.get("pwa/" + asset, b"")
+                if asset.endswith((".html", ".js", ".json", ".svg", ".webmanifest", ".md")):
+                    data = data.replace(b"\r\n", b"\n")
+                if hashlib.sha256(data).hexdigest() != digest:
+                    raise ValueError(f"PWA source provenance hash differs: {asset}")
 
     frontend = manifest.get("frontend")
     if frontend is not None:

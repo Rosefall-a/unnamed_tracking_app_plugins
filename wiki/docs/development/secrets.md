@@ -72,3 +72,5 @@ Real host acceptance checks secret retention/deletion across lifecycle operation
 Echoing credentials in errors; putting them in settings or URLs; forwarding a
 token to a changed server; following redirects with authorization; claiming
 cryptographic isolation the chosen storage pattern does not establish.
+
+Jellyfin uses the existing write-only secret mechanism for one installation credential. An administrator configures it through a declared, role-checked action; user linking never copies the credential into ordinary settings.

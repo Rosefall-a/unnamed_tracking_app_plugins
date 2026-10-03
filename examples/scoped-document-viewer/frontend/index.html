@@ -17,9 +17,23 @@
         <div class="reader-actions">
           <button id="download" type="button" hidden>Download original</button>
           <button id="refresh" type="button">Refresh library</button>
+          <button id="settings-button" type="button">Viewer settings</button>
         </div>
       </header>
       <p id="status" role="status" aria-live="polite"></p>
+      <section id="settings-panel" class="settings-panel" hidden>
+        <h2>Viewer settings</h2>
+        <p>Set the maximum document preview size in MiB. Use <strong>0</strong> for no fixed limit.</p>
+        <label>
+          Maximum preview size (MiB)
+          <input id="max-preview-mb" type="number" min="0" step="1" value="0" />
+        </label>
+        <div class="settings-actions">
+          <button id="save-settings" type="button">Save settings</button>
+          <button id="cancel-settings" type="button">Cancel</button>
+        </div>
+        <p id="settings-status" role="status"></p>
+      </section>
       <section class="layout">
         <aside>
           <h2 class="list-title">Library files</h2>
@@ -51,7 +65,7 @@
       </section>
       <footer>
         PDF · UTF-8 text · safe HTML · DOCX / PPTX / ODT / ODP reading previews
-        · 5 MiB preview limit.
+        · configurable preview limit; 0 means unlimited.
       </footer>
     </main>
     <script src="./vendor/purify.min.js"></script>

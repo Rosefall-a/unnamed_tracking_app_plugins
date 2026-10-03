@@ -17,14 +17,20 @@ In Unnamed Tracking open **Settings → Plugins → Install plugin**, select the
 package/source, review identity, publisher/signature, compatibility and permissions,
 then complete approval/configuration and enable it as required by the host flow.
 
+Maintained user-facing functionality lives in [official/](official/README.md).
+The [PWA](official/pwa/README.md) remains 0.0.1 during integration; its production
+release waits for a separate protected official signing identity. Examples remain
+demonstrations, even when their historical publisher text contains Official.
+See [folder-specific signing and environment keys](docs/official-signing.md).
+
 Catalogue membership does not establish trust. Publisher signing and host
 permission approval are separate. Unsigned preview packages remain untrusted.
 Full API/native frontend authority needs particular review; request narrow scopes.
 
 ## Create your first plugin
 
-Start with the executable [first-plugin tutorial](docs/getting-started/first-plugin.md),
-then use the [developer manual](docs/index.md) and [complete API reference](docs/plugin-author-guide.md).
+Start with the executable [first-plugin tutorial](wiki/docs/getting-started/first-plugin.md),
+then use the [developer manual](wiki/docs/index.md) and [complete API reference](wiki/docs/plugin-author-guide.md).
 The tutorial creates a minimal manifest, Python entrypoint/action and page,
 builds a real `.utp`, validates it and explains install/consent.
 
@@ -42,25 +48,25 @@ python -m mkdocs serve
 ```
 
 The Material/MkDocs wiki uses the same light/dark organization as the main app's
-wiki. Its sources live under `docs/`; `mkdocs serve` opens the local developer wiki
-at `http://127.0.0.1:8000`. [Testing](docs/testing/index.md) includes package,
+wiki. Its sources live under `wiki/docs/`; `mkdocs serve` opens the local developer wiki
+at `http://127.0.0.1:8000`. [Testing](wiki/docs/testing/index.md) includes package,
 browser and actual host conformance/lifecycle commands and PowerShell instructions.
 
-Use the [tutorial map](docs/development/index.md) for one-feature exercises,
-[architecture](docs/architecture/index.md) for the public boundary,
-[lifecycle matrix](docs/testing/lifecycle.md) for updates/recovery, and
-[release audit](docs/publishing/release-history.md) before publication.
+Use the [tutorial map](wiki/docs/development/index.md) for one-feature exercises,
+[architecture](wiki/docs/architecture/index.md) for the public boundary,
+[lifecycle matrix](wiki/docs/testing/lifecycle.md) for updates/recovery, and
+[release audit](wiki/docs/publishing/release-history.md) before publication.
 
 ## Find a working example
 
 | Source | Purpose |
 | --- | --- |
 | [Help Button](examples/help-button/README.md) | Native contributions, dialogs, overlays, navigation and cleanup |
-| [Jellyfin Media Sync](examples/jellyfin-media-sync/README.md) | Queued sync, destination-bound token, progress and native settings |
+| [Jellyfin Media Sync](examples/jellyfin-media-sync/README.md) | Master server, approved user identities, library mapping, episode completion and Watch Now |
 | [Scoped Document Viewer](examples/scoped-document-viewer/README.md) | Scoped document APIs and sandbox PDF/text/Office reader |
 | [Self-Service Session Manager](examples/self-service-session-manager/README.md) | Scoped own/admin sessions and privileged native Settings/maps |
 
-The [example map](docs/examples/index.md) identifies tests and relevant captures.
+The [example map](wiki/docs/examples/index.md) identifies tests and relevant captures.
 Small references stay small; real demos document supported behavior and host limitations.
 
 ## Understand the repository
@@ -71,7 +77,7 @@ Small references stay small; real demos document supported behavior and host lim
 | `retired_plugins.json` | Explicit policy for plugins removed from the current catalogue; historical packages remain immutable |
 | `sdk/` | Public v1 protocol helper bundled with packages |
 | `tools/`, `tests/` | Existing build/validation tools and conformance tests |
-| `docs/`, `mkdocs.yml` | Developer wiki, real assets and dated evidence |
+| `wiki/docs/`, `mkdocs.yml` | Developer wiki, real assets and dated evidence |
 | `publishers/` | Reviewed public keys/registry; never private signing keys |
 | `dist/` | Generated immutable installable `.utp` versions |
 | `releases/` | Append-only generated release metadata/history, including retired plugins |
@@ -87,19 +93,19 @@ Releases distributes/presents these same outputs; repository history is retained
 
 Author `release.json` for publisher/tags/icon/notes/update policy. The existing
 builder creates canonical payload and final archive hashes, signs Ed25519 over
-`plugin-package-v1:<payload hash>`, verifies the result, and derives all release
+`plugin-package-v2:<payload hash>` (with a signed manifest envelope in the payload), verifies the result, and derives all release
 and catalogue metadata from the package. Conventional Commits select SemVer;
 explicit higher source versions remain supported. Update policy belongs to each release.
 
 Official main publication uses `python tools/build_packages.py --require-signing`
-with the existing secure CI key and active scoped publisher registry. It preserves
+with separate folder-specific protected keys and the active scoped publisher registry. It preserves
 all historical packages and commits packages/history/catalogue/resolved versions
 together. Tag only an already-published snapshot. Never commit a private key.
 
-Follow [package publishing](docs/publishing/packages.md),
-[versioning](docs/publishing/versioning.md), and the complete
-[third-party catalogue tutorial](docs/publishing/community-catalogue.md).
-The [catalogue v1 specification](docs/catalogue-specification.md) is unchanged:
+Follow [package publishing](wiki/docs/publishing/packages.md),
+[versioning](wiki/docs/publishing/versioning.md), and the complete
+[third-party catalogue tutorial](wiki/docs/publishing/community-catalogue.md).
+The [catalogue v1 specification](wiki/docs/catalogue-specification.md) is unchanged:
 HTTPS immutable package URLs, exact hashes/manifests/signatures and retained
 history. Register catalogue endpoints and reviewed publisher keys separately
 in Plugin Manager; permissions always remain host-controlled.

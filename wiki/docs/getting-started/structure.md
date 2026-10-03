@@ -13,12 +13,13 @@ sdk/                   public protocol helper
 tools/                 builder, validators, exported schemas, host checks
 tests/                 Python, package/release and browser tests
 publishers/            reviewed verification registry and public keys
-docs/                  wiki, screenshots and historical reports
+wiki/docs/             wiki, screenshots and historical reports
 dist/                  generated immutable installable .utp versions
 releases/              generated append-only history, including retired plugins
 catalogue.json         authored name and HTTPS hosting base
 list.json              generated current catalogue and per-plugin histories
-mkdocs.yml             wiki navigation/theme and strict link validation
+wiki/mkdocs.yml         wiki navigation/theme and strict link validation
+mkdocs.yml             repository-root entry point inheriting the wiki configuration
 ```
 
 `examples/` is the intentional source root used by existing discovery and host

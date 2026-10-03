@@ -7,5 +7,5 @@
   ],
   "icon": "icon.svg",
   "automatic_update": null,
-  "release_notes": "Package lifecycle metadata, embedded documentation and validated Plugin API v1 contributions."
+  "release_notes": "One installation-wide server credential, approved per-user identities, explicit Movies/TV/Anime mapping, durable Jellyfin identity, native watched state and Watch Now. Requires the companion generic host API additions. Administrator reconfiguration and user relinking are required when upgrading from version 2; major updates require manual consent."
 }
