@@ -651,6 +651,8 @@ def main():
     parser.add_argument("--live-url")
     parser.add_argument("--live-username")
     args = parser.parse_args()
+    args.host_root = args.host_root.resolve()
+    args.work_root = args.work_root.resolve()
     if args.live_url:
         if not args.live_username:
             parser.error(
