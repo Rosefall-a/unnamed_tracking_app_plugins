@@ -8,6 +8,32 @@ Unknown keys, invalid signatures and unsigned packages never receive that badge.
 Invalid signatures are blocked; unsigned/unknown keys require explicit consent.
 Official status does not bypass permissions.
 
+The production identities registered in both repositories are:
+
+| Key ID | Channel | Plugin ID scope |
+| --- | --- | --- |
+| `unnamed-tracking-examples-2026-10-v1` | demo | `example.` |
+| `unnamed-tracking-official-2026-10-v1` | official | `official.` |
+| `unnamed-tracking-generic-2026-10-v1` | community | `example.`, `plugin.` |
+
+Adding Actions secrets alone does not register a publisher. The builder registry,
+matching public key file and deployed host registry must contain the same public
+identity. Existing historical registrations remain intact. The generic identity
+can sign examples when their folder-specific pair is entirely missing; these
+packages retain community trust rather than acquiring demo/official trust.
+It cannot sign official plugins. Official fallback requires another registered
+official identity scoped to the plugin; missing official keys fail publication.
+Invalid configured keys are never silently replaced, even if fallback is enabled.
+All three display publishers match the existing `release.json` value,
+`Unnamed Tracking Official`. Display text does not confer official status: the
+reviewed channel and scope determine that status, and publication checks the
+declared display publisher against the registered identity.
+
+Do not generate a self-trusted identity for each release or commit private seeds.
+New public keys require explicit registration and deployment before hosts trust
+them. Development jobs already produce unsigned previews without new identities;
+production jobs preserve the previous published catalogue if signing fails.
+
 Set these GitHub Actions secrets (or builder environment variables):
 
 | Key | Purpose |
