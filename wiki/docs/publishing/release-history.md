@@ -7,7 +7,7 @@ immutable archive, including retired plugins' retained packages:
 python tools/distribution.py
 python tools/distribution.py --baseline-ref origin/main
 python tools/build_packages.py
-python tools/distribution.py --root .validation --check-source
+python tools/distribution.py --root .validation --check-source --include-unreleased
 ```
 
 The first check reconstructs metadata from each `.utp`, verifies payload integrity,

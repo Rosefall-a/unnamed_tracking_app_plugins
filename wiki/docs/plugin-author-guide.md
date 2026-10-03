@@ -33,7 +33,8 @@ system is introduced here.
 
 ## Project structure
 
-For this builder, place plugins below `examples/`; the directory name need not
+For this builder, place demos below `examples/` and maintained features/previews
+below `official/`; both use the same validator and security boundary. The directory name need not
 equal the globally unique plugin ID:
 
 ```text
@@ -97,7 +98,7 @@ or `settings.get`. `storage.quota_mb` is a quota declaration, not permission to
 access host files. A `null` quota leaves quota selection to the host.
 
 `plugin_id` is stable across updates. Use a domain/publisher namespace you own;
-do not reuse an official `example.*` identity. Versions are strict stable SemVer
+do not reuse another plugin's `example.*` or `official.*` identity. Versions are strict stable SemVer
 `MAJOR.MINOR.PATCH`; prerelease/build suffixes are not supported by this host.
 Compatibility ranges accept exact versions, `^1.0.0`, `~1.0.0`, `1.x`, `*`, and
 comma-separated AND constraints such as `>=1.0.0,<2.0.0`. They do not use npm's
@@ -123,7 +124,7 @@ Common capabilities and the existing examples are:
 | Capability | Use / example |
 | --- | --- |
 | `games.read` | `games.list`, `games.metadata.search`; reports and curator |
-| `media.read`, `media.write` | `media.list`, `media.import`; Jellyfin |
+| `media.read`, `media.write` | `media.list`, `media.import`, `media.sync`; Jellyfin demo and official preview |
 | `documents.read` | `documents.list`, `documents.read`; Scoped Document Viewer |
 | `sessions.read`, `sessions.revoke` | Current-user session inspection and revocation |
 | `sessions.admin.read`, `sessions.admin.revoke` | Explicit administrator session operations |
@@ -151,15 +152,24 @@ untrusted browser field to choose which user's library to read.
 `storage.get`/`storage.put` operate on installation-owned storage. If stored
 results contain user data, additionally namespace keys using the host-injected
 action context, for example `users/<_plugin_context.user_id>/latest-report`.
-Do not assume a plugin-global key is user-private. `PLUGIN_DATA_DIR` is the
-runtime's plugin-owned data directory; existing credential examples use its
-write-only `secrets/` files. Do not expose those files through action results,
+Do not assume a plugin-global key is user-private. Use the supported private broker
+for credentials, including write-only `secrets/` keys; Jellyfin's official preview
+keeps tokens out of frontend results and never persists passwords. This storage is
+private installation data with host-managed access controls, not an encrypted vault.
+Do not expose secrets through action results,
 catalogue metadata or ordinary settings. Uninstallation/retention and rollback
 of persistent data are host policy, not package-build operations.
 
 The current Plugin Manager applies these data rules to configuration, secrets and
 plugin-owned storage. Packages contain code and defaults, never the installation's
 saved data.
+
+Jellyfin's official preview exercises generic provider enrichment, bounded JSON
+POST for password/Quick Connect, and optional subscribed-user notifications.
+The [media tutorial](development/media.md) documents those additive v1 APIs;
+no plugin ID gets a host exemption. `catalogue.json.unreleased_plugins` keeps
+an unsigned preview out of signed publication until a reviewed signing key has
+the correct namespace scope. Tagging a package official does not establish trust.
 
 | Operation | Plugin-owned data |
 | --- | --- |
@@ -307,7 +317,7 @@ with `npm ci` when working on browser bundles. A normal build is isolated:
 
 ```bash
 python tools/build_packages.py
-python tools/distribution.py --root .validation --check-source
+python tools/distribution.py --root .validation --check-source --include-unreleased
 python tools/verify_packages.py .validation/dist/*.utp
 python tools/validate_packages.py .validation/dist/*.utp
 pytest

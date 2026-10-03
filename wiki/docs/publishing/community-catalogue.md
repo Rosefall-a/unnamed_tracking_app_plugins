@@ -70,7 +70,7 @@ preview and all tests, then publish through the existing signed command:
 
 ```sh
 python tools/build_packages.py
-python tools/distribution.py --root .validation --check-source
+python tools/distribution.py --root .validation --check-source --include-unreleased
 python tools/build_packages.py --require-signing
 python tools/distribution.py --check-source
 python tools/verify_packages.py dist/*.utp

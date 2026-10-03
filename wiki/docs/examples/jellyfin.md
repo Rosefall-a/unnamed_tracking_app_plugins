@@ -1,4 +1,9 @@
-# Jellyfin Media Sync
+# Jellyfin Media Sync demo
+
+This page describes `example.jellyfin-media-sync`, which remains a demo.
+The separate [official preview](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/blob/main/official/jellyfin-media-sync/README.md)
+starts at 0.0.1 with multiple servers/accounts, richer enrichment and separate
+admin/user panels. Installation, trust, permissions and storage remain independent.
 
 Version 3 uses one administrator-configured Jellyfin server, approved per-user
 identities, explicit Movies/TV/Anime library mapping and native episode completion.

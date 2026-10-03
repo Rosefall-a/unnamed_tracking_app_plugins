@@ -22,7 +22,7 @@ Build an isolated preview using the unchanged package builder:
 
 ```sh
 python tools/build_packages.py
-python tools/distribution.py --root .validation --check-source
+python tools/distribution.py --root .validation --check-source --include-unreleased
 python tools/check_host_contract.py --host-root .validation/host --distribution-root .validation
 ```
 
@@ -35,10 +35,11 @@ On Linux with the [host prerequisites](index.md) available:
 ```sh
 python tools/check_reference_lifecycle.py --host-root .validation/host
 python tools/check_host_lifecycle.py --host-root .validation/host --plugins-root . --work-root /tmp/plugin-acceptance-new --browser
+python tools/check_jellyfin_official_lifecycle.py --host-root .validation/host --work-root /tmp/jellyfin-official-new --browser
 ```
 
 Use an empty work directory and disposable migrated PostgreSQL database for the
-second command. It consumes this repository's real sources and builder to create
+host commands. They consume this repository's real sources and builder to create
 a signed release sequence with a disposable publisher and an external-service
 fixture. Gateway, authentication, permission enforcement, storage and supervised
 workers remain real. No production signing key is needed.
@@ -56,3 +57,24 @@ original suite continues with approval and failed activation/recovery.
 Windows can run unit/package/docs tests and disabled host contract inspection.
 Real POSIX worker acceptance is the required Linux CI job. Keep failures visible;
 do not replace them with skipped tests or mocked health assertions.
+
+The official Jellyfin driver defaults to strict bubblewrap isolation. Its HTTP
+fixture implements discovery, library pagination, password login, Quick Connect,
+watched/progress DTOs and reported sessions; host records, grants, transactions
+and plugin workers are real. It checks multiple accounts, matching, review-safe
+local preservation, runtime/host restarts, credential replacement, interrupted
+sync recovery, package updates and installed desktop/mobile pages. `--isolation
+reduced` is an explicit diagnostic option for systems unable to create namespaces;
+it must not be reported as full sandbox validation.
+
+Optional live-server testing is read-only. Pass `--live-url` and `--live-username`
+and supply a disposable test key on standard input, never a command argument or
+repository file. The driver clears its broker credential even if synchronization
+fails. It logs aggregate counts, not users, item titles or credential values.
+Live password/Quick Connect approvals and server mutations are deliberately not
+performed. Those authentication flows use the disposable HTTP fixture instead.
+
+For a Windows worktree mounted into Linux, Git's absolute Windows metadata path
+may not resolve. Set `JELLYFIN_HOST_REVISION` to the actual 40-character host HEAD
+obtained on Windows for screenshot provenance; the plugin checkout still requires
+working Git metadata. Normal Linux CI derives both revisions directly from Git.
