@@ -1,4 +1,4 @@
-name: Example plugin checks
+name: Plugin checks
 
 on:
   push:
@@ -27,6 +27,7 @@ jobs:
         run: python -m mkdocs build --strict
       - run: node --test tests/session_manager_ui.test.mjs
       - run: node --test tests/native_frontends.test.mjs
+      - run: node --test tests/jellyfin_official_ui.test.mjs
       - run: node --check examples/self-service-session-manager/frontend/app.js
       - run: pytest
       - run: python tools/build_packages.py
@@ -37,7 +38,7 @@ jobs:
         env:
           BASELINE_REF: ${{ github.event.pull_request.base.sha || 'origin/main' }}
         run: python tools/distribution.py --baseline-ref "$BASELINE_REF"
-      - run: python tools/distribution.py --root .validation --check-source
+      - run: python tools/distribution.py --root .validation --check-source --include-unreleased
       - run: python tools/verify_packages.py .validation/dist/*.utp
       - run: python tools/validate_packages.py .validation/dist/*.utp
       - uses: actions/checkout@v7

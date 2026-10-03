@@ -54,7 +54,7 @@ try {
     captures.push({ filename, description, sha256: createHash("sha256").update(await readFile(file)).digest("hex") });
   };
   await page.goto(origin + "/settings?section=plugins");
-  const plugin = page.locator("article.plugin").filter({ has: page.getByRole("heading", { name: "Jellyfin Media Sync", exact: true }) });
+  const plugin = page.locator("article.plugin").filter({ has: page.getByRole("heading", { name: /^Jellyfin Media Sync(?: \(Demo\))?$/ }) });
   await plugin.getByText("running", { exact: true }).waitFor();
   await capture("installed-plugin.png", "Authenticated installed Jellyfin predecessor after denying a newly requested update scope.");
   await page.getByRole("button", { name: "Install a plugin", exact: true }).click();
@@ -63,7 +63,7 @@ try {
   await capture("plugin-install.png", "Actual authenticated installer source chooser with live catalogue data.");
   await install.getByRole("button", { name: "Close", exact: true }).click();
   await plugin.getByRole("button", { name: "Manage plugin", exact: true }).click();
-  const dialog = page.getByRole("dialog", { name: "Jellyfin Media Sync", exact: true });
+  const dialog = page.getByRole("dialog", { name: /^Jellyfin Media Sync(?: \(Demo\))?$/ });
   await dialog.getByRole("button", { name: "Stop", exact: true }).waitFor();
   await capture("lifecycle-controls.png", "Actual authenticated lifecycle controls; predecessor remains enabled and healthy.");
   await dialog.getByRole("button", { name: "Settings", exact: true }).click();
@@ -83,7 +83,12 @@ try {
   assert.equal(await credential.inputValue(), "");
   await capture("plugin-settings.png", "Actual configured Jellyfin native settings/UI; saved token is not returned to the input.");
   assert.deepEqual(errors, [], "Authenticated host browser errors");
-  const revision = (repository) => execFileSync("git", ["-C", repository, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  const revision = (repository) => {
+    // A Windows worktree's gitdir cannot resolve inside a Linux bind mount.
+    // Use only an explicit, valid revision read by the caller on that host.
+    if (repository === host && /^[a-f0-9]{40}$/.test(process.env.JELLYFIN_HOST_REVISION || "")) return process.env.JELLYFIN_HOST_REVISION;
+    return execFileSync("git", ["-C", repository, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  };
   await writeFile(path.join(work, "workflow-captures.json"), JSON.stringify({
     kind: "authenticated-real-host", captured_at: new Date().toISOString(),
     host_revision: revision(host), plugin_revision: revision(plugins),
