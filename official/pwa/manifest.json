@@ -1,0 +1,49 @@
+{
+  "manifest_version": 1,
+  "plugin_id": "official.pwa",
+  "name": "Unnamed Tracking PWA",
+  "version": "0.0.1",
+  "description": "Install the complete Unnamed Tracking web application with safe offline reconnect guidance.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": ">=1.0.0,<2.0.0",
+  "application_version_range": ">=0.0.1",
+  "capabilities": [
+    {
+      "name": "frontend.pwa",
+      "version": 1
+    }
+  ],
+  "permissions": [
+    {
+      "capability": {
+        "name": "frontend.pwa",
+        "version": 1
+      },
+      "rationale": "Publish public install metadata/icons and enable the host-owned root service worker. No private API responses are cached."
+    }
+  ],
+  "dependencies": [],
+  "ui": {
+    "settings": [],
+    "actions": [],
+    "pages": [],
+    "menus": []
+  },
+  "automatic_update": true,
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null,
+    "key_id": null
+  },
+  "pwa": {
+    "name": "Unnamed Tracking",
+    "short_name": "Tracking",
+    "theme_color": "#0f1117",
+    "background_color": "#0f1117",
+    "manifest": "pwa/manifest.webmanifest",
+    "icons": [
+      "pwa/icon-192.png",
+      "pwa/icon-512.png"
+    ]
+  }
+}

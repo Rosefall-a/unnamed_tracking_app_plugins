@@ -50,8 +50,11 @@ def test_independent_catalogue_has_real_hashes_signatures_and_history(tmp_path):
         manifest = json.loads(archive.read("manifest.json"))
         assert first["manifest"] == manifest
         assert first["sha256"] == manifest["integrity"]["sha256"]
-        key.public_key().verify(base64.b64decode(first["signing"]["signature"]),
-                                b"plugin-package-v1:" + first["sha256"].encode())
+        assert first["signing"]["signature"].startswith("v2:")
+        key.public_key().verify(base64.b64decode(first["signing"]["signature"].removeprefix("v2:")),
+                                b"plugin-package-v2:" + first["sha256"].encode())
+        envelope = json.loads(archive.read("payload/package-signature-v2.json"))
+        assert envelope["manifest"] == {k: v for k, v in manifest.items() if k != "integrity"}
     assert first["automatic_update"] is False
     commit(tmp_path, "chore: publish community release")
     metadata["automatic_update"] = True

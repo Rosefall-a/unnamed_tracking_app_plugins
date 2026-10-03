@@ -10,18 +10,17 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 try:
     from .distribution import ROOT, canonical_json, collect_payload, discover_plugins, generate_catalogue, git, import_history, load_histories, next_release, release_record, source_digest, validate_distribution, write_json
-    from .package_format import canonical_payload_digest
-    from .publisher_registry import release_signer
+    from .package_format import canonical_payload_digest, signature_envelope, signature_message, SIGNATURE_ENVELOPE
+    from .signing import select_signer
     from .validate_packages import validate_package
     from .verify_packages import verify_package
 except ImportError:
     from distribution import ROOT, canonical_json, collect_payload, discover_plugins, generate_catalogue, git, import_history, load_histories, next_release, release_record, source_digest, validate_distribution, write_json
-    from package_format import canonical_payload_digest
-    from publisher_registry import release_signer
+    from package_format import canonical_payload_digest, signature_envelope, signature_message, SIGNATURE_ENVELOPE
+    from signing import select_signer
     from validate_packages import validate_package
     from verify_packages import verify_package
 
@@ -40,17 +39,9 @@ def write_package(path: Path, manifest: dict, files: dict[str, bytes]) -> None:
 
 def build(root: Path, output: Path, *, publish: bool = False, catalogue_only: bool = False, reuse_published: bool = False) -> None:
     plugins = discover_plugins(root)
-    key = None
-    key_id = os.environ.get("PLUGIN_SIGNING_KEY_ID", "").strip()
-    encoded = os.environ.get("PLUGIN_SIGNING_KEY_B64", "").strip()
-    if encoded:
-        key = Ed25519PrivateKey.from_private_bytes(base64.b64decode(encoded, validate=True))
-        release_signer(key_id, tuple(m["plugin_id"] for _, m in plugins), key.public_key().public_bytes_raw())
-    if publish and key is None and not catalogue_only:
-        raise ValueError("a release build requires PLUGIN_SIGNING_KEY_B64 and PLUGIN_SIGNING_KEY_ID")
     if output == root and not (publish or catalogue_only):
         raise ValueError("use --publish for signed distribution; development builds must use a separate output root")
-    if publish and git(root, "status", "--porcelain", "--", "examples", "sdk", "tools", "publishers", "catalogue.json"):
+    if publish and git(root, "status", "--porcelain", "--", "examples", "official", "plugins", "sdk", "tools", "publishers", "catalogue.json"):
         raise ValueError("commit source, tooling and publisher changes before publishing a release")
 
     histories = load_histories(root)
@@ -74,18 +65,20 @@ def build(root: Path, output: Path, *, publish: bool = False, catalogue_only: bo
                     raise ValueError("release tags must reference a source snapshot already published on main")
                 manifest["version"] = version
                 if not reuse:
+                    key, key_id = select_signer(root, source, manifest["plugin_id"], required=publish)
                     commit = git(root, "rev-parse", "HEAD")
                     metadata = {**metadata, "version": version, "automatic_update": (
                         metadata["automatic_update"] if metadata["automatic_update"] is not None else bump != "major"
                     ), "build": {"source_digest": fingerprint, "source_commit": commit,
                         "source_committed_at": git(root, "show", "-s", "--format=%cI", commit) if commit else None,
                         "source_path": source.relative_to(root).as_posix(), "builder": "tools/build_packages.py",
-                        "contract_revision": "f1165fcc805e57ee428e7bc42fa6b83f4a6caf25", "version_bump": bump}}
+                        "contract_revision": "c50e6d0cc08e4649371def34bbef80f5e226e324", "version_bump": bump}}
                     files["distribution.json"] = canonical_json(metadata)
+                    files[SIGNATURE_ENVELOPE] = canonical_json(signature_envelope(manifest, key_id))
                     digest = canonical_payload_digest(files.items())
                     manifest["integrity"] = {
                         "sha256": digest,
-                        "signature": base64.b64encode(key.sign(b"plugin-package-v1:" + digest.encode())).decode() if key else None,
+                        "signature": "v2:" + base64.b64encode(key.sign(signature_message(digest))).decode() if key else None,
                         "key_id": key_id if key else None,
                     }
                     package = stage / "dist" / f"{manifest['plugin_id']}-{version}.utp"

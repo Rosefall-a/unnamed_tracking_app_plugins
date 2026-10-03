@@ -1,0 +1,40 @@
+"""Select independently scoped signers; never silently downgrade a configured key."""
+from __future__ import annotations
+
+import base64
+import os
+from pathlib import Path
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+try:
+    from .publisher_registry import release_signer
+except ImportError:
+    from publisher_registry import release_signer
+
+
+def select_signer(root: Path, source: Path, plugin_id: str, *, required: bool):
+    folder = source.relative_to(root).parts[0]
+    prefix = {"examples": "PLUGIN_EXAMPLES_SIGNING", "official": "PLUGIN_OFFICIAL_SIGNING"}.get(folder, "PLUGIN_SIGNING")
+    fallback = os.getenv("PLUGIN_SIGNING_FALLBACK", "generic").strip()
+    if fallback not in {"generic", "unsigned", "error"}:
+        raise ValueError("PLUGIN_SIGNING_FALLBACK must be generic, unsigned or error")
+    key_id = os.getenv(prefix + "_KEY_ID", "").strip()
+    encoded = os.getenv(prefix + "_KEY_B64", "").strip()
+    if not key_id and not encoded and prefix != "PLUGIN_SIGNING" and fallback == "generic":
+        key_id = os.getenv("PLUGIN_SIGNING_KEY_ID", "").strip()
+        encoded = os.getenv("PLUGIN_SIGNING_KEY_B64", "").strip()
+    if bool(key_id) != bool(encoded):
+        raise ValueError(f"{prefix}: both KEY_ID and KEY_B64 are required")
+    if not encoded:
+        if required or fallback == "error":
+            raise ValueError(f"{folder}/{source.name}: a registered signing key is required for publication")
+        return None, None
+    try:
+        key = Ed25519PrivateKey.from_private_bytes(base64.b64decode(encoded, validate=True))
+    except ValueError as exc:
+        raise ValueError(f"{prefix}: invalid Ed25519 seed") from exc
+    record = release_signer(key_id, (plugin_id,), key.public_key().public_bytes_raw())
+    if folder == "official" and record.channel != "official":
+        raise ValueError("official sources require an official publisher identity; fallback cannot promote demo/community keys")
+    if folder == "examples" and record.channel == "official":
+        raise ValueError("example sources cannot use the official signing identity")
+    return key, key_id

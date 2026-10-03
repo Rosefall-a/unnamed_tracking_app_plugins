@@ -43,20 +43,24 @@ def git(root: Path, *args: str) -> str | None:
 
 
 def discover_plugins(root: Path) -> list[tuple[Path, dict]]:
-    if not (root / "examples").is_dir():
-        raise ValueError("no plugin source tree found under examples/")
     if (root / "examples.old").exists():
-        raise ValueError("obsolete examples.old source tree; keep maintained plugins under examples/")
-    for source in sorted((root / "examples").iterdir()):
-        if source.name.startswith(".") or source.name in {"__pycache__", "node_modules"}:
+        raise ValueError("obsolete examples.old source tree")
+    plugins = []
+    for folder in ("examples", "official", "plugins"):
+        tree = root / folder
+        if not tree.exists():
             continue
-        if source.is_symlink():
-            raise ValueError("plugin source cannot be a symbolic link")
-        if source.is_dir() and not (source / "manifest.json").is_file():
-            raise ValueError(f"{source.name}: manifest.json is missing (incomplete plugin source)")
-    plugins = [(p.parent, json.loads(p.read_text(encoding="utf-8"))) for p in sorted((root / "examples").glob("*/manifest.json"))]
+        for source in sorted(tree.iterdir()):
+            if source.name.startswith(".") or source.name in {"__pycache__", "node_modules"}:
+                continue
+            if source.is_symlink():
+                raise ValueError("plugin source cannot be a symbolic link")
+            if source.is_dir():
+                if not (source / "manifest.json").is_file():
+                    raise ValueError(f"{source.name}: manifest.json is missing (incomplete plugin source)")
+                plugins.append((source, json.loads((source / "manifest.json").read_text(encoding="utf-8"))))
     if not plugins:
-        raise ValueError("no plugin manifests found under examples/")
+        raise ValueError("no plugin manifests found under examples/, official/ or plugins/")
     ids = [m["plugin_id"] for _, m in plugins]
     if len(ids) != len(set(ids)):
         raise ValueError("duplicate plugin_id")
@@ -98,7 +102,7 @@ def source_bytes(path: Path) -> bytes:
         raise ValueError("package source cannot be a symbolic link")
     data = path.read_bytes()
     # Text is stored as LF in Git, independent of the author's checkout settings.
-    return data.replace(b"\r\n", b"\n") if path.suffix in {".py", ".js", ".css", ".html", ".md", ".json", ".svg"} else data
+    return data.replace(b"\r\n", b"\n") if path.suffix in {".py", ".js", ".css", ".html", ".md", ".json", ".svg", ".webmanifest"} else data
 
 
 def collect_payload(root: Path, source: Path, manifest: dict) -> tuple[dict[str, bytes], dict]:
@@ -118,7 +122,7 @@ def collect_payload(root: Path, source: Path, manifest: dict) -> tuple[dict[str,
             files[name] = source_bytes(path)
     if not files.get("README.md", b"").strip():
         raise ValueError(f"{source.name}: a non-empty README.md is required")
-    for name in ("frontend", "native"):
+    for name in ("frontend", "native", "pwa"):
         for path in (source / name).rglob("*"):
             if path.is_file() and not any(p.startswith(".") or p == "node_modules" for p in path.relative_to(source).parts):
                 if path.is_symlink():
@@ -196,6 +200,17 @@ def import_history(root: Path, histories: dict[str, list[dict]]) -> None:
 
 
 def next_release(root: Path, source: Path, manifest: dict, history: list[dict], fingerprint: str) -> tuple[str, bool, str]:
+    if manifest.get("pwa") and manifest["plugin_id"] == "official.pwa":
+        if version_key(manifest["version"])[:2] != (0, 0):
+            raise ValueError("PWA development releases must remain 0.0.x; stable promotion requires a separate human policy change")
+        if history:
+            latest = history[-1]
+            if version_key(manifest["version"]) < version_key(latest["version"]):
+                raise ValueError("PWA source version cannot go backwards")
+            if manifest["version"] == latest["version"]:
+                if latest["build"]["source_digest"] != fingerprint:
+                    raise ValueError("changed PWA source requires an explicit new 0.0.x patch version")
+                return manifest["version"], True, "none"
     if not history:
         return manifest["version"], False, "initial"
     latest = history[-1]
@@ -237,7 +252,11 @@ def catalogue_document(root: Path, plugins: list[tuple[Path, dict]], histories: 
     validate_url(base)
     entries = []
     for source, source_manifest in sorted(plugins, key=lambda p: p[1]["plugin_id"]):
-        history = histories[source_manifest["plugin_id"]]
+        history = histories.get(source_manifest["plugin_id"])
+        if not history:
+            if source.relative_to(root).parts[0] != "official":
+                raise ValueError("non-official source is missing release history")
+            continue
         latest = catalogue_release(history[-1], base)
         manifest = latest["manifest"]
         entries.append({**latest, "name": manifest["name"], "description": manifest.get("description", ""),
@@ -313,7 +332,12 @@ def validate_distribution(output: Path, *, source_root: Path = ROOT, check_sourc
     if len({e["plugin_id"] for e in entries}) != len(entries):
         raise ValueError("duplicate catalogue identity")
     sources = {m["plugin_id"]: (s, m) for s, m in discover_plugins(source_root)}
-    if set(sources) != {e["plugin_id"] for e in entries}:
+    released_sources = {
+        plugin_id for plugin_id, (source, _) in sources.items()
+        if plugin_id in histories or source.relative_to(source_root).parts[0] != "official"
+    }
+    expected_sources = set(sources) if check_source else released_sources
+    if expected_sources != {e["plugin_id"] for e in entries}:
         raise ValueError("catalogue does not match source plugin set")
     config_path = source_root / "catalogue.json"
     configured_base = json.loads(config_path.read_text())["base_url"].rstrip("/") if config_path.exists() else DEFAULT_BASE
