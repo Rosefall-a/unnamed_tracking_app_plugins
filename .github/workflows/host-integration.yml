@@ -100,6 +100,10 @@ jobs:
           # supervisor still probes and reports isolation; nothing is mocked.
           NONBUBBLE_ENV: 'true'
         run: python tools/check_reference_lifecycle.py --host-root .validation/host
+      - name: Verify official PWA signing and real browser lifecycle
+        run: |
+          python .validation/host/tools/check_pwa_lifecycle.py --plugins-root . \
+            --work-root "${{ runner.temp }}/pwa-acceptance"
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -109,4 +113,7 @@ jobs:
             ${{ runner.temp }}/plugin-acceptance/conformance.json
             ${{ runner.temp }}/plugin-acceptance/**/*.png
             ${{ runner.temp }}/plugin-acceptance/workflow-captures.json
+            ${{ runner.temp }}/pwa-acceptance/*.log
+            ${{ runner.temp }}/pwa-acceptance/*.png
+            ${{ runner.temp }}/pwa-acceptance/pwa-conformance.json
           if-no-files-found: warn
