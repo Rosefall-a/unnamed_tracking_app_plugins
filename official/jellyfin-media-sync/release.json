@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "publisher": "Unnamed Tracking Official",
+  "tags": [
+    "official",
+    "preview",
+    "media",
+    "integration"
+  ],
+  "icon": "icon.svg",
+  "automatic_update": false,
+  "release_notes": "Initial official preview. Separate identity from the Jellyfin demonstration; requires the current plugin-manager public media enrichment API."
+}

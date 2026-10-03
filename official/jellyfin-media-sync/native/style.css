@@ -1,0 +1,135 @@
+.jf-official.jf-sync {
+  color: var(--text);
+  font: inherit;
+  max-width: 72rem;
+  margin: auto;
+  padding: 1rem;
+}
+.jf-official.jf-sync h2,
+.jf-official.jf-sync h3,
+.jf-official.jf-sync strong {
+  color: var(--text-h);
+}
+.jf-official .jf-badge {
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+.jf-official .jf-panel {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin: 1rem 0;
+}
+.jf-official .jf-panel h3 {
+  margin-top: 0;
+}
+.jf-official .jf-field {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.8rem 0;
+}
+.jf-official .jf-field input,
+.jf-official .jf-field select {
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  padding: 0.6rem;
+  font: inherit;
+  width: 100%;
+  box-sizing: border-box;
+}
+.jf-official .jf-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.7rem 0;
+}
+.jf-official .jf-check input {
+  accent-color: var(--accent);
+}
+.jf-official .jf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+.jf-official.jf-sync button {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  padding: 0.55rem 0.8rem;
+  border-radius: 0.45rem;
+  cursor: pointer;
+  font: inherit;
+}
+.jf-official.jf-sync button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.jf-official.jf-sync :is(input, select, button, a):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.jf-official.jf-sync fieldset {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+.jf-official .jf-review,
+.jf-official .jf-server {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.jf-official .jf-status {
+  padding: 0.7rem;
+  background: var(--accent-bg);
+  border-radius: 0.5rem;
+}
+.jf-official .jf-warning,
+.jf-official .jf-error {
+  padding: 0.7rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0.4rem;
+}
+.jf-official.jf-sync p,
+.jf-official.jf-sync code {
+  overflow-wrap: anywhere;
+}
+.jf-official.jf-watch {
+  max-width: 75rem;
+  margin: 1rem auto;
+  padding: 0 1rem;
+  color: var(--text);
+  font: inherit;
+}
+.jf-official.jf-watch a {
+  color: var(--accent);
+  display: inline-block;
+  padding: 0.6rem 0.8rem;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--ui-radius-control);
+  text-decoration: none;
+}
+@media (max-width: 600px) {
+  .jf-official.jf-sync {
+    padding: 0.5rem;
+  }
+  .jf-official .jf-panel {
+    padding: 0.8rem;
+  }
+  .jf-official .jf-actions button {
+    flex: 1 1 auto;
+  }
+}
+.jf-official {
+  --text: var(--ui-dim);
+  --text-h: var(--ui-text);
+  --bg: var(--ui-surface);
+  --border: var(--ui-border);
+  --accent: var(--ui-accent);
+  --accent-bg: var(--ui-accent-soft);
+  --accent-border: var(--ui-accent-line);
+}

@@ -1,7 +1,7 @@
 # Repository structure
 
 ```text
-examples/<name>/        maintained official references and real demos
+examples/<name>/        functional reference and demo plugins
   manifest.json        runtime, permissions and compatibility
   plugin.py            implementation using sdk.plugin_protocol
   README.md            release-specific user/developer instructions
@@ -9,6 +9,7 @@ examples/<name>/        maintained official references and real demos
   ui.json              declared actions/settings/pages, when needed
   frontend/            optional sandboxed browser bundle
   native/              optional privileged Vue module
+official/<name>/        maintained features and clearly labelled previews; same layout
 sdk/                   public protocol helper
 tools/                 builder, validators, exported schemas, host checks
 tests/                 Python, package/release and browser tests
@@ -22,8 +23,9 @@ wiki/mkdocs.yml         wiki navigation/theme and strict link validation
 mkdocs.yml             repository-root entry point inheriting the wiki configuration
 ```
 
-`examples/` is the intentional source root used by existing discovery and host
-acceptance. Complete third-party repositories can use the same layout without
+`examples/` and `official/` are the source roots used by the same builder,
+validators and host acceptance. Categories grant no additional permissions.
+Complete third-party repositories can use the same layout without
 joining the official catalogue. There is no `examples.old/` fallback discovery.
 Incomplete source directories fail validation rather than silently disappearing.
 

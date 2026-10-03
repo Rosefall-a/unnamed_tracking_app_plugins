@@ -59,6 +59,34 @@ def records(root):
     return json.loads((root / "releases/example.help-button.json").read_text(encoding="utf-8"))["releases"]
 
 
+def test_unreleased_official_preview_is_installable_without_expanding_signer_scope(checkout):
+    root, env = checkout
+    shutil.copytree(ROOT / "official/jellyfin-media-sync", root / "official/jellyfin-media-sync")
+    config = {"name": "Disposable catalogue", "base_url": "https://example.invalid/plugins",
+              "unreleased_plugins": ["official.jellyfin-media-sync"]}
+    (root / "catalogue.json").write_text(json.dumps(config))
+    commit(root, "feat: add independently installable preview")
+    # The real official source is built unsigned by the existing developer flow.
+    preview_env = {k: v for k, v in env.items() if not k.startswith("PLUGIN_SIGNING_")}
+    run_build(root, preview_env)
+    preview = root / ".validation/dist/official.jellyfin-media-sync-0.0.1.utp"
+    validate_package(preview)
+    with zipfile.ZipFile(preview) as archive:
+        preview_manifest = json.loads(archive.read("manifest.json"))
+    assert preview_manifest["plugin_id"] == "official.jellyfin-media-sync"
+    assert not preview_manifest["integrity"].get("signature")
+    validate_distribution(root / ".validation", source_root=root, include_unreleased=True)
+    run_build(root, env, "--publish")
+    assert {p["plugin_id"] for p in json.loads((root / "list.json").read_text())["plugins"]} == {"example.help-button"}
+    assert not (root / "releases/official.jellyfin-media-sync.json").exists()
+    commit(root, "chore: retain reviewed distribution")
+    config["unreleased_plugins"] = []
+    (root / "catalogue.json").write_text(json.dumps(config))
+    commit(root, "feat: request official publication")
+    denied = run_build(root, env, "--publish", check=False)
+    assert denied.returncode != 0 and "scope" in denied.stderr.lower()
+
+
 def test_signed_releases_preserve_history_and_release_specific_opt_out(checkout):
     root, env = checkout
     metadata_path = root / "examples/help-button/release.json"

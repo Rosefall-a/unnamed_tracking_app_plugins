@@ -278,7 +278,7 @@ def validate_url(url: str) -> None:
         raise ValueError("distribution URLs must be absolute HTTPS URLs without credentials, query or fragment")
 
 
-def validate_distribution(output: Path, *, source_root: Path = ROOT, check_source: bool = False, baseline_ref: str | None = None) -> None:
+def validate_distribution(output: Path, *, source_root: Path = ROOT, check_source: bool = False, baseline_ref: str | None = None, include_unreleased: bool = False) -> None:
     try:
         from .verify_packages import verify_package
         from .validate_packages import validate_package
@@ -332,12 +332,16 @@ def validate_distribution(output: Path, *, source_root: Path = ROOT, check_sourc
     if len({e["plugin_id"] for e in entries}) != len(entries):
         raise ValueError("duplicate catalogue identity")
     sources = {m["plugin_id"]: (s, m) for s, m in discover_plugins(source_root)}
+    pending = set(json.loads((source_root / "catalogue.json").read_text()).get("unreleased_plugins", [])) if (source_root / "catalogue.json").exists() else set()
+    if not pending.issubset(sources):
+        raise ValueError("unreleased identity must have a maintained source contract")
     released_sources = {
         plugin_id for plugin_id, (source, _) in sources.items()
         if plugin_id in histories or source.relative_to(source_root).parts[0] != "official"
     }
-    expected_sources = set(sources) if check_source else released_sources
-    if expected_sources != {e["plugin_id"] for e in entries}:
+    required_sources = set(sources) if include_unreleased else (set(sources) if check_source else released_sources) - pending
+    entry_ids = {e["plugin_id"] for e in entries}
+    if not required_sources.issubset(entry_ids) or not entry_ids.issubset(sources):
         raise ValueError("catalogue does not match source plugin set")
     config_path = source_root / "catalogue.json"
     configured_base = json.loads(config_path.read_text())["base_url"].rstrip("/") if config_path.exists() else DEFAULT_BASE
@@ -403,9 +407,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Verify catalogue, release history and actual package bytes")
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--check-source", action="store_true")
+    parser.add_argument("--include-unreleased", action="store_true", help="validate all source previews, including unpublished plugin identities")
     parser.add_argument("--baseline-ref", help="reject changes/removal of existing packages or release records in this Git revision")
     args = parser.parse_args()
-    validate_distribution(args.root.resolve(), check_source=args.check_source, baseline_ref=args.baseline_ref)
+    validate_distribution(args.root.resolve(), check_source=args.check_source, baseline_ref=args.baseline_ref,
+                          include_unreleased=args.include_unreleased)
     print("Catalogue, release history, package hashes and metadata verified")
 
 

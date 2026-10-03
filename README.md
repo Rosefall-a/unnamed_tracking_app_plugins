@@ -42,7 +42,7 @@ python tools/check_source_layout.py
 python tools/check_docs.py
 python -m pytest
 python tools/build_packages.py
-python tools/distribution.py --root .validation --check-source
+python tools/distribution.py --root .validation --check-source --include-unreleased
 python -m mkdocs build --strict
 python -m mkdocs serve
 ```
@@ -79,7 +79,8 @@ Small references stay small; real demos document supported behavior and host lim
 
 | Path | Role |
 | --- | --- |
-| `examples/` | Complete maintained plugin source; one intentional source tree |
+| `examples/` | Functional reference/demo sources, including the original Jellyfin demo |
+| `official/` | Independently packaged official features and clearly labelled previews |
 | `sdk/` | Public v1 protocol helper bundled with packages |
 | `tools/`, `tests/` | Existing build/validation tools and conformance tests |
 | `wiki/docs/`, `mkdocs.yml` | Developer wiki, real assets and dated evidence |
@@ -93,6 +94,13 @@ Development builds write isolated `.validation/` previews. Published packages
 and historical records remain unchanged. Do not manually edit generated lists,
 re-sign old ZIPs, or remove historical packages to tidy the repository. GitHub
 Releases distributes/presents these same outputs; repository history is retained.
+
+Official features and examples use the same SDK, package validator, permission
+review and sandbox. [Jellyfin's official preview](official/jellyfin-media-sync/README.md)
+starts at 0.0.1 with a separate identity; the original Jellyfin package stays a demo.
+`catalogue.json.unreleased_plugins` explicitly keeps previews outside signed
+publication until reviewed signer scope exists. Development builds still include
+and fully validate every maintained source, including unreleased previews.
 
 ## Sign and publish independently
 

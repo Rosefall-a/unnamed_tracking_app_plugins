@@ -44,10 +44,14 @@
     {
       "name": "frontend.context.media",
       "version": 1
+    },
+    {
+      "name": "notifications.send",
+      "version": 1
     }
   ],
   "dependencies": [],
-  "description": "Working example of installation-wide Jellyfin configuration, approved identities, durable media sync, episode completion and native Watch Now contributions.",
+  "description": "Official preview: multiple Jellyfin accounts, shared media matching, metadata, progress and reported viewing sessions. The separate example remains a demo.",
   "entrypoint": "plugin:main",
   "integrity": {
     "key_id": null,
@@ -55,7 +59,7 @@
     "signature": null
   },
   "manifest_version": 1,
-  "name": "Jellyfin Media Sync (Demo)",
+  "name": "Jellyfin Media Sync",
   "native_frontend": {
     "entry": "native/app.js",
     "styles": [
@@ -139,36 +143,47 @@
         "version": 1
       },
       "rationale": "Resolve Watch Now for the authenticated media-page context."
+    },
+    {
+      "capability": {
+        "name": "notifications.send",
+        "version": 1
+      },
+      "rationale": "Optionally notify the subscribing user about sync errors; denied grants do not stop sync."
     }
   ],
-  "plugin_id": "example.jellyfin-media-sync",
+  "plugin_id": "official.jellyfin-media-sync",
   "sdk_version_range": "^1.0.0",
   "storage": {
-    "quota_mb": 32
+    "quota_mb": 128
   },
   "ui": {
     "actions": [
-      "save-master",
-      "save-token",
+      "save-server",
+      "clear-server-credential",
       "test-connection",
       "save-mappings",
       "authorize-identity",
       "get-config",
-      "save-user",
-      "unlink-user",
+      "login",
+      "quick-connect-start",
+      "quick-connect-finish",
+      "link-approved",
+      "save-account",
+      "clear-account-credential",
+      "order-accounts",
       "sync-now",
       "status",
       "watch-now",
-      "resolve-conflict"
+      "resolve-review"
     ],
-    "menus": [
-      "sync"
-    ],
+    "menus": [],
     "pages": [
-      "sync",
+      "accounts",
+      "admin",
       "watch"
     ],
     "settings": []
   },
-  "version": "3.0.0"
+  "version": "0.0.1"
 }

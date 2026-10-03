@@ -1,6 +1,7 @@
 # Working examples
 
-All maintained plugins live in one `examples/` source tree. Every one has a
+Demonstrations live under `examples/`; official features live under `official/`.
+Jellyfin has separate demo and official preview identities. Every maintained source has a
 manifest, implementation, README, tests and support in the existing builder.
 The catalogue is generated from their actual packages, not this table.
 

@@ -17,7 +17,7 @@ Never put plugin-authored risk fields in either manifest or release metadata.
 python tools/check_source_layout.py
 python -m pytest
 python tools/build_packages.py
-python tools/distribution.py --root .validation --check-source
+python tools/distribution.py --root .validation --check-source --include-unreleased
 python tools/verify_packages.py .validation/dist/*.utp
 python tools/validate_packages.py .validation/dist/*.utp
 python -m mkdocs build --strict

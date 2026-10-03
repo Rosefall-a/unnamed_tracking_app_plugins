@@ -73,6 +73,11 @@ jobs:
           python -m pip install -r .validation/host/src/backend/requirements.txt jsonschema
           sudo apt-get update
           sudo apt-get install -y bubblewrap
+          # The disposable runner must permit namespaces for strict sandbox tests.
+          if [ -f /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+          bwrap --unshare-all --ro-bind / / -- /bin/true
           sudo mkdir -p /data
           sudo chown "$(id -u):$(id -g)" /data
       - name: Prepare disposable database
@@ -100,6 +105,11 @@ jobs:
           # supervisor still probes and reports isolation; nothing is mocked.
           NONBUBBLE_ENV: 'true'
         run: python tools/check_reference_lifecycle.py --host-root .validation/host
+      - name: Test independently installed official Jellyfin preview
+        run: |
+          bash .validation/host/tools/run_strict_plugin_acceptance.sh \
+            "$GITHUB_WORKSPACE/.validation/host" "$GITHUB_WORKSPACE" \
+            "${{ runner.temp }}/jellyfin-official-acceptance"
       - name: Verify official PWA signing and real browser lifecycle
         run: |
           python .validation/host/tools/check_pwa_lifecycle.py --plugins-root . \
@@ -113,6 +123,9 @@ jobs:
             ${{ runner.temp }}/plugin-acceptance/conformance.json
             ${{ runner.temp }}/plugin-acceptance/**/*.png
             ${{ runner.temp }}/plugin-acceptance/workflow-captures.json
+            ${{ runner.temp }}/jellyfin-official-acceptance/*.log
+            ${{ runner.temp }}/jellyfin-official-acceptance/conformance.json
+            ${{ runner.temp }}/jellyfin-official-acceptance/screenshots/*.png
             ${{ runner.temp }}/pwa-acceptance/*.log
             ${{ runner.temp }}/pwa-acceptance/*.png
             ${{ runner.temp }}/pwa-acceptance/pwa-conformance.json

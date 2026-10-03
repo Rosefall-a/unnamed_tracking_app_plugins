@@ -123,7 +123,7 @@ From the repository root:
 ```sh
 python tools/check_source_layout.py
 python tools/build_packages.py
-python tools/distribution.py --root .validation --check-source
+python tools/distribution.py --root .validation --check-source --include-unreleased
 python tools/verify_packages.py .validation/dist/org.example.library-summary-1.0.0.utp
 python tools/validate_packages.py --full .validation/dist/org.example.library-summary-1.0.0.utp
 python -m zipfile -l .validation/dist/org.example.library-summary-1.0.0.utp
