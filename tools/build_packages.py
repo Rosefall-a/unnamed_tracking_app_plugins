@@ -40,6 +40,10 @@ def write_package(path: Path, manifest: dict, files: dict[str, bytes]) -> None:
 
 def build(root: Path, output: Path, *, publish: bool = False, catalogue_only: bool = False, reuse_published: bool = False) -> None:
     plugins = discover_plugins(root)
+    if publish:
+        config_path = root / "catalogue.json"
+        pending = set(json.loads(config_path.read_text()).get("unreleased_plugins", [])) if config_path.exists() else set()
+        plugins = [(source, manifest) for source, manifest in plugins if manifest["plugin_id"] not in pending]
     key = None
     key_id = os.environ.get("PLUGIN_SIGNING_KEY_ID", "").strip()
     encoded = os.environ.get("PLUGIN_SIGNING_KEY_B64", "").strip()
@@ -50,7 +54,7 @@ def build(root: Path, output: Path, *, publish: bool = False, catalogue_only: bo
         raise ValueError("a release build requires PLUGIN_SIGNING_KEY_B64 and PLUGIN_SIGNING_KEY_ID")
     if output == root and not (publish or catalogue_only):
         raise ValueError("use --publish for signed distribution; development builds must use a separate output root")
-    if publish and git(root, "status", "--porcelain", "--", "examples", "sdk", "tools", "publishers", "catalogue.json"):
+    if publish and git(root, "status", "--porcelain", "--", "examples", "official", "sdk", "tools", "publishers", "catalogue.json"):
         raise ValueError("commit source, tooling and publisher changes before publishing a release")
 
     histories = load_histories(root)
@@ -101,7 +105,8 @@ def build(root: Path, output: Path, *, publish: bool = False, catalogue_only: bo
         for plugin_id, history in histories.items():
             write_json(stage / "releases" / f"{plugin_id}.json", {"version": 1, "plugin_id": plugin_id, "releases": history})
         generate_catalogue(root, stage, plugins, histories)
-        validate_distribution(stage, source_root=root, check_source=not catalogue_only)
+        validate_distribution(stage, source_root=root, check_source=not catalogue_only,
+                              include_unreleased=not publish and not catalogue_only)
         output.mkdir(parents=True, exist_ok=True)
         for directory in ("dist", "releases"):
             (output / directory).mkdir(exist_ok=True)

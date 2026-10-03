@@ -47,14 +47,16 @@ def discover_plugins(root: Path) -> list[tuple[Path, dict]]:
         raise ValueError("no plugin source tree found under examples/")
     if (root / "examples.old").exists():
         raise ValueError("obsolete examples.old source tree; keep maintained plugins under examples/")
-    for source in sorted((root / "examples").iterdir()):
+    trees = [root / name for name in ("examples", "official") if (root / name).is_dir()]
+    for source in sorted(p for tree in trees for p in tree.iterdir()):
         if source.name.startswith(".") or source.name in {"__pycache__", "node_modules"}:
             continue
         if source.is_symlink():
             raise ValueError("plugin source cannot be a symbolic link")
         if source.is_dir() and not (source / "manifest.json").is_file():
             raise ValueError(f"{source.name}: manifest.json is missing (incomplete plugin source)")
-    plugins = [(p.parent, json.loads(p.read_text(encoding="utf-8"))) for p in sorted((root / "examples").glob("*/manifest.json"))]
+    plugins = [(p.parent, json.loads(p.read_text(encoding="utf-8")))
+               for p in sorted(p for tree in trees for p in tree.glob("*/manifest.json"))]
     if not plugins:
         raise ValueError("no plugin manifests found under examples/")
     ids = [m["plugin_id"] for _, m in plugins]
@@ -237,6 +239,8 @@ def catalogue_document(root: Path, plugins: list[tuple[Path, dict]], histories: 
     validate_url(base)
     entries = []
     for source, source_manifest in sorted(plugins, key=lambda p: p[1]["plugin_id"]):
+        if source_manifest["plugin_id"] not in histories:
+            continue
         history = histories[source_manifest["plugin_id"]]
         latest = catalogue_release(history[-1], base)
         manifest = latest["manifest"]
@@ -259,7 +263,7 @@ def validate_url(url: str) -> None:
         raise ValueError("distribution URLs must be absolute HTTPS URLs without credentials, query or fragment")
 
 
-def validate_distribution(output: Path, *, source_root: Path = ROOT, check_source: bool = False, baseline_ref: str | None = None) -> None:
+def validate_distribution(output: Path, *, source_root: Path = ROOT, check_source: bool = False, baseline_ref: str | None = None, include_unreleased: bool = False) -> None:
     try:
         from .verify_packages import verify_package
         from .validate_packages import validate_package
@@ -313,7 +317,11 @@ def validate_distribution(output: Path, *, source_root: Path = ROOT, check_sourc
     if len({e["plugin_id"] for e in entries}) != len(entries):
         raise ValueError("duplicate catalogue identity")
     sources = {m["plugin_id"]: (s, m) for s, m in discover_plugins(source_root)}
-    if set(sources) != {e["plugin_id"] for e in entries}:
+    pending = set(json.loads((source_root / "catalogue.json").read_text()).get("unreleased_plugins", [])) if (source_root / "catalogue.json").exists() else set()
+    if not pending.issubset(sources):
+        raise ValueError("unreleased identity must have a maintained source contract")
+    required_sources = set(sources) if include_unreleased else set(sources) - pending
+    if not required_sources.issubset({e["plugin_id"] for e in entries}) or not {e["plugin_id"] for e in entries}.issubset(sources):
         raise ValueError("catalogue does not match source plugin set")
     config_path = source_root / "catalogue.json"
     configured_base = json.loads(config_path.read_text())["base_url"].rstrip("/") if config_path.exists() else DEFAULT_BASE
@@ -379,9 +387,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Verify catalogue, release history and actual package bytes")
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--check-source", action="store_true")
+    parser.add_argument("--include-unreleased", action="store_true", help="validate all source previews, including unpublished plugin identities")
     parser.add_argument("--baseline-ref", help="reject changes/removal of existing packages or release records in this Git revision")
     args = parser.parse_args()
-    validate_distribution(args.root.resolve(), check_source=args.check_source, baseline_ref=args.baseline_ref)
+    validate_distribution(args.root.resolve(), check_source=args.check_source, baseline_ref=args.baseline_ref,
+                          include_unreleased=args.include_unreleased)
     print("Catalogue, release history, package hashes and metadata verified")
 
 

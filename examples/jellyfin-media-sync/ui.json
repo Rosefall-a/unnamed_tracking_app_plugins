@@ -1,7 +1,7 @@
 {
   "schema_version": "v1",
   "plugin_id": "example.jellyfin-media-sync",
-  "title": "Jellyfin Media Sync",
+  "title": "Jellyfin Media Sync (Demo)",
   "settings": [],
   "actions": [
     {
@@ -127,7 +127,7 @@
   "pages": [
     {
       "id": "sync",
-      "title": "Jellyfin Media Sync",
+      "title": "Jellyfin Media Sync (Demo)",
       "description": "One installation server. Your own Jellyfin identity and completion.",
       "settings": [],
       "actions": [

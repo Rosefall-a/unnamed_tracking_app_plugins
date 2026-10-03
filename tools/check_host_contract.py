@@ -51,7 +51,7 @@ def main() -> None:
             root=work / "workers", storage_root=work / "storage"
         )
         registry = PluginRegistry(work / "installed", supervisor)
-        for manifest_path in sorted((root / "examples").glob("*/manifest.json")):
+        for manifest_path in sorted(p for tree in ("examples", "official") for p in (root / tree).glob("*/manifest.json")):
             source = manifest_path.parent
             manifest = PluginManifest.model_validate_json(
                 (source / "manifest.json").read_bytes()

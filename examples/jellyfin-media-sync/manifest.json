@@ -47,7 +47,7 @@
     }
   ],
   "dependencies": [],
-  "description": "Installation-wide Jellyfin server with approved user identities, explicit library mapping, durable media identity, episode completion and Watch Now.",
+  "description": "Working example of installation-wide Jellyfin configuration, approved identities, durable media sync, episode completion and native Watch Now contributions.",
   "entrypoint": "plugin:main",
   "integrity": {
     "key_id": null,
@@ -55,7 +55,7 @@
     "signature": null
   },
   "manifest_version": 1,
-  "name": "Jellyfin Media Sync",
+  "name": "Jellyfin Media Sync (Demo)",
   "native_frontend": {
     "entry": "native/app.js",
     "styles": [
