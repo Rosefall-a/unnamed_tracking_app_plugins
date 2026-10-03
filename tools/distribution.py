@@ -157,7 +157,8 @@ def release_record(path: Path, *, root: Path, source: Path | None = None, finger
         readme = archive.read("payload/README.md").decode("utf-8") if "payload/README.md" in names else None
         icon_path = metadata.get("icon") if metadata else None
         icon = {"path": icon_path, "sha256": hashlib.sha256(archive.read("payload/" + icon_path)).hexdigest()} if icon_path else None
-    key = load_registry().get(manifest["integrity"].get("key_id"))
+    key_id = manifest["integrity"].get("key_id")
+    key = load_registry().get(key_id) if key_id else None
     if metadata:
         validate_metadata(metadata, packaged=True)
         if key and metadata["publisher"] != key.publisher:
