@@ -135,8 +135,14 @@ def test_missing_signer_and_changed_historical_artifact_fail_without_writes(chec
     commit(root, "chore: publish package")
     before = (root / "list.json").read_bytes()
     no_signer = {k: v for k, v in env.items() if not k.startswith("PLUGIN_SIGNING_KEY")}
+    # Reusing an immutable verified release requires no retired private key.
+    run_build(root, no_signer, "--publish")
+    assert (root / "list.json").read_bytes() == before
+    source = root / "examples/help-button/plugin.py"
+    source.write_text(source.read_text() + "\n# New source needs a signer.\n")
+    commit(root, "fix: require signing for a new release")
     result = run_build(root, no_signer, "--publish", check=False)
-    assert result.returncode != 0 and "requires" in result.stderr
+    assert result.returncode != 0 and "required" in result.stderr
     package = next((root / "dist").glob("*.utp"))
     package.write_bytes(package.read_bytes() + b"modified")
     result = run_build(root, env, "--publish", check=False)

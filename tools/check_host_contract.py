@@ -30,6 +30,7 @@ def main() -> None:
     from src.plugin_api.updates import PackageVerificationError, PluginPackageVerifier, TrustedPublisher
     from pydantic import BaseModel, Field
     from publisher_registry import load_registry
+    from distribution import discover_plugins
 
     root = Path(__file__).parents[1]
     catalogue = json.loads((args.distribution_root / "list.json").read_text(encoding="utf-8"))
@@ -44,15 +45,14 @@ def main() -> None:
     for entry in catalogue["plugins"]:
         namespace["PluginCatalogEntry"].model_validate(entry)
     publishers = {key: TrustedPublisher(key_id=key, public_key=record.public_key, publisher=record.publisher,
-                    status=record.status, plugin_id_prefixes=record.plugin_id_prefixes) for key, record in load_registry().items()}
+                    status=record.status, plugin_id_prefixes=record.plugin_id_prefixes, channel=record.channel, legacy_manifest_hashes=record.legacy_manifest_hashes, require_manifest_binding=True) for key, record in load_registry().items()}
     with tempfile.TemporaryDirectory(dir=args.temporary_root) as temporary:
         work = Path(temporary)
         supervisor = PluginSupervisor(
             root=work / "workers", storage_root=work / "storage"
         )
         registry = PluginRegistry(work / "installed", supervisor)
-        for manifest_path in sorted(p for tree in ("examples", "official") for p in (root / tree).glob("*/manifest.json")):
-            source = manifest_path.parent
+        for source, _ in discover_plugins(root):
             manifest = PluginManifest.model_validate_json(
                 (source / "manifest.json").read_bytes()
             )

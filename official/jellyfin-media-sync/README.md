@@ -1,4 +1,4 @@
-# Jellyfin Media Sync — official preview
+# Jellyfin Media Sync â€” official preview
 
 Version **0.0.1** is an official preview under test, with automatic package updates
 disabled. The independently installable `official.jellyfin-media-sync` package is
@@ -62,7 +62,7 @@ to all plugins. No plugin-specific host hook or trust bypass is used.
 
 Build a validated preview with `python tools/build_packages.py`. Packages and
 catalogue previews land under `.validation/`; published historical packages remain
-immutable. This preview is explicitly unreleased in `catalogue.json` until a
-reviewed signing identity covers its new official ID. Unsigned local packages must
+immutable. The 0.0.1 preview is published through the reviewed official signing
+identity; automatic updates remain disabled during validation. Unsigned local packages must
 use the host's normal untrusted-package approval flow. Test signing keys are for
 disposable integration tests only and never confer production trust.

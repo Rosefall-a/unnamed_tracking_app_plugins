@@ -77,6 +77,7 @@
         "frontend.page.replace.settings",
         "frontend.routes",
         "frontend.native",
+        "frontend.pwa",
         "backend.routes",
         "backend.routes.plugin",
         "backend.routes.host",
@@ -299,6 +300,66 @@
       "title": "PluginNativeFrontendDeclaration",
       "type": "object"
     },
+    "PluginPwaDeclaration": {
+      "additionalProperties": false,
+      "description": "Non-executable install metadata; the host owns the worker and root routes.",
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "short_name": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Short Name",
+          "type": "string"
+        },
+        "theme_color": {
+          "default": "#0f1117",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Theme Color",
+          "type": "string"
+        },
+        "background_color": {
+          "default": "#0f1117",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Background Color",
+          "type": "string"
+        },
+        "manifest": {
+          "default": "pwa/manifest.webmanifest",
+          "pattern": "^pwa/manifest\\.webmanifest$",
+          "title": "Manifest",
+          "type": "string"
+        },
+        "icons": {
+          "default": [
+            "pwa/icon-192.png",
+            "pwa/icon-512.png"
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Icons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "short_name"
+      ],
+      "title": "PluginPwaDeclaration",
+      "type": "object"
+    },
     "PluginUiDeclaration": {
       "additionalProperties": false,
       "description": "Declarative identifiers exposed to the native frontend.",
@@ -395,6 +456,32 @@
       "title": "Description",
       "type": "string"
     },
+    "icon": {
+      "anyOf": [
+        {
+          "maxLength": 2048,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Icon"
+    },
+    "tags": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags",
+      "type": "array"
+    },
+    "automatic_update": {
+      "default": true,
+      "title": "Automatic Update",
+      "type": "boolean"
+    },
     "entrypoint": {
       "maxLength": 255,
       "minLength": 1,
@@ -481,6 +568,17 @@
       },
       "title": "Backend Routes",
       "type": "array"
+    },
+    "pwa": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PluginPwaDeclaration"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "required": [

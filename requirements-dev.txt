@@ -2,4 +2,5 @@ pytest>=8,<10
 cryptography>=50,<51
 jsonschema>=4.23,<5
 pydantic>=2,<3
+Pillow>=12,<13
 -r wiki/docs/requirements.txt

@@ -28,10 +28,12 @@ Do not duplicate host infrastructure here.
 
 # 1. Repository Structure
 
-Maintained source lives in one intentional tree:
+Maintained source is split by product purpose and signing identity:
 
 ```text
-examples/<plugin-name>/  # complete official reference and demo sources
+examples/<plugin-name>/  # complete reference/demo sources (demo signers)
+official/<plugin-name>/  # maintained user-facing plugins (official signers)
+plugins/<plugin-name>/   # independent sources (generic signers, optional)
 sdk/                    # public Plugin API v1 protocol helper
 wiki/docs/              # Material/MkDocs developer manual and dated history
 tests/                  # source, package, browser and release contract tests

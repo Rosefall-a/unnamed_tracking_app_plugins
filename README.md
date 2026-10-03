@@ -17,6 +17,12 @@ In Unnamed Tracking open **Settings → Plugins → Install plugin**, select the
 package/source, review identity, publisher/signature, compatibility and permissions,
 then complete approval/configuration and enable it as required by the host flow.
 
+Maintained user-facing functionality lives in [official/](official/README.md).
+The [PWA](official/pwa/README.md) remains 0.0.1 during integration; its production
+release waits for a separate protected official signing identity. Examples remain
+demonstrations, even when their historical publisher text contains Official.
+See [folder-specific signing and environment keys](docs/official-signing.md).
+
 Catalogue membership does not establish trust. Publisher signing and host
 permission approval are separate. Unsigned preview packages remain untrusted.
 Full API/native frontend authority needs particular review; request narrow scopes.
@@ -100,12 +106,12 @@ and fully validate every maintained source, including unreleased previews.
 
 Author `release.json` for publisher/tags/icon/notes/update policy. The existing
 builder creates canonical payload and final archive hashes, signs Ed25519 over
-`plugin-package-v1:<payload hash>`, verifies the result, and derives all release
+`plugin-package-v2:<payload hash>` (with a signed manifest envelope in the payload), verifies the result, and derives all release
 and catalogue metadata from the package. Conventional Commits select SemVer;
 explicit higher source versions remain supported. Update policy belongs to each release.
 
 Official main publication uses `python tools/build_packages.py --require-signing`
-with the existing secure CI key and active scoped publisher registry. It preserves
+with separate folder-specific protected keys and the active scoped publisher registry. It preserves
 all historical packages and commits packages/history/catalogue/resolved versions
 together. Tag only an already-published snapshot. Never commit a private key.
 
