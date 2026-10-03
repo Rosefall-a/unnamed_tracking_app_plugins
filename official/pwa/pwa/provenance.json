@@ -4,7 +4,7 @@
   "source_path": "pwa",
   "sha256": {
     "manifest.webmanifest": "3c847628081be385d87a887d5df7fa7c2994e0c7a67ceba9613f77d566606a3a",
-    "service-worker.js": "24bc2be49924a30456d5f13c64bb4d744675bd90b20253a175e395545ee3deeb",
+    "service-worker.js": "26ce5dc7a33752cc3f2173603d7ed872403bd4878cd38f451204ed34009cbb31",
     "offline.html": "e32032dece9e5093ce3c59535da67f5889ccf969c1f973e9e7b6ba728beae5d4",
     "pwa-icon.svg": "33d30871e87f333c9ccef6618c6783424481f354f6b6c09ef8dec9c0d209963a",
     "icon-192.png": "54de1241522aa6f6c1a218e409fb071cbbf63fdc7f4e77bd790a8d55c28acf51",
