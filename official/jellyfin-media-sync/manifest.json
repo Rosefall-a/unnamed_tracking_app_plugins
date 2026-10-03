@@ -1,0 +1,189 @@
+{
+  "application_version_range": "^1.0.0",
+  "capabilities": [
+    {
+      "name": "media.write",
+      "version": 1
+    },
+    {
+      "name": "plugin.storage",
+      "version": 1
+    },
+    {
+      "name": "tasks.background",
+      "version": 1
+    },
+    {
+      "name": "network.outbound",
+      "version": 1
+    },
+    {
+      "name": "frontend.native",
+      "version": 1
+    },
+    {
+      "name": "frontend.navigation.main",
+      "version": 1
+    },
+    {
+      "name": "frontend.navigation.settings",
+      "version": 1
+    },
+    {
+      "name": "frontend.settings",
+      "version": 1
+    },
+    {
+      "name": "frontend.routes",
+      "version": 1
+    },
+    {
+      "name": "frontend.page.extend",
+      "version": 1
+    },
+    {
+      "name": "frontend.context.media",
+      "version": 1
+    },
+    {
+      "name": "notifications.send",
+      "version": 1
+    }
+  ],
+  "dependencies": [],
+  "description": "Official preview: multiple Jellyfin accounts, shared media matching, metadata, progress and reported viewing sessions. The separate example remains a demo.",
+  "entrypoint": "plugin:main",
+  "integrity": {
+    "key_id": null,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null
+  },
+  "manifest_version": 1,
+  "name": "Jellyfin Media Sync",
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": [
+      "native/style.css"
+    ]
+  },
+  "permissions": [
+    {
+      "capability": {
+        "name": "media.write",
+        "version": 1
+      },
+      "rationale": "Upsert Movies, TV and Anime with stable provider identity and conflict-checked completion."
+    },
+    {
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      },
+      "rationale": "Secure installation credential, approved user links, media mappings and bounded synchronization checkpoints."
+    },
+    {
+      "capability": {
+        "name": "tasks.background",
+        "version": 1
+      },
+      "rationale": "Synchronize each explicitly subscribed user through live user-scoped media grants."
+    },
+    {
+      "capability": {
+        "name": "network.outbound",
+        "version": 1
+      },
+      "rationale": "Contact only the configured Jellyfin server after a live grant check; redirects are refused."
+    },
+    {
+      "capability": {
+        "name": "frontend.native",
+        "version": 1
+      },
+      "rationale": "Render native Vue configuration, write-only credential entry and progress using the host SDK."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.main",
+        "version": 1
+      },
+      "rationale": "Add Jellyfin Sync to the sidebar."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.settings",
+        "version": 1
+      },
+      "rationale": "Link to the native Jellyfin Settings contribution."
+    },
+    {
+      "capability": {
+        "name": "frontend.settings",
+        "version": 1
+      },
+      "rationale": "Provide native configuration and status within Settings."
+    },
+    {
+      "capability": {
+        "name": "frontend.routes",
+        "version": 1
+      },
+      "rationale": "Expose the plugin-owned Jellyfin sync route."
+    },
+    {
+      "capability": {
+        "name": "frontend.page.extend",
+        "version": 1
+      },
+      "rationale": "Contribute a plugin-owned Watch Now panel to media detail pages."
+    },
+    {
+      "capability": {
+        "name": "frontend.context.media",
+        "version": 1
+      },
+      "rationale": "Resolve Watch Now for the authenticated media-page context."
+    },
+    {
+      "capability": {
+        "name": "notifications.send",
+        "version": 1
+      },
+      "rationale": "Optionally notify the subscribing user about sync errors; denied grants do not stop sync."
+    }
+  ],
+  "plugin_id": "official.jellyfin-media-sync",
+  "sdk_version_range": "^1.0.0",
+  "storage": {
+    "quota_mb": 128
+  },
+  "ui": {
+    "actions": [
+      "save-server",
+      "clear-server-credential",
+      "test-connection",
+      "save-mappings",
+      "authorize-identity",
+      "get-config",
+      "login",
+      "quick-connect-start",
+      "quick-connect-finish",
+      "link-approved",
+      "save-account",
+      "clear-account-credential",
+      "order-accounts",
+      "sync-now",
+      "status",
+      "watch-now",
+      "resolve-review"
+    ],
+    "menus": [],
+    "pages": [
+      "accounts",
+      "admin",
+      "watch"
+    ],
+    "settings": []
+  },
+  "version": "0.0.1"
+}

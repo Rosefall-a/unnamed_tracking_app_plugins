@@ -1,0 +1,270 @@
+{
+  "schema_version": "v1",
+  "plugin_id": "official.jellyfin-media-sync",
+  "title": "Jellyfin Media Sync",
+  "settings": [],
+  "actions": [
+    {
+      "id": "save-server",
+      "label": "save server",
+      "handler": "plugin:save_server",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "clear-server-credential",
+      "label": "clear server credential",
+      "handler": "plugin:clear_server_credential",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "test-connection",
+      "label": "test connection",
+      "handler": "plugin:test_connection",
+      "capability": {
+        "name": "network.outbound",
+        "version": 1
+      }
+    },
+    {
+      "id": "save-mappings",
+      "label": "save mappings",
+      "handler": "plugin:save_mappings",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "authorize-identity",
+      "label": "authorize identity",
+      "handler": "plugin:authorize_identity",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "get-config",
+      "label": "get config",
+      "handler": "plugin:get_config",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "login",
+      "label": "login",
+      "handler": "plugin:login",
+      "capability": {
+        "name": "network.outbound",
+        "version": 1
+      }
+    },
+    {
+      "id": "quick-connect-start",
+      "label": "quick connect start",
+      "handler": "plugin:quick_connect_start",
+      "capability": {
+        "name": "network.outbound",
+        "version": 1
+      }
+    },
+    {
+      "id": "quick-connect-finish",
+      "label": "quick connect finish",
+      "handler": "plugin:quick_connect_finish",
+      "capability": {
+        "name": "network.outbound",
+        "version": 1
+      }
+    },
+    {
+      "id": "link-approved",
+      "label": "link approved",
+      "handler": "plugin:link_approved",
+      "capability": {
+        "name": "tasks.background",
+        "version": 1
+      }
+    },
+    {
+      "id": "save-account",
+      "label": "save account",
+      "handler": "plugin:save_account",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "clear-account-credential",
+      "label": "clear account credential",
+      "handler": "plugin:clear_account_credential",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "order-accounts",
+      "label": "order accounts",
+      "handler": "plugin:order_accounts",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "sync-now",
+      "label": "sync now",
+      "handler": "plugin:sync_now",
+      "capability": {
+        "name": "tasks.background",
+        "version": 1
+      }
+    },
+    {
+      "id": "status",
+      "label": "status",
+      "handler": "plugin:status",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "watch-now",
+      "label": "watch now",
+      "handler": "plugin:watch_now",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      },
+      "external_navigation": true
+    },
+    {
+      "id": "resolve-review",
+      "label": "resolve review",
+      "handler": "plugin:resolve_review",
+      "capability": {
+        "name": "tasks.background",
+        "version": 1
+      },
+      "confirmation": "Apply this mapping or watched-state decision? Local notes and ratings are retained."
+    }
+  ],
+  "tables": [],
+  "dialogs": [],
+  "menus": [],
+  "pages": [
+    {
+      "id": "accounts",
+      "title": "Your Jellyfin accounts",
+      "description": "Connect accounts, choose approved libraries and review synchronization.",
+      "settings": [],
+      "actions": [
+        "get-config",
+        "login",
+        "quick-connect-start",
+        "quick-connect-finish",
+        "link-approved",
+        "save-account",
+        "clear-account-credential",
+        "order-accounts",
+        "sync-now",
+        "status",
+        "resolve-review"
+      ],
+      "tables": [],
+      "dialogs": []
+    },
+    {
+      "id": "admin",
+      "title": "Jellyfin administration",
+      "description": "Administrator-only server discovery, approved libraries and shared identity access.",
+      "settings": [],
+      "actions": [
+        "get-config",
+        "save-server",
+        "clear-server-credential",
+        "test-connection",
+        "save-mappings",
+        "authorize-identity"
+      ],
+      "tables": [],
+      "dialogs": []
+    },
+    {
+      "id": "watch",
+      "title": "Watch in Jellyfin",
+      "description": "Open an available item using your account priority.",
+      "settings": [],
+      "actions": [
+        "watch-now"
+      ],
+      "tables": [],
+      "dialogs": []
+    }
+  ],
+  "extensions": [
+    {
+      "id": "watch-media",
+      "slot": "media.detail.after-header",
+      "page_id": "watch",
+      "order": 30
+    }
+  ],
+  "navigation": [
+    {
+      "id": "accounts-sidebar",
+      "location": "main.sidebar",
+      "label": "Jellyfin",
+      "route_id": "accounts-route",
+      "order": 60
+    },
+    {
+      "id": "admin-settings",
+      "location": "settings.sidebar",
+      "label": "Jellyfin servers",
+      "settings_section_id": "jellyfin-admin",
+      "order": 60,
+      "visibility": {
+        "admin_only": true
+      }
+    }
+  ],
+  "settings_sections": [
+    {
+      "id": "jellyfin-admin",
+      "label": "Jellyfin servers",
+      "page_id": "admin",
+      "order": 60,
+      "visibility": {
+        "admin_only": true
+      }
+    }
+  ],
+  "routes": [
+    {
+      "id": "accounts-route",
+      "path": "accounts",
+      "page_id": "accounts"
+    }
+  ],
+  "contextual_actions": [
+    {
+      "id": "watch-now-media",
+      "location": "media",
+      "label": "Watch in Jellyfin",
+      "action_id": "watch-now",
+      "order": 30
+    }
+  ]
+}
