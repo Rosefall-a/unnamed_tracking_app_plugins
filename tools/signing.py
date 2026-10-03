@@ -6,9 +6,9 @@ import os
 from pathlib import Path
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 try:
-    from .publisher_registry import release_signer
+    from .publisher_registry import PublisherRegistryError, release_signer
 except ImportError:
-    from publisher_registry import release_signer
+    from publisher_registry import PublisherRegistryError, release_signer
 
 
 def select_signer(root: Path, source: Path, plugin_id: str, *, required: bool):
@@ -20,6 +20,7 @@ def select_signer(root: Path, source: Path, plugin_id: str, *, required: bool):
     key_id = os.getenv(prefix + "_KEY_ID", "").strip()
     encoded = os.getenv(prefix + "_KEY_B64", "").strip()
     if not key_id and not encoded and prefix != "PLUGIN_SIGNING" and fallback == "generic":
+        prefix = "PLUGIN_SIGNING"
         key_id = os.getenv("PLUGIN_SIGNING_KEY_ID", "").strip()
         encoded = os.getenv("PLUGIN_SIGNING_KEY_B64", "").strip()
     if bool(key_id) != bool(encoded):
@@ -32,7 +33,16 @@ def select_signer(root: Path, source: Path, plugin_id: str, *, required: bool):
         key = Ed25519PrivateKey.from_private_bytes(base64.b64decode(encoded, validate=True))
     except ValueError as exc:
         raise ValueError(f"{prefix}: invalid Ed25519 seed") from exc
-    record = release_signer(key_id, (plugin_id,), key.public_key().public_bytes_raw())
+    try:
+        record = release_signer(key_id, (plugin_id,), key.public_key().public_bytes_raw())
+    except PublisherRegistryError as exc:
+        raise PublisherRegistryError(
+            f"{source.relative_to(root).as_posix()}: {prefix} identity rejected: {exc}. "
+            "Register the matching public key, channel and plugin scope in "
+            "publishers/registry.json and the host trusted_publishers.json; "
+            "adding Actions secrets alone does not register a publisher. "
+            "Configured invalid identities are not silently replaced."
+        ) from exc
     if folder == "official" and record.channel != "official":
         raise ValueError("official sources require an official publisher identity; fallback cannot promote demo/community keys")
     if folder == "examples" and record.channel == "official":

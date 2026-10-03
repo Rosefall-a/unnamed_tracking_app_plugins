@@ -15,8 +15,22 @@ from verify_packages import verify_package
 
 def test_registry_matches_reviewed_public_key_files() -> None:
     registry = load_registry()
-    assert set(registry) == {"official-example-2026", "official-example-2026-additional", "non-secret-testkey"}
-    assert all(record.allows_plugin("example.lifecycle") for record in registry.values())
+    historical = {"official-example-2026", "official-example-2026-additional", "non-secret-testkey"}
+    current = {"unnamed-tracking-examples-2026-10-v1", "unnamed-tracking-official-2026-10-v1",
+               "unnamed-tracking-generic-2026-10-v1"}
+    assert set(registry) == historical | current
+    assert all(registry[key].allows_plugin("example.lifecycle") for key in historical)
+    official = registry["unnamed-tracking-official-2026-10-v1"]
+    assert official.channel == "official" and official.allows_plugin("official.pwa", release=True)
+    assert not official.allows_plugin("example.lifecycle")
+    examples = registry["unnamed-tracking-examples-2026-10-v1"]
+    assert examples.channel == "demo" and examples.allows_plugin("example.lifecycle", release=True)
+    generic = registry["unnamed-tracking-generic-2026-10-v1"]
+    assert generic.channel == "community" and generic.allows_plugin("example.lifecycle", release=True)
+    assert generic.allows_plugin("plugin.lifecycle", release=True)
+    assert not examples.allows_plugin("official.pwa")
+    assert not generic.allows_plugin("official.pwa")
+    assert {registry[key].publisher for key in current} == {"Unnamed Tracking Official"}
 
 
 def test_release_signer_requires_an_active_scoped_registered_key() -> None:

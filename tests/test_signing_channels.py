@@ -77,6 +77,75 @@ def test_real_publish_uses_three_independent_keys(scoped_checkout):
     assert seen == {"official.pwa": "official", "example.signing": "demo", "community.signing": "community"}
 
 
+@pytest.mark.parametrize("folder,prefix,signer", [
+    ("examples", "PLUGIN_EXAMPLES_SIGNING", "demo"),
+    ("official", "PLUGIN_OFFICIAL_SIGNING", "official"),
+])
+def test_missing_folder_pair_can_use_appropriately_scoped_generic(scoped_checkout, folder, prefix, signer):
+    root, env = scoped_checkout
+    for suffix in ("_KEY_ID", "_KEY_B64"):
+        env["PLUGIN_SIGNING" + suffix] = env.pop(prefix + suffix)
+    # This fixture's generic plugin has an unrelated scope; keep this test
+    # focused on the requested folder and its real publication verification.
+    shutil.rmtree(root / "plugins")
+    subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
+    subprocess.run(["git", "-C", str(root), "commit", "-m", "chore: isolate fallback scope"],
+                   check=True, capture_output=True)
+    env["PLUGIN_SIGNING_FALLBACK"] = "generic"
+    result = build(root, env, "--publish")
+    assert result.returncode == 0, result.stderr
+    plugin_id = "example.signing" if folder == "examples" else "official.pwa"
+    package = next((root / "dist").glob(plugin_id + "-*.utp"))
+    with zipfile.ZipFile(package) as archive:
+        manifest = json.loads(archive.read("manifest.json"))
+        assert manifest["integrity"]["key_id"] == signer
+    verified = subprocess.run([sys.executable, str(root / "tools/verify_packages.py"), str(package)],
+                              capture_output=True, text=True)
+    assert verified.returncode == 0, verified.stderr
+
+
+def test_registered_community_generic_can_sign_examples_without_official_trust(scoped_checkout):
+    root, env = scoped_checkout
+    env.pop("PLUGIN_EXAMPLES_SIGNING_KEY_ID")
+    env.pop("PLUGIN_EXAMPLES_SIGNING_KEY_B64")
+    env["PLUGIN_SIGNING_FALLBACK"] = "generic"
+    path = root / "publishers/registry.json"
+    registry = json.loads(path.read_text())
+    next(r for r in registry["publishers"] if r["channel"] == "community")["plugin_id_prefixes"].append("example.")
+    path.write_text(json.dumps(registry))
+    subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+    subprocess.run(["git", "-C", str(root), "commit", "-m", "chore: authorize community example fallback"],
+                   check=True, capture_output=True)
+    result = build(root, env, "--publish")
+    assert result.returncode == 0, result.stderr
+    with zipfile.ZipFile(next((root / "dist").glob("example.signing-*.utp"))) as archive:
+        manifest = json.loads(archive.read("manifest.json"))
+        assert manifest["integrity"]["key_id"] == "community"
+
+
+def test_configured_unknown_key_explains_public_registration(scoped_checkout):
+    root, env = scoped_checkout
+    env["PLUGIN_OFFICIAL_SIGNING_KEY_ID"] = "not-registered"
+    result = build(root, env, "--publish")
+    assert result.returncode != 0
+    assert "adding Actions secrets alone does not register a publisher" in result.stderr
+    assert "publishers/registry.json" in result.stderr
+    assert env["PLUGIN_OFFICIAL_SIGNING_KEY_B64"] not in result.stderr
+    assert not (root / "dist").exists()
+
+
+def test_unrelated_generic_key_cannot_rescue_missing_official_key(scoped_checkout):
+    root, env = scoped_checkout
+    env.pop("PLUGIN_OFFICIAL_SIGNING_KEY_ID")
+    env.pop("PLUGIN_OFFICIAL_SIGNING_KEY_B64")
+    env["PLUGIN_SIGNING_FALLBACK"] = "generic"
+    result = build(root, env, "--publish")
+    assert result.returncode != 0
+    assert "PLUGIN_SIGNING identity rejected" in result.stderr
+    assert "outside the plugin scope" in result.stderr
+    assert not (root / "dist").exists()
+
+
 @pytest.mark.parametrize("defect", ["missing", "partial", "malformed", "demo", "unknown"])
 def test_official_signing_failure_never_publishes_or_downgrades(scoped_checkout, defect):
     root, env = scoped_checkout
