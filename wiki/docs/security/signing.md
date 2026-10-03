@@ -1,9 +1,24 @@
 # Package signing and publisher identity
 
-The existing v1 package signature is Ed25519 over ASCII
-`plugin-package-v1:<canonical-payload-sha256>`. The sorted path/NUL/bytes/NUL
-payload hash excludes the manifest; the complete package hash separately binds
-the final archive, including its manifest. Do not conflate these digests.
+New packages use Ed25519 over ASCII `plugin-package-v2:<canonical-payload-sha256>`.
+The sorted path/NUL/bytes/NUL digest includes `package-signature-v2.json`, which
+binds the complete manifest without integrity and the signing key ID. The outer
+signature is prefixed `v2:`. Verification compares the signed and outer manifests.
+The entire final archive has a separate SHA-256; do not conflate these digests.
+
+Historical v1 archives are immutable. They use `plugin-package-v1:<sha256>` and
+require an exact reviewed manifest hash in `legacy_manifest_hashes` (payload hash
+to a list of approved manifest hashes). They cannot establish Official status.
+New official PWA contributions require v2. This closes the legacy manifest
+substitution gap while retaining authentic historical packages.
+
+Publisher channels are reviewed `official`, `demo`, or `community`. Official
+signing is a separate identity from demo/example signing and grants no extra
+permissions. Set folder-specific `PLUGIN_OFFICIAL_SIGNING_KEY_ID/KEY_B64` and
+`PLUGIN_EXAMPLES_SIGNING_KEY_ID/KEY_B64`; generic sources and optional fallback
+use `PLUGIN_SIGNING_KEY_ID/KEY_B64`. `PLUGIN_SIGNING_FALLBACK` selects `generic`,
+`unsigned` or `error`. Missing keys may yield unsigned previews, never unsigned
+official publication. Configured invalid keys fail without silent fallback.
 
 `publishers/registry.json` records reviewed public keys, key IDs, public-key hashes,
 publisher labels, status and allowed plugin-ID prefixes. New publication requires

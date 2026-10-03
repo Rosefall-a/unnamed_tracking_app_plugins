@@ -95,8 +95,10 @@ download contract needs an explicit update before publishing that larger list.
 
 Compute archive hashes only after signing/writing the final ZIP. The payload hash
 uses the unchanged v1 sorted `path + NUL + bytes + NUL` stream, excluding the
-manifest. Ed25519 signatures use `plugin-package-v1:<payload-sha256>`. The entire
-package hash additionally binds the manifest and ZIP bytes. Hashes have distinct
+outer manifest. New Ed25519 signatures use `plugin-package-v2:<payload-sha256>`;
+the payload contains a verified manifest envelope and the signature has a `v2:`
+prefix. Historical v1 manifests require reviewed pins. The entire package hash
+additionally binds the manifest and ZIP bytes. Hashes have distinct
 meanings; do not pass `package_sha256` to a host API expecting the payload digest.
 Publisher labels and a catalogue URL alone never establish signing trust.
 

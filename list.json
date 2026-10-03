@@ -1,5 +1,5 @@
 {
-  "name": "Unnamed Tracking App official plugins",
+  "name": "Unnamed Tracking plugins",
   "plugins": [
     {
       "application_version_range": ">=1.0.0",

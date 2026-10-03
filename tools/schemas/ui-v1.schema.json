@@ -47,6 +47,7 @@
         "frontend.page.replace.settings",
         "frontend.routes",
         "frontend.native",
+        "frontend.pwa",
         "backend.routes",
         "backend.routes.plugin",
         "backend.routes.host",

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "publisher": "Unnamed Tracking Official",
+  "tags": [
+    "pwa",
+    "official",
+    "installable",
+    "offline"
+  ],
+  "icon": "pwa/pwa-icon.svg",
+  "automatic_update": true,
+  "release_notes": "Initial 0.0.1 integration. Complete web app, neutral reconnect page, isolated caches and normal session authentication."
+}

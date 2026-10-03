@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import base64
 import binascii
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import hashlib
 import json
 from pathlib import Path
@@ -28,6 +28,8 @@ class PublisherRecord:
     public_key: bytes
     status: str
     plugin_id_prefixes: tuple[str, ...]
+    channel: str = "community"
+    legacy_manifest_hashes: dict[str, list[str]] = field(default_factory=dict)
 
     def allows_plugin(self, plugin_id: str, *, release: bool = False) -> bool:
         allowed_statuses = {"active"} if release else {"active", "retiring"}
@@ -86,12 +88,22 @@ def load_registry(path: Path = REGISTRY_PATH) -> dict[str, PublisherRecord]:
             ) from exc
         if file_key != public_key:
             raise PublisherRegistryError("publisher registry public-key file does not match")
+        if entry.get("channel", "community") not in {"official", "demo", "community"}:
+            raise PublisherRegistryError("invalid publisher channel")
+        legacy = entry.get("legacy_manifest_hashes", {})
+        if not isinstance(legacy, dict) or len(legacy) > 2048 or any(
+            not re.fullmatch(r"[a-f0-9]{64}", key) or not isinstance(value, list) or not value or len(value) > 128
+            or any(not isinstance(pin, str) or not re.fullmatch(r"[a-f0-9]{64}", pin) for pin in value) for key, value in legacy.items()
+        ):
+            raise PublisherRegistryError("invalid legacy manifest review pins")
         records[key_id] = PublisherRecord(
             key_id=key_id,
             publisher=str(entry.get("publisher", "")),
             public_key=public_key,
             status=status,
             plugin_id_prefixes=tuple(scopes),
+            channel=entry.get("channel", "community"),
+            legacy_manifest_hashes=legacy,
         )
     if not records:
         raise PublisherRegistryError("publisher registry must contain at least one key")
