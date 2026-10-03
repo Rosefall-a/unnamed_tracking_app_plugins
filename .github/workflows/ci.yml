@@ -24,7 +24,7 @@ jobs:
       - name: Validate documentation and repository references
         run: python tools/check_docs.py
       - name: Build developer wiki with strict validation
-        run: python -m mkdocs build --strict
+        run: python -m mkdocs build --strict -f wiki/mkdocs.yml
       - run: node --test tests/session_manager_ui.test.mjs
       - run: node --test tests/native_frontends.test.mjs
       - run: node --check examples/self-service-session-manager/frontend/app.js

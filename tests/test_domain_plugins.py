@@ -41,15 +41,6 @@ def load_plugin(name: str):
                 "sessions.geoip.configure",
             },
         ),
-        (
-            "discord-delivery-provider",
-            {
-                "notification_providers.register",
-                "notification_providers.deliver",
-                "plugin.storage",
-                "frontend.navigation.main",
-            },
-        ),
     ],
 )
 def test_domain_manifests_are_minimally_scoped(name: str, expected: set[str]) -> None:
@@ -209,63 +200,10 @@ def test_session_manager_routes_preserve_self_service_and_admin_capabilities(
     assert all(route["authorization"] == "admin" for route in admin_routes)
 
 
-def test_delivery_provider_registers_namespaced_provider(monkeypatch) -> None:
-    plugin = load_plugin("discord-delivery-provider")
-    calls = []
-
-    def fake_request(method, capability, payload):
-        calls.append((method, capability, payload))
-        raise StopIteration
-
-    monkeypatch.setattr(plugin, "request", fake_request)
-    with pytest.raises(StopIteration):
-        plugin.main()
-
-    assert calls == [
-        (
-            "notification_providers.register",
-            "notification_providers.register",
-            {
-                "provider_id": "example.discord-delivery-provider.discord",
-                "name": "Discord (plugin)",
-                "action_id": "deliver",
-            },
-        )
-    ]
-
-
-def test_delivery_provider_returns_bounded_work_without_a_secret() -> None:
-    plugin = load_plugin("discord-delivery-provider")
-    result = plugin.deliver(
-        {
-            "delivery": {
-                "notification_id": "notification-id",
-                "title": "T" * 400,
-                "body": "B" * 5000,
-                "event_at": 1,
-            }
-        }
-    )
-
-    assert result["discord"] is True
-    assert len(result["content"]) <= 2000
-    assert "webhook" not in result
-
-
-def test_delivery_provider_rejects_malformed_work() -> None:
-    plugin = load_plugin("discord-delivery-provider")
-    assert plugin.deliver({"delivery": {}}) == {
-        "success": False,
-        "retryable": False,
-        "error": "Invalid delivery work.",
-    }
-
-
 def test_reference_frontends_use_only_the_host_bridge() -> None:
     for name in (
         "scoped-document-viewer",
         "self-service-session-manager",
-        "discord-delivery-provider",
     ):
         script = (ROOT / "examples" / name / "frontend" / "app.js").read_text(encoding="utf-8")
         assert "plugin-api-request" in script

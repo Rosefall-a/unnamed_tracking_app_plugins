@@ -37,8 +37,12 @@ def test_moves_preserve_old_commit_version_intent(checkout):
 
 def test_only_changed_plugin_releases_but_shared_sdk_releases_every_consumer(checkout):
     root, env = checkout
-    shutil.copytree(ROOT / "examples/ui-api", root / "examples/ui-api")
-    commit(root, "feat: add a second real source")
+    shutil.copytree(ROOT / "examples/help-button", root / "examples/ui-api")
+    manifest = json.loads((root / "examples/ui-api/manifest.json").read_text(encoding="utf-8"))
+    manifest["plugin_id"] = "example.ui-api"
+    manifest["name"] = "Release selection fixture"
+    (root / "examples/ui-api/manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    commit(root, "feat: add a second release fixture")
     run_build(root, env, "--publish")
     commit(root, "chore: publish both packages")
     other = root / "releases/example.ui-api.json"

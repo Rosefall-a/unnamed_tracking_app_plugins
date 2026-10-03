@@ -160,7 +160,7 @@ def test_preview_build_never_overwrites_published_distribution(built_distributio
             assert (built_distribution / "dist" / filename).read_bytes() == (ROOT / "dist" / filename).read_bytes()
 
 
-@pytest.mark.parametrize("plugin_id", ["example.ui-api", "example.playtime-report", "example.recently-played-notifier", "example.metadata-curator"])
+@pytest.mark.parametrize("plugin_id", ["example.help-button"])
 def test_packaged_workers_report_ready_and_remain_alive(current_packages, tmp_path, plugin_id):
     with zipfile.ZipFile(current_packages[plugin_id]) as archive:
         for name in archive.namelist():
@@ -183,7 +183,7 @@ def test_packaged_workers_report_ready_and_remain_alive(current_packages, tmp_pa
 
 @pytest.mark.parametrize("defect", ["handler", "ui_shape", "risk", "range", "metadata_version", "missing_readme"])
 def test_incompatible_new_packages_are_rejected(current_packages, tmp_path, defect):
-    with zipfile.ZipFile(current_packages["example.playtime-report"]) as archive:
+    with zipfile.ZipFile(current_packages["example.help-button"]) as archive:
         members = {name: archive.read(name) for name in archive.namelist()}
     manifest = json.loads(members["manifest.json"])
     document = json.loads(members["payload/ui.json"])
@@ -238,7 +238,7 @@ def test_ci_rejects_source_and_catalogue_removal_even_with_retained_history(chec
     catalogue = json.loads((root / "list.json").read_bytes())
     catalogue["plugins"] = []
     (root / "list.json").write_text(json.dumps(catalogue), encoding="utf-8")
-    with pytest.raises(ValueError, match="disappeared from catalogue"):
+    with pytest.raises(ValueError, match="without retirement policy"):
         validate_immutable_history(root, root, "HEAD")
 
 
@@ -254,6 +254,25 @@ def test_every_release_metadata_field_is_checked_against_package(built_distribut
     path.write_text(json.dumps(document), encoding="utf-8")
     with pytest.raises((ValueError, TypeError, KeyError)):
         validate_distribution(root)
+
+
+def test_ci_allows_explicitly_retired_catalogue_entries(checkout):
+    root, env = checkout
+    run_build(root, env, "--publish")
+    commit(root, "chore: publish release")
+    (root / "retired_plugins.json").write_text(json.dumps({
+        "version": 1,
+        "plugins": [{
+            "plugin_id": "example.help-button",
+            "status": "retired",
+            "reason": "Replaced by a newer maintained reference implementation.",
+        }],
+    }))
+    shutil.rmtree(root / "examples/help-button")
+    catalogue = json.loads((root / "list.json").read_bytes())
+    catalogue["plugins"] = []
+    (root / "list.json").write_text(json.dumps(catalogue), encoding="utf-8")
+    validate_immutable_history(root, root, "HEAD")
 
 
 def test_package_generation_rejects_unindexed_output(built_distribution, tmp_path):

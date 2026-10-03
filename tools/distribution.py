@@ -20,6 +20,7 @@ ROOT = Path(__file__).parents[1]
 SEMVER = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
 TAG = re.compile(r"^[a-z0-9][a-z0-9-]{0,47}$")
 DEFAULT_BASE = "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main"
+RETIREMENT_FILE = "retired_plugins.json"
 
 
 def canonical_json(value: object) -> bytes:
@@ -137,6 +138,27 @@ def collect_payload(root: Path, source: Path, manifest: dict) -> tuple[dict[str,
 def source_digest(manifest: dict, files: dict[str, bytes]) -> str:
     source = {k: v for k, v in manifest.items() if k not in {"version", "integrity"}}
     return canonical_payload_digest([("manifest.json", canonical_json(source)), *files.items()])
+
+
+def load_retired_plugins(root: Path) -> set[str]:
+    path = root / RETIREMENT_FILE
+    if not path.exists():
+        return set()
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if data.get("version") != 1 or not isinstance(data.get("plugins"), list):
+        raise ValueError("invalid retirement policy schema")
+    ids = []
+    for record in data["plugins"]:
+        if not isinstance(record, dict) or not isinstance(record.get("plugin_id"), str):
+            raise ValueError("invalid retired plugin identity")
+        if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{0,127}", record["plugin_id"]):
+            raise ValueError("invalid retired plugin identity")
+        if record.get("status") != "retired" or not isinstance(record.get("reason"), str) or not record["reason"].strip():
+            raise ValueError("retirement records require status=retired and a reason")
+        ids.append(record["plugin_id"])
+    if len(ids) != len(set(ids)):
+        raise ValueError("duplicate retired plugin_id")
+    return set(ids)
 
 
 def load_histories(root: Path) -> dict[str, list[dict]]:
@@ -376,8 +398,16 @@ def validate_immutable_history(output: Path, repository: Path, baseline_ref: str
     previous_ids = {entry["plugin_id"] for entry in json.loads(baseline_catalogue.stdout)["plugins"]}
     current_ids = {entry["plugin_id"] for entry in json.loads((output / "list.json").read_bytes())["plugins"]}
     removed = previous_ids - current_ids
-    if removed:
-        raise ValueError(f"published plugins disappeared from catalogue: {', '.join(sorted(removed))}")
+    retired = load_retired_plugins(repository)
+    unexpected = removed - retired
+    if unexpected:
+        raise ValueError(f"published plugins disappeared from catalogue without retirement policy: {', '.join(sorted(unexpected))}")
+    if retired & current_ids:
+        raise ValueError(f"retired plugins remain in the current catalogue: {', '.join(sorted(retired & current_ids))}")
+    histories = load_histories(repository)
+    for plugin_id in retired:
+        if plugin_id not in histories:
+            raise ValueError(f"retired plugin has no retained release history: {plugin_id}")
     names = git(repository, "ls-tree", "-r", "--name-only", baseline_ref, "--", "dist", "releases")
     for name in (names or "").splitlines():
         if not name.endswith((".utp", ".json")):

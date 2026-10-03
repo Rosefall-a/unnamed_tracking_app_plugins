@@ -61,12 +61,6 @@ Use the [tutorial map](wiki/docs/development/index.md) for one-feature exercises
 
 | Source | Purpose |
 | --- | --- |
-| [UI/API](examples/ui-api/README.md) | Small reference: declarative page, setting and library action |
-| [Playtime Report](examples/playtime-report/README.md) | Read → calculate → persist a user-scoped report |
-| [Recently Played Notifier](examples/recently-played-notifier/README.md) | Library data and host notifications |
-| [Metadata Curator](examples/metadata-curator/README.md) | Settings, metadata search and normalized state |
-| [Discord Delivery Provider](examples/discord-delivery-provider/README.md) | Core-coordinated external delivery and write-only secrets |
-| [UI Playground](examples/ui-playground/README.md) | Sandboxed Vue pages and bridge; CDN teaching limitation |
 | [Help Button](examples/help-button/README.md) | Native contributions, dialogs, overlays, navigation and cleanup |
 | [Jellyfin Media Sync](examples/jellyfin-media-sync/README.md) | Master server, approved user identities, library mapping, episode completion and Watch Now |
 | [Scoped Document Viewer](examples/scoped-document-viewer/README.md) | Scoped document APIs and sandbox PDF/text/Office reader |
@@ -80,6 +74,7 @@ Small references stay small; real demos document supported behavior and host lim
 | Path | Role |
 | --- | --- |
 | `examples/` | Complete maintained plugin source; one intentional source tree |
+| `retired_plugins.json` | Explicit policy for plugins removed from the current catalogue; historical packages remain immutable |
 | `sdk/` | Public v1 protocol helper bundled with packages |
 | `tools/`, `tests/` | Existing build/validation tools and conformance tests |
 | `wiki/docs/`, `mkdocs.yml` | Developer wiki, real assets and dated evidence |

@@ -18,14 +18,14 @@ def test_all_maintained_sources_have_full_contracts(built_distribution):
 
 @pytest.mark.parametrize("defect", ["old_tree", "missing_manifest", "missing_entrypoint", "duplicate_id"])
 def test_discovery_rejects_layout_drift(tmp_path, defect):
-    shutil.copytree(ROOT / "examples/ui-api", tmp_path / "examples/ui-api")
+    shutil.copytree(ROOT / "examples/help-button", tmp_path / "examples/ui-api")
     if defect == "old_tree":
         (tmp_path / "examples.old").mkdir()
     elif defect == "missing_manifest":
         (tmp_path / "examples/stub").mkdir()
         (tmp_path / "examples/stub/README.md").write_text("Obsolete stub", encoding="utf-8")
     elif defect == "missing_entrypoint":
-        (tmp_path / "examples/ui-api/plugin.py").unlink()
+        (tmp_path / "examples/help-button/plugin.py").unlink()
     else:
         shutil.copytree(tmp_path / "examples/ui-api", tmp_path / "examples/duplicate")
     with pytest.raises(ValueError):

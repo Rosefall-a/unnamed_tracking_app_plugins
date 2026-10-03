@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "plugins": [
+    {
+      "plugin_id": "example.advanced",
+      "status": "retired",
+      "reason": "Legacy reference package; source implementation is no longer maintained."
+    },
+    {
+      "plugin_id": "example.events",
+      "status": "retired",
+      "reason": "Legacy reference package; source implementation is no longer maintained."
+    },
+    {
+      "plugin_id": "example.lifecycle",
+      "status": "retired",
+      "reason": "Legacy reference package; source implementation is no longer maintained."
+    },
+    {
+      "plugin_id": "example.discord-delivery-provider",
+      "status": "retired",
+      "reason": "Legacy notification-provider reference superseded by the maintained plugin architecture and current demos."
+    },
+    {
+      "plugin_id": "example.metadata-curator",
+      "status": "retired",
+      "reason": "Legacy metadata demo superseded by the maintained reference set."
+    },
+    {
+      "plugin_id": "example.playtime-report",
+      "status": "retired",
+      "reason": "Legacy playtime demo superseded by the maintained reference set."
+    },
+    {
+      "plugin_id": "example.recently-played-notifier",
+      "status": "retired",
+      "reason": "Legacy notification demo superseded by the maintained reference set."
+    },
+    {
+      "plugin_id": "example.ui-api",
+      "status": "retired",
+      "reason": "Legacy declarative UI/API demo superseded by the maintained reference set."
+    },
+    {
+      "plugin_id": "example.ui-playground",
+      "status": "retired",
+      "reason": "Legacy UI playground superseded by the maintained frontend examples."
+    }
+  ]
+}
