@@ -107,8 +107,9 @@ jobs:
         run: python tools/check_reference_lifecycle.py --host-root .validation/host
       - name: Test independently installed official Jellyfin preview
         run: |
-          python tools/check_jellyfin_official_lifecycle.py --host-root .validation/host \
-            --work-root "${{ runner.temp }}/jellyfin-official-acceptance" --browser
+          bash .validation/host/tools/run_strict_plugin_acceptance.sh \
+            "$GITHUB_WORKSPACE/.validation/host" "$GITHUB_WORKSPACE" \
+            "${{ runner.temp }}/jellyfin-official-acceptance"
       - name: Verify official PWA signing and real browser lifecycle
         run: |
           python .validation/host/tools/check_pwa_lifecycle.py --plugins-root . \
