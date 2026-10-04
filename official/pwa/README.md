@@ -2,8 +2,8 @@
 
 The maintained official PWA integrates the existing mobile repository's PWA
 assets with the complete Unnamed Tracking web application. Initial version:
-**0.0.1**. The v1.1 host contract migration uses plugin release **0.0.2** around
-the unchanged, reviewed mobile assets at **0.0.1**. Stable 1.0.0 requires an
+**0.0.1**. The v1.1 host contract and theme migration uses plugin release **0.0.2**
+with reviewed mobile assets at **0.0.2**. Stable 1.0.0 requires an
 explicit human release decision.
 
 Install its `.utp` through Plugin Manager, review `frontend.pwa`, and enable it.
@@ -22,6 +22,12 @@ The installed app opens the full website and uses its normal login/session/SSO.
 Passwords are never saved by this plugin. Session expiry returns to normal login.
 Offline navigation displays a neutral waiting-for-internet page, never account
 data. No `/api/` response is cached. Reconnect restores normal navigation.
+
+The full application, sign-in/SSO redirects and neutral offline page follow
+Light, Dark or System and the last device palette, including Orange, Green and
+custom colors. Only cosmetic color roles are cached locally; saved account
+preferences take precedence online. Browser bars follow the current background.
+The public signed installation manifest never contains personal appearance data.
 
 Updates replace the host worker generation and remove only owned old caches.
 The offline page has no time expiry. Disable, permission revocation or uninstall

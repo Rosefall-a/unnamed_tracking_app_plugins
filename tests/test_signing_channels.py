@@ -178,8 +178,8 @@ def test_unsigned_preview_is_explicit_and_keeps_zero_zero_version(scoped_checkou
         manifest = json.loads(archive.read("manifest.json"))
         assert manifest["version"] == "0.0.2"
         assert manifest["api_contract_version"] == "1.1.0"
-        assert json.loads(archive.read("payload/pwa/version.json"))["version"] == "0.0.1"
-        assert json.loads(archive.read("payload/pwa/provenance.json"))["version"] == "0.0.1"
+        assert json.loads(archive.read("payload/pwa/version.json"))["version"] == "0.0.2"
+        assert json.loads(archive.read("payload/pwa/provenance.json"))["version"] == "0.0.2"
         assert manifest["integrity"]["signature"] is None
         assert manifest["integrity"]["key_id"] is None
     assert not (root / "list.json").exists()
