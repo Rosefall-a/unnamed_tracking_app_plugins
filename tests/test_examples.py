@@ -6,6 +6,8 @@ from pathlib import Path
 ROOT = Path(__file__).parents[1]
 PLUGINS = (
     "ui-api",
+    "home-widgets",
+    "theme-palettes",
     "scoped-document-viewer",
     "self-service-session-manager",
     "discord-delivery-provider",

@@ -1,0 +1,75 @@
+{
+  "manifest_version": 1,
+  "api_contract_version": "1.1.0",
+  "plugin_id": "example.home-widgets",
+  "name": "Home Widgets",
+  "version": "1.0.0",
+  "description": "Personal library glance and embedded media demo widgets.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": "^1.1.0",
+  "application_version_range": "*",
+  "capabilities": [
+    {
+      "name": "games.read",
+      "version": 1
+    },
+    {
+      "name": "frontend.home.widgets",
+      "version": 1
+    },
+    {
+      "name": "frontend.native",
+      "version": 1
+    }
+  ],
+  "permissions": [
+    {
+      "capability": {
+        "name": "games.read",
+        "version": 1
+      },
+      "rationale": "Read only the signed-in user's public game library when the widget refreshes."
+    },
+    {
+      "capability": {
+        "name": "frontend.home.widgets",
+        "version": 1
+      },
+      "rationale": "Offer optional Home widgets selected by each account."
+    },
+    {
+      "capability": {
+        "name": "frontend.native",
+        "version": 1
+      },
+      "rationale": "Render the declared native widget pages inside the host using its public Vue SDK."
+    }
+  ],
+  "dependencies": [],
+  "storage": {
+    "quota_mb": 1
+  },
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null,
+    "key_id": null
+  },
+  "native_frontend": {
+    "entry": "native/index.js",
+    "styles": [
+      "native/style.css"
+    ]
+  },
+  "ui": {
+    "settings": [],
+    "actions": [
+      "library-glance"
+    ],
+    "pages": [
+      "library-glance",
+      "library-glance-mobile",
+      "embedded-media"
+    ],
+    "menus": []
+  }
+}

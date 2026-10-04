@@ -18,7 +18,7 @@ package/source, review identity, publisher/signature, compatibility and permissi
 then complete approval/configuration and enable it as required by the host flow.
 
 Maintained user-facing functionality lives in [official/](official/README.md).
-The [PWA](official/pwa/README.md) remains 0.0.1 during integration; its production
+The [PWA](official/pwa/README.md) appearance migration remains unreleased 0.0.2; its production
 release waits for a separate protected official signing identity. Examples remain
 demonstrations, even when their historical publisher text contains Official.
 See [folder-specific signing and environment keys](docs/official-signing.md).
@@ -62,6 +62,8 @@ Use the [tutorial map](wiki/docs/development/index.md) for one-feature exercises
 | Source | Purpose |
 | --- | --- |
 | [UI/API](examples/ui-api/README.md) | Small reference: declarative page, setting and library action |
+| [Home Widgets](examples/home-widgets/README.md) | v1.1 personal widget options, separate phone layout and embedded media demo |
+| [Blue Hour Palettes](examples/theme-palettes/README.md) | Optional light/dark semantic palettes, personal copies and independent permission |
 | [Playtime Report](examples/playtime-report/README.md) | Read → calculate → persist a user-scoped report |
 | [Recently Played Notifier](examples/recently-played-notifier/README.md) | Library data and host notifications |
 | [Metadata Curator](examples/metadata-curator/README.md) | Settings, metadata search and normalized state |

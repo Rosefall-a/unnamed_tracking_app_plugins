@@ -1,0 +1,42 @@
+{
+  "schema_version": "v1",
+  "api_contract_version": "1.1.0",
+  "plugin_id": "example.theme-palettes",
+  "title": "Blue Hour Palettes",
+  "themes": [
+    {
+      "id": "blue-hour",
+      "label": "Blue Hour",
+      "description": "Cool blue menus and calm surfaces for your personal library.",
+      "colors": {
+        "light": {
+          "background": "#f1f5fc",
+          "surface": "#ffffff",
+          "surface_alt": "#e5edf8",
+          "text": "#20304b",
+          "muted": "#51617a",
+          "accent": "#3961a6",
+          "success": "#216e3e",
+          "warning": "#855000",
+          "error": "#b42318",
+          "info": "#265a8b",
+          "purple": "#6951a2"
+        },
+        "dark": {
+          "background": "#121a29",
+          "surface": "#1c293e",
+          "surface_alt": "#273650",
+          "text": "#edf3fc",
+          "muted": "#b0bfd6",
+          "accent": "#93b8fa",
+          "success": "#96d5a9",
+          "warning": "#f2c87a",
+          "error": "#ffa6a0",
+          "info": "#a2c8ef",
+          "purple": "#c6b5f1"
+        }
+      },
+      "order": 0
+    }
+  ]
+}
