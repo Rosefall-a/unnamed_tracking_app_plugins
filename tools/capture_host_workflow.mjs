@@ -20,7 +20,9 @@ const mime = { ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+
 const server = createServer(async (incoming, outgoing) => {
   if (incoming.url.startsWith("/api/")) {
     const upstream = httpRequest(new URL(incoming.url, backend), {
-      method: incoming.method, headers: incoming.headers,
+      // This supplemental proxy reuses the backend's authenticated session.
+      // Keep its canonical Host: session cookies are scoped to host and port.
+      method: incoming.method, headers: { ...incoming.headers, host: new URL(backend).host },
     }, (response) => { outgoing.writeHead(response.statusCode, response.headers); response.pipe(outgoing); });
     upstream.on("error", () => { outgoing.writeHead(502); outgoing.end("Host unavailable"); });
     incoming.pipe(upstream);
@@ -45,6 +47,8 @@ try {
   const cookies = JSON.parse(await readFile(cookieFile, "utf8"));
   assert.ok(cookies.length, "Authenticated acceptance cookies are required");
   await context.addCookies(cookies.map(({ name, value }) => ({ name, value, url: origin })));
+  const authenticated = await context.request.get(origin + "/api/auth/me");
+  assert.equal(authenticated.status(), 200, "Capture proxy must retain the actual backend session");
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (error) => errors.push(String(error)));
