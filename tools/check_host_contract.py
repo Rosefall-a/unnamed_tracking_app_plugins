@@ -42,6 +42,10 @@ def main() -> None:
     models = [n for n in tree.body if isinstance(n, ast.ClassDef) and n.name in {"PluginCatalogRelease", "PluginCatalogEntry"}]
     namespace = {"BaseModel": BaseModel, "Field": Field, "PluginDependency": PluginDependency}
     exec(compile(ast.Module(body=models, type_ignores=[]), str(api_source), "exec"), namespace)
+    # This tool uses postponed annotations; resolve the public transport types
+    # explicitly instead of relying on the API server's module namespace.
+    for model in models:
+        namespace[model.name].model_rebuild(_types_namespace=namespace)
     for entry in catalogue["plugins"]:
         namespace["PluginCatalogEntry"].model_validate(entry)
     publishers = {key: TrustedPublisher(key_id=key, public_key=record.public_key, publisher=record.publisher,
