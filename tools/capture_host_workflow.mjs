@@ -65,8 +65,8 @@ try {
   const install = page.getByRole("dialog", { name: "Install a plugin", exact: true });
   await install.waitFor();
   await capture("plugin-install.png", "Actual authenticated installer source chooser with live catalogue data.");
-  await install.getByRole("button", { name: "Close", exact: true }).click();
-  await plugin.getByRole("button", { name: "Manage plugin", exact: true }).click();
+  await install.getByRole("button", { name: "Close dialog", exact: true }).click();
+  await plugin.getByRole("button", { name: "Settings & access", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: /^Jellyfin Media Sync(?: \(Demo\))?$/ });
   await dialog.getByRole("button", { name: "Stop", exact: true }).waitFor();
   await capture("lifecycle-controls.png", "Actual authenticated lifecycle controls; predecessor remains enabled and healthy.");
