@@ -33,8 +33,8 @@ try {
   assert.equal(await page.getByLabel("Discovery API key", { exact: false }).count(), 0);
   await page.screenshot({ path: path.join(output, "jellyfin-official-accounts.png"), fullPage: true });
   // The settings contribution remains separate from the user's account route.
-  await page.goto(`${base}/settings`);
-  await page.getByRole("button", { name: "Jellyfin servers", exact: true }).first().click();
+  await page.goto(`${base}/settings?section=jellyfin-admin`);
+  await page.getByRole("heading", { name: "Jellyfin servers", exact: true }).waitFor();
   await page.getByTestId("jf-admin").waitFor();
   assert.equal(await page.getByTestId("jf-account").count(), 0);
   await page.screenshot({ path: path.join(output, "jellyfin-official-admin.png"), fullPage: true });
