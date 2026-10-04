@@ -1221,6 +1221,11 @@
       "$ref": "#/$defs/UiSchemaVersion",
       "default": "v1"
     },
+    "api_contract_version": {
+      "default": "1.0.0",
+      "title": "Api Contract Version",
+      "type": "string"
+    },
     "plugin_id": {
       "maxLength": 128,
       "minLength": 1,

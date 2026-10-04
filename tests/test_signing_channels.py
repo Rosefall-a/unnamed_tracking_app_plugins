@@ -174,9 +174,12 @@ def test_unsigned_preview_is_explicit_and_keeps_zero_zero_version(scoped_checkou
     env["PLUGIN_SIGNING_FALLBACK"] = "unsigned"
     result = build(root, env)
     assert result.returncode == 0, result.stderr
-    with zipfile.ZipFile(root / ".validation/dist/official.pwa-0.0.1.utp") as archive:
+    with zipfile.ZipFile(root / ".validation/dist/official.pwa-0.0.2.utp") as archive:
         manifest = json.loads(archive.read("manifest.json"))
-        assert manifest["version"] == "0.0.1"
+        assert manifest["version"] == "0.0.2"
+        assert manifest["api_contract_version"] == "1.1.0"
+        assert json.loads(archive.read("payload/pwa/version.json"))["version"] == "0.0.1"
+        assert json.loads(archive.read("payload/pwa/provenance.json"))["version"] == "0.0.1"
         assert manifest["integrity"]["signature"] is None
         assert manifest["integrity"]["key_id"] is None
     assert not (root / "list.json").exists()
@@ -195,7 +198,7 @@ def test_changed_pwa_needs_explicit_patch_even_after_breaking_commit(scoped_chec
     result = build(root, env, "--publish")
     assert result.returncode != 0
     assert "explicit new 0.0.x patch" in result.stderr
-    assert {p.name for p in (root / "dist").glob("official.pwa-*.utp")} == {"official.pwa-0.0.1.utp"}
+    assert {p.name for p in (root / "dist").glob("official.pwa-*.utp")} == {"official.pwa-0.0.2.utp"}
 
 
 @pytest.mark.parametrize("version", ["0.1.0", "1.0.0"])
@@ -215,7 +218,7 @@ def test_packaged_pwa_rejects_source_provenance_drift(scoped_checkout):
     root, env = scoped_checkout
     result = build(root, env)
     assert result.returncode == 0, result.stderr
-    source = root / ".validation/dist/official.pwa-0.0.1.utp"
+    source = root / ".validation/dist/official.pwa-0.0.2.utp"
     changed = root / "changed.utp"
     with zipfile.ZipFile(source) as original, zipfile.ZipFile(changed, "w") as archive:
         for name in original.namelist():

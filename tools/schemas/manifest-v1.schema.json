@@ -450,6 +450,11 @@
       "title": "Version",
       "type": "string"
     },
+    "api_contract_version": {
+      "default": "1.0.0",
+      "title": "Api Contract Version",
+      "type": "string"
+    },
     "description": {
       "default": "",
       "maxLength": 2000,

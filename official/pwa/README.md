@@ -2,7 +2,9 @@
 
 The maintained official PWA integrates the existing mobile repository's PWA
 assets with the complete Unnamed Tracking web application. Initial version:
-**0.0.1**. Stable 1.0.0 requires an explicit human release decision.
+**0.0.1**. The v1.1 host contract migration uses plugin release **0.0.2** around
+the unchanged, reviewed mobile assets at **0.0.1**. Stable 1.0.0 requires an
+explicit human release decision.
 
 Install its `.utp` through Plugin Manager, review `frontend.pwa`, and enable it.
 The permission publishes public install metadata and icons and enables the
@@ -30,7 +32,8 @@ guidance. Reinstallation gets a new installation/cache identity.
 
 Assets are synchronized from `unnamed-tracking-mobile-app/pwa` using
 `tools/sync_pwa.py --mobile-root PATH --host-root PATH`; `--check` validates exact
-provenance and version consistency. The host never executes a worker from an
+provenance and a plugin release that does not precede its mobile asset version.
+The host never executes a worker from an
 untrusted package: reviewed worker/offline infrastructure is shipped by the host.
 Metadata colors are typed for future theme support; no mobile UI redesign is
 included.

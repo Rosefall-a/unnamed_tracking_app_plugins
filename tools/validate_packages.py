@@ -176,14 +176,17 @@ def validate_package(path: Path, *, full: bool = False) -> None:
                 raise ValueError("PWA icon is missing, oversized or has invalid dimensions")
         if manifest["plugin_id"] == "official.pwa":
             version = json.loads(files.get("pwa/version.json", b"{}"))
-            if version.get("version") != manifest["version"] or not manifest["version"].startswith("0.0."):
-                raise ValueError("PWA source/package versions must match and remain 0.0.x")
+            asset_version = version.get("version", "")
+            if (not isinstance(asset_version, str) or not re.fullmatch(r"0\.0\.[0-9]+", asset_version)
+                    or not re.fullmatch(r"0\.0\.[0-9]+", manifest["version"])
+                    or int(manifest["version"].split(".")[2]) < int(asset_version.split(".")[2])):
+                raise ValueError("PWA source/package versions must remain 0.0.x; package cannot precede assets")
             provenance = json.loads(files.get("pwa/provenance.json", b"{}"))
             expected_assets = {"manifest.webmanifest", "service-worker.js", "offline.html", "pwa-icon.svg",
                                "icon-192.png", "icon-512.png", "version.json", "README.md"}
             if (provenance.get("repository") != "Rosefall-a/unnamed-tracking-mobile-app"
                     or provenance.get("source_path") != "pwa"
-                    or provenance.get("version") != manifest["version"]
+                    or provenance.get("version") != asset_version
                     or set(provenance.get("sha256", {})) != expected_assets):
                 raise ValueError("PWA provenance identity/version/assets do not match")
             for asset, digest in provenance["sha256"].items():
@@ -215,6 +218,8 @@ def validate_current_contract(manifest: dict, files: dict[str, bytes]) -> None:
     schemas = Path(__file__).parent / "schemas"
     Draft202012Validator(json.loads((schemas / "manifest-v1.schema.json").read_text())).validate(manifest)
     version_key(manifest["version"])
+    contract = manifest.get("api_contract_version", "1.0.0")
+    version_key(contract)
     ranges = [manifest[field] for field in ("sdk_version_range", "application_version_range")]
     ranges.extend(d["version_range"] for d in manifest.get("dependencies", []))
     for value in ranges:
@@ -259,6 +264,8 @@ def validate_current_contract(manifest: dict, files: dict[str, bytes]) -> None:
             raise ValueError("declared UI contributions require ui.json")
         return
     document = json.loads(files["ui.json"])
+    if document.get("api_contract_version", "1.0.0") != contract:
+        raise ValueError("UI and manifest API contracts must match")
     Draft202012Validator(json.loads((schemas / "ui-v1.schema.json").read_text())).validate(document)
     if document["plugin_id"] != manifest["plugin_id"]:
         raise ValueError("UI plugin identity mismatch")

@@ -34,6 +34,7 @@ nav:
   - Tutorials:
       - Choose a tutorial: development/index.md
       - Manifest and compatibility: development/manifest.md
+      - Plugin v1.1 migration: development/v1.1-migration.md
       - SDK and gateway: development/gateway.md
       - Capabilities and permissions: development/capabilities.md
       - Settings: development/settings.md
