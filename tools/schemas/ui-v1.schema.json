@@ -1087,6 +1087,30 @@
           "title": "Order",
           "type": "integer"
         },
+        "area": {
+          "anyOf": [
+            {
+              "enum": [
+                "account",
+                "preferences",
+                "administration"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area"
+        },
+        "group": {
+          "default": "Extensions",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Group",
+          "type": "string"
+        },
         "visibility": {
           "$ref": "#/$defs/UiVisibility",
           "default": {

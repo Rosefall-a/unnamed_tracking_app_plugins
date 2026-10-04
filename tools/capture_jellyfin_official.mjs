@@ -23,6 +23,11 @@ try {
   browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, colorScheme: "dark" });
   assert((await context.request.post(`${base}/api/auth/login`, { data: { username_or_email: process.env.PRIMARY_USER_USERNAME, password: process.env.PRIMARY_USER_PASSWORD } })).ok());
+  // Capture a returning account; first-login appearance has separate host coverage.
+  const preferences = await context.request.get(`${base}/api/preferences`);
+  assert(preferences.ok());
+  if (Object.hasOwn(await preferences.json(), "ui_welcome_completed"))
+    assert((await context.request.patch(`${base}/api/preferences`, { data: { ui_welcome_completed: true } })).ok());
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));

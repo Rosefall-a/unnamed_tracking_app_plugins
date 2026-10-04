@@ -121,7 +121,9 @@
       "id": "sessions",
       "label": "Sessions",
       "page_id": "sessions",
-      "order": 50
+      "order": 50,
+      "area": "account",
+      "group": "Sessions"
     },
     {
       "id": "admin-sessions",
@@ -130,7 +132,9 @@
       "order": 51,
       "visibility": {
         "admin_only": true
-      }
+      },
+      "area": "administration",
+      "group": "Sessions"
     }
   ]
 }

@@ -249,7 +249,9 @@
       "order": 60,
       "visibility": {
         "admin_only": true
-      }
+      },
+      "area": "administration",
+      "group": "Media integrations"
     }
   ],
   "routes": [

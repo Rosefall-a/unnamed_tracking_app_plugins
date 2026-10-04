@@ -150,7 +150,9 @@
       "id": "help-showcase",
       "label": "Help showcase",
       "page_id": "help",
-      "order": 900
+      "order": 900,
+      "area": "preferences",
+      "group": "Help & shortcuts"
     }
   ],
   "overlays": [

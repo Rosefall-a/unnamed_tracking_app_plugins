@@ -187,7 +187,9 @@
       "id": "jellyfin-sync",
       "label": "Jellyfin Sync",
       "page_id": "sync",
-      "order": 60
+      "order": 60,
+      "area": "account",
+      "group": "Media integrations"
     }
   ],
   "routes": [

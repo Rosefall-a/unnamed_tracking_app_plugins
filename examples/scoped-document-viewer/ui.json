@@ -114,7 +114,9 @@
       "order": 45,
       "visibility": {
         "admin_only": true
-      }
+      },
+      "area": "administration",
+      "group": "Documents"
     }
   ],
   "navigation": [
