@@ -97,4 +97,15 @@ test("opaque frame forwards only host-advertised Alt navigation and protects edi
     { repeat: true }, { isComposing: true }, { defaultPrevented: true }, { getModifierState: () => true },
     { target: { closest: () => ({}) } }, { target: { isContentEditable: true } }]) assert.equal(key(change), false);
   assert.equal(messages.length, count);
+  assert.equal(key({ key: "?", code: "Slash", altKey: false }), false, "Older snapshots do not advertise host dialogs");
+  events.get("message")({ source: parent, data: { type: "plugin-appearance-changed", appearance: { ...appearance, global_shortcuts: ["help", "search", "arbitrary"] } } });
+  assert.equal(key({ key: "?", code: "Slash", altKey: false, shiftKey: true }), true);
+  assert.equal(messages.at(-1).payload.key, "help");
+  for (const modifier of ["ctrlKey", "metaKey"]) {
+    assert.equal(key({ key: "k", code: "KeyK", altKey: false, [modifier]: true }), true);
+    assert.equal(messages.at(-1).payload.key, "search");
+  }
+  for (const changes of [{ target: { closest: () => ({}) } }, { altKey: true }, { isComposing: true }, { shiftKey: true }]) {
+    assert.equal(key({ key: "k", code: "KeyK", altKey: false, ctrlKey: true, ...changes }), false);
+  }
 });

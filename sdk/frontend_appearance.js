@@ -1,12 +1,15 @@
-// Public cosmetic Plugin API v1.1 bridge. Sandboxed plugins remain opaque origins.
+// Public appearance and keyboard bridge. Sandboxed plugins remain opaque origins.
 (() => {
   let navigationKeys = new Set();
+  let globalKeys = new Set();
   function apply(appearance) {
     if (!appearance || appearance.api_contract_version !== "1.1.0" ||
         !["light", "dark"].includes(appearance.mode) || !appearance.tokens) return;
     const root = document.documentElement;
     navigationKeys = new Set(Array.isArray(appearance.navigation_shortcuts)
       ? appearance.navigation_shortcuts.filter(key => typeof key === "string" && /^[a-z]$/.test(key)) : []);
+    globalKeys = new Set(Array.isArray(appearance.global_shortcuts)
+      ? appearance.global_shortcuts.filter(key => key === "help" || key === "search") : []);
     root.style.colorScheme = appearance.mode;
     root.dataset.theme = appearance.mode;
     root.classList.toggle("high-contrast", appearance.high_contrast === true);
@@ -29,12 +32,14 @@
   window.parent.postMessage({ type: "plugin-api-request", requestId,
     method: "plugin.theme", payload: {} }, "*");
   window.addEventListener("keydown", event => {
-    if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
-        event.isComposing || event.repeat || event.defaultPrevented || event.getModifierState("AltGraph")) return;
+    if (event.isComposing || event.repeat || event.defaultPrevented || event.getModifierState("AltGraph")) return;
     if (event.target?.closest?.("input, textarea, select, [role=combobox]") || event.target?.isContentEditable) return;
-    const key = /^[a-z]$/i.test(event.key) ? event.key.toLowerCase()
+    const letter = /^[a-z]$/i.test(event.key) ? event.key.toLowerCase()
       : /^Key[A-Z]$/.test(event.code) ? event.code.slice(3).toLowerCase() : "";
-    if (!navigationKeys.has(key)) return;
+    const key = event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && navigationKeys.has(letter) ? letter
+      : !event.altKey && !event.ctrlKey && !event.metaKey && event.key === "?" && globalKeys.has("help") ? "help"
+      : !event.altKey && !event.shiftKey && (event.ctrlKey || event.metaKey) && letter === "k" && globalKeys.has("search") ? "search" : "";
+    if (!key) return;
     event.preventDefault();
     window.parent.postMessage({ type: "plugin-api-request", requestId: identifier(),
       method: "plugin.shortcut", payload: { key } }, "*");
