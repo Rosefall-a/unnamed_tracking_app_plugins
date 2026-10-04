@@ -39,9 +39,9 @@ def main() -> None:
     # additive to its v1 contract; this does not imply old hosts consume them.
     api_source = args.host_root / "src/backend/src/api/routes/plugins.py"
     tree = ast.parse(api_source.read_text(encoding="utf-8"))
-    model = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "PluginCatalogEntry")
+    models = [n for n in tree.body if isinstance(n, ast.ClassDef) and n.name in {"PluginCatalogRelease", "PluginCatalogEntry"}]
     namespace = {"BaseModel": BaseModel, "Field": Field, "PluginDependency": PluginDependency}
-    exec(compile(ast.Module(body=[model], type_ignores=[]), str(api_source), "exec"), namespace)
+    exec(compile(ast.Module(body=models, type_ignores=[]), str(api_source), "exec"), namespace)
     for entry in catalogue["plugins"]:
         namespace["PluginCatalogEntry"].model_validate(entry)
     publishers = {key: TrustedPublisher(key_id=key, public_key=record.public_key, publisher=record.publisher,

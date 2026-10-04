@@ -61,8 +61,9 @@ try {
   const plugin = page.locator("article.plugin").filter({ has: page.getByRole("heading", { name: /^Jellyfin Media Sync(?: \(Demo\))?$/ }) });
   await plugin.getByText("running", { exact: true }).waitFor();
   await capture("installed-plugin.png", "Authenticated installed Jellyfin predecessor after denying a newly requested update scope.");
-  await page.getByRole("button", { name: "Install a plugin", exact: true }).click();
-  const install = page.getByRole("dialog", { name: "Install a plugin", exact: true });
+  const acquisitionLabel = await page.getByRole("button", { name: "Install package or URL", exact: true }).count() ? "Install package or URL" : "Install a plugin";
+  await page.getByRole("button", { name: acquisitionLabel, exact: true }).click();
+  const install = page.getByRole("dialog", { name: acquisitionLabel, exact: true });
   await install.waitFor();
   await capture("plugin-install.png", "Actual authenticated installer source chooser with live catalogue data.");
   await install.getByRole("button", { name: "Close dialog", exact: true }).click();
