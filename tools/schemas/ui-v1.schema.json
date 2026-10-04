@@ -43,6 +43,8 @@
         "frontend.overlay",
         "frontend.dialog",
         "frontend.page.extend",
+        "frontend.home.widgets",
+        "frontend.themes",
         "frontend.page.replace.home",
         "frontend.page.replace.settings",
         "frontend.routes",
@@ -542,6 +544,82 @@
       ],
       "title": "UiFieldType",
       "type": "string"
+    },
+    "UiHomeWidget": {
+      "additionalProperties": false,
+      "description": "Account-selected Home content with optional phone layout and personal options.",
+      "properties": {
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "maxLength": 512,
+          "title": "Description",
+          "type": "string"
+        },
+        "page_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "mobile_page_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9._-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Page Id"
+        },
+        "order": {
+          "default": 0,
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "Order",
+          "type": "integer"
+        },
+        "configuration": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/UiField"
+          },
+          "maxItems": 16,
+          "title": "Configuration",
+          "type": "array"
+        },
+        "visibility": {
+          "$ref": "#/$defs/UiVisibility",
+          "default": {
+            "admin_only": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "page_id"
+      ],
+      "title": "UiHomeWidget",
+      "type": "object"
     },
     "UiMenuItem": {
       "additionalProperties": false,
@@ -1127,6 +1205,140 @@
       "title": "UiTableColumn",
       "type": "object"
     },
+    "UiTheme": {
+      "additionalProperties": false,
+      "description": "A named optional palette offered to each account in Appearance.",
+      "properties": {
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "maxLength": 512,
+          "title": "Description",
+          "type": "string"
+        },
+        "colors": {
+          "$ref": "#/$defs/UiThemePalette"
+        },
+        "order": {
+          "default": 0,
+          "title": "Order",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "colors"
+      ],
+      "title": "UiTheme",
+      "type": "object"
+    },
+    "UiThemeColors": {
+      "additionalProperties": false,
+      "description": "Semantic color roles, never arbitrary stylesheets or executable assets.",
+      "properties": {
+        "background": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Background",
+          "type": "string"
+        },
+        "surface": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Surface",
+          "type": "string"
+        },
+        "surface_alt": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Surface Alt",
+          "type": "string"
+        },
+        "text": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Text",
+          "type": "string"
+        },
+        "muted": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Muted",
+          "type": "string"
+        },
+        "accent": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Accent",
+          "type": "string"
+        },
+        "success": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Success",
+          "type": "string"
+        },
+        "warning": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Warning",
+          "type": "string"
+        },
+        "error": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Error",
+          "type": "string"
+        },
+        "info": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Info",
+          "type": "string"
+        },
+        "purple": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Purple",
+          "type": "string"
+        }
+      },
+      "required": [
+        "background",
+        "surface",
+        "surface_alt",
+        "text",
+        "muted",
+        "accent",
+        "success",
+        "warning",
+        "error",
+        "info",
+        "purple"
+      ],
+      "title": "UiThemeColors",
+      "type": "object"
+    },
+    "UiThemePalette": {
+      "additionalProperties": false,
+      "description": "A theme supplies both modes so System can follow the device.",
+      "properties": {
+        "light": {
+          "$ref": "#/$defs/UiThemeColors"
+        },
+        "dark": {
+          "$ref": "#/$defs/UiThemeColors"
+        }
+      },
+      "required": [
+        "light",
+        "dark"
+      ],
+      "title": "UiThemePalette",
+      "type": "object"
+    },
     "UiValidation": {
       "additionalProperties": false,
       "description": "Safe client/server validation constraints for a declarative field.",
@@ -1315,6 +1527,24 @@
         "$ref": "#/$defs/UiExtension"
       },
       "title": "Extensions",
+      "type": "array"
+    },
+    "home_widgets": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/UiHomeWidget"
+      },
+      "maxItems": 32,
+      "title": "Home Widgets",
+      "type": "array"
+    },
+    "themes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/UiTheme"
+      },
+      "maxItems": 32,
+      "title": "Themes",
       "type": "array"
     },
     "navigation": {

@@ -73,6 +73,8 @@
         "frontend.overlay",
         "frontend.dialog",
         "frontend.page.extend",
+        "frontend.home.widgets",
+        "frontend.themes",
         "frontend.page.replace.home",
         "frontend.page.replace.settings",
         "frontend.routes",

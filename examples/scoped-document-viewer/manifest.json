@@ -39,6 +39,18 @@
     {
       "name": "plugin.settings",
       "version": 1
+    },
+    {
+      "name": "frontend.native",
+      "version": 1
+    },
+    {
+      "name": "frontend.settings",
+      "version": 1
+    },
+    {
+      "name": "frontend.navigation.settings",
+      "version": 1
     }
   ],
   "dependencies": [],
@@ -83,6 +95,27 @@
         "version": 1
       },
       "rationale": "Persist the viewer preview-size setting; zero means unlimited. Document content and host paths are never stored."
+    },
+    {
+      "capability": {
+        "name": "frontend.native",
+        "version": 1
+      },
+      "rationale": "Render the declared viewer settings with public host Vue controls; document content remains sandboxed."
+    },
+    {
+      "capability": {
+        "name": "frontend.settings",
+        "version": 1
+      },
+      "rationale": "Add native document reader configuration to Settings."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.settings",
+        "version": 1
+      },
+      "rationale": "Link to document reader settings in the Settings navigation."
     }
   ],
   "plugin_id": "example.scoped-document-viewer",
@@ -98,11 +131,18 @@
     ],
     "menus": [],
     "pages": [
-      "documents"
+      "documents",
+      "reader-settings"
     ],
     "settings": [
       "viewer-settings"
     ]
   },
-  "version": "1.7.0"
+  "version": "1.7.0",
+  "native_frontend": {
+    "entry": "native/settings.js",
+    "styles": [
+      "native/style.css"
+    ]
+  }
 }

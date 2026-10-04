@@ -31,6 +31,9 @@ def test_document_package_contains_current_source_and_pinned_libraries(current_p
             "backend.routes.plugin",
             "frontend.context.documents",
             "plugin.settings",
+            "frontend.native",
+            "frontend.settings",
+            "frontend.navigation.settings",
         }
         for path in (SOURCE / "frontend").rglob("*"):
             if path.is_file():
@@ -38,8 +41,10 @@ def test_document_package_contains_current_source_and_pinned_libraries(current_p
                     archive.read("payload/" + path.relative_to(SOURCE).as_posix())
                     == path.read_bytes()
                 )
-        for name in ("plugin.py", "ui.json"):
+        for name in ("plugin.py", "ui.json", "native/settings.js", "native/style.css"):
             assert archive.read("payload/" + name) == (SOURCE / name).read_bytes()
+        for name in ("frontend_appearance.js", "frontend_appearance.css"):
+            assert archive.read("payload/frontend/" + name.replace("frontend_", "")) == (ROOT / "sdk" / name).read_bytes()
         for record in lock.values():
             assert record["integrity"].startswith("sha512-")
             for name, expected_hash in record["files"].items():

@@ -113,6 +113,9 @@ def collect_payload(root: Path, source: Path, manifest: dict) -> tuple[dict[str,
     }
     validate_metadata(metadata)
     files = {"sdk/plugin_protocol.py": source_bytes(root / "sdk/plugin_protocol.py")}
+    if manifest.get("frontend"):
+        files["frontend/appearance.js"] = source_bytes(root / "sdk/frontend_appearance.js")
+        files["frontend/appearance.css"] = source_bytes(root / "sdk/frontend_appearance.css")
     for path in source.rglob("*.py"):
         if not any(part.startswith(".") or part in {"__pycache__", "node_modules"} for part in path.relative_to(source).parts):
             files[path.relative_to(source).as_posix()] = source_bytes(path)
@@ -255,8 +258,8 @@ def catalogue_document(root: Path, plugins: list[tuple[Path, dict]], histories: 
     for source, source_manifest in sorted(plugins, key=lambda p: p[1]["plugin_id"]):
         history = histories.get(source_manifest["plugin_id"])
         if not history:
-            if source.relative_to(root).parts[0] != "official":
-                raise ValueError("non-official source is missing release history")
+            if source.relative_to(root).parts[0] != "official" and source_manifest["plugin_id"] not in config.get("unreleased_plugins", []):
+                raise ValueError("source is missing release history and is not explicitly unreleased")
             continue
         latest = catalogue_release(history[-1], base)
         manifest = latest["manifest"]

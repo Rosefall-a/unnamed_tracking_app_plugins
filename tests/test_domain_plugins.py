@@ -25,7 +25,8 @@ def load_plugin(name: str):
     [
         (
             "scoped-document-viewer",
-            {"documents.read", "backend.routes.plugin", "frontend.context.documents", "plugin.settings"},
+            {"documents.read", "backend.routes.plugin", "frontend.context.documents", "plugin.settings",
+             "frontend.native", "frontend.settings", "frontend.navigation.settings"},
         ),
         (
             "self-service-session-manager",
