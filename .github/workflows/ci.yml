@@ -69,8 +69,13 @@ jobs:
           COMPANION_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           ref=main
-          if [ "$COMPANION_BRANCH" != main ] && git ls-remote --exit-code --heads https://github.com/Rosefall-a/unnamed-tracking-mobile-app.git "refs/heads/$COMPANION_BRANCH" >/dev/null; then
-            ref="$COMPANION_BRANCH"
+          mobile_branch="$COMPANION_BRANCH"
+          # The appearance migration has a separate canonical mobile-source PR.
+          if [ "$COMPANION_BRANCH" = feat/ui-ux-redevelopment ]; then
+            mobile_branch=feat/pwa-personal-appearance
+          fi
+          if [ "$mobile_branch" != main ] && git ls-remote --exit-code --heads https://github.com/Rosefall-a/unnamed-tracking-mobile-app.git "refs/heads/$mobile_branch" >/dev/null; then
+            ref="$mobile_branch"
           fi
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v7
