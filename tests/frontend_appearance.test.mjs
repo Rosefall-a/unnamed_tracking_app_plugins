@@ -12,7 +12,7 @@ test("opaque frontend appearance bridge trusts only its parent and versioned cos
     classList: { toggle: (key, value) => value ? classes.add(key) : classes.delete(key) } };
   vm.runInNewContext(readFileSync(new URL("../sdk/frontend_appearance.js", import.meta.url), "utf8"), {
     crypto: { randomUUID: () => "request" }, document: { documentElement: root },
-    window: { parent, addEventListener: (type, callback) => { listener = callback; } },
+    window: { parent, addEventListener: (type, callback) => { if (type === "message") listener = callback; } },
   });
   const appearance = { api_contract_version: "1.1.0", mode: "dark", high_contrast: true,
     tokens: { "--ui-bg": "#123456", "unrelated": "hidden" } };
@@ -63,10 +63,38 @@ test("HTTP previews without randomUUID still correlate cosmetic responses", () =
   let listener;
   vm.runInNewContext(readFileSync(new URL("../sdk/frontend_appearance.js", import.meta.url), "utf8"), {
     crypto: {}, document: { documentElement: { style: { setProperty: (key, value) => values.set(key, value) }, dataset: {}, classList: { toggle() {} } } },
-    window: { parent, addEventListener: (type, callback) => { listener = callback; } },
+    window: { parent, addEventListener: (type, callback) => { if (type === "message") listener = callback; } },
   });
   assert.match(messages[0].requestId, /^appearance-/);
   listener({ source: parent, data: { type: "plugin-api-response", requestId: messages[0].requestId,
     result: { api_contract_version: "1.1.0", mode: "light", tokens: { "--ui-bg": "#ffffff" } } } });
   assert.equal(values.get("--ui-bg"), "#ffffff");
+});
+
+
+test("opaque frame forwards only host-advertised Alt navigation and protects editing", () => {
+  const events = new Map(), messages = [];
+  const parent = { postMessage: message => messages.push(message) };
+  const root = { style: { setProperty() {} }, dataset: {}, classList: { toggle() {} } };
+  vm.runInNewContext(readFileSync(new URL("../sdk/frontend_appearance.js", import.meta.url), "utf8"), {
+    crypto: { randomUUID: () => "request" }, document: { documentElement: root },
+    window: { parent, addEventListener: (type, callback) => events.set(type, callback) },
+  });
+  const appearance = { api_contract_version: "1.1.0", mode: "dark", tokens: {}, navigation_shortcuts: ["u", "g"] };
+  const key = (changes = {}) => { let prevented = false; const event = { key: "u", code: "KeyU", altKey: true,
+    getModifierState: () => false, preventDefault: () => { prevented = true; }, ...changes };
+    events.get("keydown")(event); return prevented; };
+  assert.equal(key(), false, "No shortcuts before the host snapshot");
+  events.get("message")({ source: {}, data: { type: "plugin-appearance-changed", appearance } });
+  assert.equal(key(), false, "Other windows cannot advertise shortcuts");
+  events.get("message")({ source: parent, data: { type: "plugin-appearance-changed", appearance } });
+  assert.equal(key(), true);
+  assert.equal(messages.at(-1).method, "plugin.shortcut"); assert.equal(messages.at(-1).payload.key, "u");
+  assert.equal(key({ key: "symbol", code: "KeyG" }), true, "Option key uses its underlying code");
+  assert.equal(messages.at(-1).payload.key, "g");
+  const count = messages.length;
+  for (const change of [{ key: "x", code: "KeyX" }, { ctrlKey: true }, { metaKey: true }, { shiftKey: true },
+    { repeat: true }, { isComposing: true }, { defaultPrevented: true }, { getModifierState: () => true },
+    { target: { closest: () => ({}) } }, { target: { isContentEditable: true } }]) assert.equal(key(change), false);
+  assert.equal(messages.length, count);
 });

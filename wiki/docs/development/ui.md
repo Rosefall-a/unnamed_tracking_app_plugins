@@ -67,3 +67,8 @@ denied/disabled actions cannot execute.
 Unsupported `pages[].components`; missing bundled assets; assuming iframe
 cookies/DOM access; uncorrelated bridge replies; reporting fixture output as
 authenticated permission enforcement evidence.
+
+
+### Host navigation in opaque frames
+
+The shared `sdk/frontend_appearance.js` also keeps host Alt navigation available when your frontend frame has focus. It reads the host's `navigation_shortcuts` list and sends `plugin.shortcut` with the selected key. Editing fields, composition, repeated keys, AltGraph, competing modifiers and handled events are ignored. The host maps only its current known keys and retains dialog/command-palette guards; this grants no arbitrary navigation or privileged action. Plugins without this additive snapshot field keep their previous behavior.
