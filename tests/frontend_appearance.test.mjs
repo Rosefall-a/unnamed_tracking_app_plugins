@@ -56,3 +56,17 @@ test("inline delivery starts frame measurement after the body is ready", () => {
   events.get("DOMContentLoaded")(); measure();
   assert.equal(messages.at(-1).method, "plugin.resize"); assert.equal(messages.at(-1).payload.height, 1000);
 });
+
+test("HTTP previews without randomUUID still correlate cosmetic responses", () => {
+  const messages = [], values = new Map();
+  const parent = { postMessage: message => messages.push(message) };
+  let listener;
+  vm.runInNewContext(readFileSync(new URL("../sdk/frontend_appearance.js", import.meta.url), "utf8"), {
+    crypto: {}, document: { documentElement: { style: { setProperty: (key, value) => values.set(key, value) }, dataset: {}, classList: { toggle() {} } } },
+    window: { parent, addEventListener: (type, callback) => { listener = callback; } },
+  });
+  assert.match(messages[0].requestId, /^appearance-/);
+  listener({ source: parent, data: { type: "plugin-api-response", requestId: messages[0].requestId,
+    result: { api_contract_version: "1.1.0", mode: "light", tokens: { "--ui-bg": "#ffffff" } } } });
+  assert.equal(values.get("--ui-bg"), "#ffffff");
+});

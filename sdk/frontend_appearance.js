@@ -13,7 +13,10 @@
         root.style.setProperty(name, value);
     }
   }
-  const requestId = crypto.randomUUID();
+  // Correlation identifiers are not credentials; HTTP previews may lack randomUUID.
+  const identifier = () => typeof crypto.randomUUID === "function"
+    ? crypto.randomUUID() : `appearance-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const requestId = identifier();
   window.addEventListener("message", event => {
     if (event.source !== window.parent) return;
     if (event.data?.type === "plugin-appearance-changed") apply(event.data.appearance);
@@ -28,7 +31,7 @@
         const height = Math.ceil(document.body.getBoundingClientRect().height);
         if (height === previous) return;
         previous = height;
-        window.parent.postMessage({ type: "plugin-api-request", requestId: crypto.randomUUID(),
+        window.parent.postMessage({ type: "plugin-api-request", requestId: identifier(),
           method: "plugin.resize", payload: { height } }, "*");
       }).observe(document.body);
     if (document.body) observe();
