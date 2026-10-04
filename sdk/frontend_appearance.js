@@ -22,14 +22,16 @@
   });
   window.parent.postMessage({ type: "plugin-api-request", requestId,
     method: "plugin.theme", payload: {} }, "*");
-  if (typeof ResizeObserver === "function" && document.body) {
+  if (typeof ResizeObserver === "function") {
     let previous = 0;
-    new ResizeObserver(() => {
-      const height = Math.ceil(document.body.getBoundingClientRect().height);
-      if (height === previous) return;
-      previous = height;
-      window.parent.postMessage({ type: "plugin-api-request", requestId: crypto.randomUUID(),
-        method: "plugin.resize", payload: { height } }, "*");
-    }).observe(document.body);
+    const observe = () => new ResizeObserver(() => {
+        const height = Math.ceil(document.body.getBoundingClientRect().height);
+        if (height === previous) return;
+        previous = height;
+        window.parent.postMessage({ type: "plugin-api-request", requestId: crypto.randomUUID(),
+          method: "plugin.resize", payload: { height } }, "*");
+      }).observe(document.body);
+    if (document.body) observe();
+    else window.addEventListener("DOMContentLoaded", observe, { once: true });
   }
 })();

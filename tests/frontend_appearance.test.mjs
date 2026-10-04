@@ -42,3 +42,17 @@ test("opaque frame reports intrinsic content sizing without repeating unchanged 
   assert.equal(messages.filter(message => message.method === "plugin.resize").length, 2);
   assert.equal(messages.at(-1).payload.height, 801);
 });
+
+test("inline delivery starts frame measurement after the body is ready", () => {
+  const events = new Map(), document = {}, messages = [];
+  let measure;
+  vm.runInNewContext(readFileSync(new URL("../sdk/frontend_appearance.js", import.meta.url), "utf8"), {
+    crypto: { randomUUID: () => "request" }, document,
+    ResizeObserver: class { constructor(callback) { measure = callback; } observe(value) { assert.equal(value, document.body); } },
+    window: { parent: { postMessage: message => messages.push(message) }, addEventListener: (type, callback) => events.set(type, callback) },
+  });
+  assert.equal(measure, undefined);
+  document.body = { getBoundingClientRect: () => ({ height: 1000 }) };
+  events.get("DOMContentLoaded")(); measure();
+  assert.equal(messages.at(-1).method, "plugin.resize"); assert.equal(messages.at(-1).payload.height, 1000);
+});
