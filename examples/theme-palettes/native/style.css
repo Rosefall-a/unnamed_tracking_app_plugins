@@ -1,19 +1,33 @@
 /* Optional global CSS uses the host's selected-theme scope. */
 [data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] {
-  --ui-radius-control: 2px;
-  --ui-radius-card: 3px;
-  --ui-radius-row: 2px;
-  --ui-radius-panel: 3px;
+  --ui-radius-control: 0px;
+  --ui-radius-card: 0px;
+  --ui-radius-row: 0px;
+  --ui-radius-dialog: 0px;
+  --ui-radius-nav: 0px;
   --ui-font-family: "Trebuchet MS", Verdana, sans-serif;
 }
+/* Host selectors may use their own radius instead of a public token. This
+   deliberately square example demonstrates the stylesheet's full reach. */
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :where(*) {
+  border-radius: 0 !important;
+}
 [data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
-  .ui-btn, .pill, .sidebar-nav, .sidebar-nav a, .nav-item, .nav-mobile-tab,
-  .segmented-tabs, .segmented-tabs button, .ui-modal, .ui-modal-dialog,
-  .game-card, .collection-card, .home-widget, .settings-card, .page-header,
-  .palette-preview, .preview-card, .preview-menu button, .preview-row,
-  .preview-dropdown, .preview-dropdown button, input, select, textarea
+  .navigation, .phone-navigation, .mobile-tabs, .account-chip, .settings-nav
 ) {
-  border-radius: 2px !important;
+  border: 2px solid var(--ui-accent);
+  box-shadow: 4px 4px 0 var(--ui-accent-soft);
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .nav-item, .settings-nav button, .mobile-tabs a, .mobile-tabs button
+) {
+  border: 1px solid transparent;
+  font-weight: 700;
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .nav-item.active, .settings-nav .active, .mobile-tabs .active
+) {
+  border-color: var(--ui-accent-line);
 }
 [data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
   .game-card, .collection-card, .home-widget, .settings-card, .preview-card

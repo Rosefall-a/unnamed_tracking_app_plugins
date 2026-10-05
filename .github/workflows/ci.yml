@@ -77,7 +77,8 @@ jobs:
         run: |
           ref="$REQUESTED_REF"
           if [ -z "$ref" ]; then
-            ref=plugin-manager
+            # Current native plugins require the public Plugin API 1.1 host.
+            ref=feat/ui-ux-redevelopment
             # Repository main branches have different ownership targets.
             if [ "$COMPANION_BRANCH" != main ] && git ls-remote --exit-code --heads https://github.com/Rosefall-a/unnamed_tracking_app.git "refs/heads/$COMPANION_BRANCH" >/dev/null; then
               ref="$COMPANION_BRANCH"

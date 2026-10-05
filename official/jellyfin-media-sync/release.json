@@ -9,5 +9,5 @@
   ],
   "icon": "icon.svg",
   "automatic_update": false,
-  "release_notes": "Initial official preview. Separate identity from the Jellyfin demonstration; requires the current plugin-manager public media enrichment API."
+  "release_notes": "Official preview for Plugin API 1.1: server administration directly under Server management, personal connections in Account settings, and direct Media navigation. Native loading errors include host permission/runtime guidance and a retry control."
 }

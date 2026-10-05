@@ -57,6 +57,10 @@
     {
       "name": "frontend.placement.settings.admin",
       "version": 1
+    },
+    {
+      "name": "frontend.placement.settings.account",
+      "version": 1
     }
   ],
   "dependencies": [],
@@ -172,7 +176,14 @@
         "name": "frontend.placement.settings.admin",
         "version": 1
       },
-      "rationale": "Place these settings beneath the built-in administration headings. Approval covers this settings area and its folders, not other settings areas or backend actions."
+      "rationale": "Place server configuration directly beneath the built-in administration headings. Approval covers this settings area, not other settings areas or backend actions."
+    },
+    {
+      "capability": {
+        "name": "frontend.placement.settings.account",
+        "version": 1
+      },
+      "rationale": "Place personal Jellyfin connections beneath Account settings. This grants placement throughout the account settings area, not access to other users' accounts or server administration."
     }
   ],
   "plugin_id": "official.jellyfin-media-sync",

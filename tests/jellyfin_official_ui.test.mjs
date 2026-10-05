@@ -81,6 +81,45 @@ test("Administrator page is separate and regular users cannot see discovery cont
   } finally { f.close(); }
 });
 
+test("Administrator loading never presents an access denial before the host responds", async () => {
+  const f = fixture(true);
+  try {
+    let resolve;
+    f.host.runAction = () => new Promise(done => { resolve = done; });
+    const render = f.components.admin.setup({ host: f.host });
+    assert(JSON.stringify(render()).includes("Loading Jellyfin configuration"));
+    assert(!JSON.stringify(render()).includes("Administrator access is required"));
+    resolve(f.config); await flush();
+    assert(all(render()).some(x => x.props["data-testid"] === "jf-admin"));
+    assert(!JSON.stringify(render()).includes("Administrator access is required"));
+  } finally { f.close(); }
+});
+
+test("Failed configuration explains missing access and can be retried without reloading", async () => {
+  const f = fixture(true);
+  try {
+    f.host.runAction = async () => { throw new Error("Plugin action failed (403): Review plugin.storage approval in Plugin Manager."); };
+    const render = f.components.admin.setup({ host: f.host }); await flush();
+    assert(JSON.stringify(render()).includes("plugin.storage approval"));
+    assert(!JSON.stringify(render()).includes("Administrator access is required"));
+    assert(!all(render()).some(x => x.tag === "input"));
+    f.host.runAction = async () => f.config;
+    await all(render()).find(x => x.tag === "button" && x.children === "Retry loading").props.onClick();
+    assert(all(render()).some(x => x.props["data-testid"] === "jf-admin"));
+    assert(!JSON.stringify(render()).includes("plugin.storage approval"));
+  } finally { f.close(); }
+});
+
+test("Account actions retain the host's error instead of reporting an administrator denial", async () => {
+  const f = fixture();
+  try {
+    const render = f.components.accounts.setup({ host: f.host }); await flush();
+    f.host.runAction = async () => { throw new Error("Plugin action failed (503): Runtime unavailable. Retry when ready."); };
+    await all(render()).find(x => x.tag === "button" && x.children === "Sign in").props.onClick();
+    assert(JSON.stringify(render()).includes("Runtime unavailable. Retry when ready."));
+  } finally { f.close(); }
+});
+
 test("Polling refreshes review decisions without overwriting unsaved account preferences", async () => {
   const f = fixture();
   try {

@@ -2,7 +2,8 @@
 
 An executable Plugin API v1.1 example under **Settings → Appearance & interface → Color palette**.
 Blue Hour offers calm blue colours. Purple Blocks makes the interface purple, adds bold borders,
-and changes rounded controls and cards into blocks. Both provide light and dark modes.
+and changes rounded controls, cards, dialogs, the desktop sidebar, mobile drawer
+and bottom navigation into square blocks. Both provide light and dark modes.
 
 Install a verified `.utp` or the CI `unsigned-dist` preview using the host's unsigned-package
 consent. Approve `frontend.themes` to expose palettes. Approving the separate privileged

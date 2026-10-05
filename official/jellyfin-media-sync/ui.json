@@ -231,8 +231,7 @@
       "order": 60,
       "group": "Your library",
       "folders": [
-        "Media",
-        "Jellyfin"
+        "Media"
       ]
     },
     {
@@ -248,6 +247,14 @@
   ],
   "settings_sections": [
     {
+      "id": "jellyfin-accounts",
+      "label": "Your Jellyfin accounts",
+      "page_id": "accounts",
+      "order": 60,
+      "area": "account",
+      "group": "Account"
+    },
+    {
       "id": "jellyfin-admin",
       "label": "Jellyfin servers",
       "page_id": "admin",
@@ -256,10 +263,7 @@
         "admin_only": true
       },
       "area": "administration",
-      "group": "Server management",
-      "folders": [
-        "Media integrations"
-      ]
+      "group": "Server management"
     }
   ],
   "routes": [
