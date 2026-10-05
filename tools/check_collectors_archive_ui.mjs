@@ -375,8 +375,8 @@ try {
       const dimensions = await page.evaluate(() => ({
         width: innerWidth,
         scroll: document.documentElement.scrollWidth,
-        sidebarScroll: document.querySelector(".main-navigation")?.scrollWidth,
-        sidebarClient: document.querySelector(".main-navigation")?.clientWidth,
+        sidebarScroll: document.querySelector(".nav-scroll")?.scrollWidth,
+        sidebarClient: document.querySelector(".nav-scroll")?.clientWidth,
       }));
       assert.ok(
         dimensions.scroll <= dimensions.width + 1,
@@ -387,6 +387,10 @@ try {
           dimensions.sidebarScroll <= dimensions.sidebarClient + 1,
           "Sidebar overflow",
         );
+      assert.ok(
+        width <= 760 || dimensions.sidebarClient > 0,
+        "Measured desktop sidebar is required",
+      );
       await page.evaluate(() => window.scrollTo(0, 0));
       const filename = `collector-loaded-${route.split("?")[0]}-${width}-${theme}.png`;
       await page.screenshot({
@@ -451,6 +455,11 @@ try {
   await reminders.getByText("Archive deadline quest", { exact: true }).click();
   await page.waitForURL(new RegExp(`/plugins/${plugin}/bounties\\?record_id=`));
   await page.getByLabel("Search bounties").waitFor({ timeout: 60000 });
+  await page.waitForFunction(
+    (field) => field.value === "Archive deadline quest",
+    await page.getByLabel("Search bounties").elementHandle(),
+    { timeout: 60000 },
+  );
   assert.equal(
     await page.getByLabel("Search bounties").inputValue(),
     "Archive deadline quest",
