@@ -43,3 +43,14 @@ plugin-owned Vue components. The build uses the documented `context.vue` runtime
 and `context.ui` components; it bundles no host source or second Vue runtime.
 Python behavior tests and actual host/runtime/browser acceptance are maintained
 alongside the source. Published signed archives remain immutable.
+
+For a disposable installed host, run
+`node tools/check_collectors_archive_ui.mjs <host-source> <output> <backend-url> <temporary-admin-cookies.json>`.
+The check creates temporary ordinary users through the public API, imports all
+seven retained record groups, exercises native set/card creation, objectives,
+evidence, journals, reward idempotency and cross-user denial, and captures loaded
+phone/desktop Light/Dark pages. It also checks global search, Home goals,
+deadline reminders and disable/re-enable cleanup. Accounts created by the check
+are removed afterwards. Never use personal session cookies or production data.
+Set `COLLECTOR_FRONTEND_ORIGIN` to the same backend origin to exercise a compiled
+production frontend through Nginx instead of the local static review proxy.

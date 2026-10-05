@@ -295,7 +295,7 @@ onMounted(load);
 
 @media (max-width: 760px) {
   .cards-page {
-    padding-top: 84px;
+    padding-top: 24px;
   }
   .cards-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

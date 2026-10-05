@@ -214,7 +214,7 @@ onMounted(load);
 
 @media (max-width: 760px) {
   .sets-page {
-    padding-top: 84px;
+    padding-top: 24px;
   }
 }
 </style>

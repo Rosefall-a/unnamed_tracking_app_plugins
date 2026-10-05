@@ -84,6 +84,7 @@ const EVIDENCE_KIND_LABELS: Record<EvidenceKind, string> = {
 const bounties = ref<Bounty[]>([]);
 const games = ref<Game[]>([]);
 const loading = ref(true);
+const loadError = ref("");
 const actionPending = ref<string | null>(null);
 
 const statusFilter = ref<"active" | "completed" | "paused" | "abandoned">(
@@ -97,12 +98,17 @@ const route = useRoute();
 
 async function loadAll() {
   loading.value = true;
+  loadError.value = "";
   try {
     const [b, g] = await Promise.all([fetchBounties(), fetchGames()]);
     bounties.value = b;
     const requested = b.find(item => item.id === route.query.record_id);
     if (requested) { searchQuery.value = requested.title; statusFilter.value = requested.status; }
     games.value = g.slice().sort((a, c) => a.title.localeCompare(c.title));
+  } catch (reason) {
+    loadError.value = reason instanceof Error
+      ? reason.message
+      : "Could not load your bounties.";
   } finally {
     loading.value = false;
   }
@@ -756,6 +762,16 @@ async function togglePoints() {
         </button>
       </template>
     </PageHeader>
+
+    <div v-if="loadError" class="ui-alert" role="alert">
+      {{ loadError }}
+      <button
+        type="button"
+        class="ui-btn ui-btn-ghost"
+        :disabled="loading"
+        @click="loadAll"
+      >Retry</button>
+    </div>
 
     <div v-if="showPoints" class="points-panel">
       <div class="points-total">
@@ -2160,7 +2176,7 @@ async function togglePoints() {
 
 @media (max-width: 760px) {
   .bounties-page {
-    padding-top: 84px;
+    padding-top: 24px;
   }
   .status-tabs {
     flex-wrap: wrap;

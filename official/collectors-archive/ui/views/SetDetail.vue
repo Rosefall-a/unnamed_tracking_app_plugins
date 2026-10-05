@@ -251,6 +251,9 @@ h1 {
   overflow-wrap: anywhere;
 }
 @media (max-width: 760px) {
+  .set-detail-page {
+    padding-top: 24px;
+  }
   .progress {
     flex-wrap: wrap;
   }

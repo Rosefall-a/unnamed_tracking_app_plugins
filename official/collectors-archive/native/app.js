@@ -33,7 +33,7 @@ var init_plugin_ui = __esm({
   }
 });
 
-// official/collectors-archive/ui/native/host.ts
+// .validation/companion-plugins/official/collectors-archive/ui/native/host.ts
 function configureHost(value) {
   context = value;
 }
@@ -104,11 +104,11 @@ async function pluginRequest(path, options = {}) {
 }
 var context;
 var init_host = __esm({
-  "official/collectors-archive/ui/native/host.ts"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/native/host.ts"() {
   }
 });
 
-// official/collectors-archive/ui/native/router.ts
+// .validation/companion-plugins/official/collectors-archive/ui/native/router.ts
 function archivePath(path) {
   const [pathname, query] = path.split("?");
   const match = pathname.match(/^\/(cards|sets)(?:\/([^/]+))?$/);
@@ -130,7 +130,7 @@ function useRoute() {
 }
 var RouterLink;
 var init_router = __esm({
-  "official/collectors-archive/ui/native/router.ts"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/native/router.ts"() {
     init_plugin_vue();
     init_host();
     RouterLink = defineComponent({
@@ -146,7 +146,7 @@ var init_router = __esm({
   }
 });
 
-// official/collectors-archive/ui/services/cards.ts
+// .validation/companion-plugins/official/collectors-archive/ui/services/cards.ts
 function toIso(seconds) {
   return new Date(seconds * 1e3).toISOString();
 }
@@ -230,12 +230,12 @@ async function generatePrestigeChallenge(id) {
   return mapBackendCard(raw);
 }
 var init_cards = __esm({
-  "official/collectors-archive/ui/services/cards.ts"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/services/cards.ts"() {
     init_host();
   }
 });
 
-// official/collectors-archive/ui/services/games.ts
+// .validation/companion-plugins/official/collectors-archive/ui/services/games.ts
 function mapGame(raw) {
   const assets = raw.assets;
   const total = Number(raw.achievement_total ?? 0);
@@ -315,12 +315,12 @@ async function fetchGameAchievements(id) {
   return (await gameData(id)).achievements.map(mapAchievement);
 }
 var init_games = __esm({
-  "official/collectors-archive/ui/services/games.ts"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/services/games.ts"() {
     init_host();
   }
 });
 
-// official/collectors-archive/ui/services/bounties.ts
+// .validation/companion-plugins/official/collectors-archive/ui/services/bounties.ts
 async function handle2(response, action) {
   if (!response.ok) {
     const body = await response.json().catch(() => null);
@@ -518,19 +518,19 @@ async function fetchRandomBountyProposal() {
   return body.proposal;
 }
 var init_bounties = __esm({
-  "official/collectors-archive/ui/services/bounties.ts"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/services/bounties.ts"() {
     init_host();
   }
 });
 
-// official/collectors-archive/ui/views/CardCollection.vue
+// .validation/companion-plugins/official/collectors-archive/ui/views/CardCollection.vue
 var CardCollection_exports = {};
 __export(CardCollection_exports, {
   default: () => CardCollection_default
 });
 var _hoisted_1, _hoisted_2, _hoisted_3, _hoisted_4, _hoisted_5, _hoisted_6, _hoisted_7, _hoisted_8, _hoisted_9, _hoisted_10, _hoisted_11, _hoisted_12, _hoisted_13, component, CardCollection_default;
 var init_CardCollection = __esm({
-  "official/collectors-archive/ui/views/CardCollection.vue"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/views/CardCollection.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_plugin_ui();
@@ -766,7 +766,7 @@ var init_CardCollection = __esm({
   }
 });
 
-// official/collectors-archive/ui/services/set.ts
+// .validation/companion-plugins/official/collectors-archive/ui/services/set.ts
 function toIso2(seconds) {
   return new Date(seconds * 1e3).toISOString();
 }
@@ -843,16 +843,16 @@ async function deleteSet(id) {
   }
 }
 var init_set = __esm({
-  "official/collectors-archive/ui/services/set.ts"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/services/set.ts"() {
     init_host();
     init_cards();
   }
 });
 
-// official/collectors-archive/ui/types/card.ts
+// .validation/companion-plugins/official/collectors-archive/ui/types/card.ts
 var DEFAULT_CARD_CUSTOMIZATION, CARD_SYMBOLS, CARD_SYMBOL_ORDER;
 var init_card = __esm({
-  "official/collectors-archive/ui/types/card.ts"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/types/card.ts"() {
     DEFAULT_CARD_CUSTOMIZATION = {
       frontTemplate: "classic",
       backTemplate: "emblem",
@@ -914,14 +914,14 @@ var init_card = __esm({
   }
 });
 
-// official/collectors-archive/ui/views/CardDetail.vue
+// .validation/companion-plugins/official/collectors-archive/ui/views/CardDetail.vue
 var CardDetail_exports = {};
 __export(CardDetail_exports, {
   default: () => CardDetail_default
 });
 var _hoisted_14, _hoisted_22, _hoisted_32, _hoisted_42, _hoisted_52, _hoisted_62, _hoisted_72, _hoisted_82, _hoisted_92, _hoisted_102, _hoisted_112, _hoisted_122, _hoisted_132, _hoisted_142, _hoisted_15, _hoisted_16, _hoisted_17, _hoisted_18, _hoisted_19, _hoisted_20, _hoisted_21, _hoisted_222, _hoisted_23, _hoisted_24, _hoisted_25, _hoisted_26, _hoisted_27, _hoisted_28, _hoisted_29, _hoisted_30, _hoisted_31, _hoisted_322, _hoisted_33, _hoisted_34, _hoisted_35, _hoisted_36, _hoisted_37, _hoisted_38, _hoisted_39, _hoisted_40, _hoisted_41, _hoisted_422, _hoisted_43, _hoisted_44, _hoisted_45, _hoisted_46, _hoisted_47, _hoisted_48, _hoisted_49, _hoisted_50, _hoisted_51, _hoisted_522, _hoisted_53, _hoisted_54, _hoisted_55, _hoisted_56, _hoisted_57, _hoisted_58, _hoisted_59, _hoisted_60, _hoisted_61, _hoisted_622, _hoisted_63, _hoisted_64, _hoisted_65, _hoisted_66, _hoisted_67, _hoisted_68, _hoisted_69, _hoisted_70, _hoisted_71, _hoisted_722, _hoisted_73, _hoisted_74, _hoisted_75, _hoisted_76, _hoisted_77, _hoisted_78, _hoisted_79, _hoisted_80, _hoisted_81, _hoisted_822, _hoisted_83, _hoisted_84, _hoisted_85, _hoisted_86, _hoisted_87, _hoisted_88, _hoisted_89, _hoisted_90, _hoisted_91, _hoisted_922, _hoisted_93, _hoisted_94, _hoisted_95, _hoisted_96, _hoisted_97, _hoisted_98, _hoisted_99, _hoisted_100, _hoisted_101, _hoisted_1022, _hoisted_103, _hoisted_104, _hoisted_105, _hoisted_106, _hoisted_107, _hoisted_108, _hoisted_109, _hoisted_110, _hoisted_111, _hoisted_1122, _hoisted_113, _hoisted_114, _hoisted_115, _hoisted_116, _hoisted_117, _hoisted_118, _hoisted_119, _hoisted_120, _hoisted_121, _hoisted_1222, _hoisted_123, _hoisted_124, _hoisted_125, _hoisted_126, _hoisted_127, _hoisted_128, _hoisted_129, _hoisted_130, _hoisted_131, _hoisted_1322, _hoisted_133, _hoisted_134, _hoisted_135, _hoisted_136, _hoisted_137, _hoisted_138, _hoisted_139, _hoisted_140, _hoisted_141, _hoisted_1422, _hoisted_143, _hoisted_144, _hoisted_145, _hoisted_146, _hoisted_147, _hoisted_148, _hoisted_149, _hoisted_150, _hoisted_151, _hoisted_152, _hoisted_153, _hoisted_154, _hoisted_155, _hoisted_156, _hoisted_157, _hoisted_158, MAX_TILT, component2, CardDetail_default;
 var init_CardDetail = __esm({
-  "official/collectors-archive/ui/views/CardDetail.vue"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/views/CardDetail.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_router();
@@ -3024,14 +3024,14 @@ var init_CardDetail = __esm({
   }
 });
 
-// official/collectors-archive/ui/views/SetList.vue
+// .validation/companion-plugins/official/collectors-archive/ui/views/SetList.vue
 var SetList_exports = {};
 __export(SetList_exports, {
   default: () => SetList_default
 });
 var _hoisted_159, _hoisted_210, _hoisted_310, _hoisted_410, _hoisted_510, _hoisted_610, _hoisted_710, _hoisted_810, _hoisted_910, _hoisted_1010, component3, SetList_default;
 var init_SetList = __esm({
-  "official/collectors-archive/ui/views/SetList.vue"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/views/SetList.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_plugin_ui();
@@ -3220,24 +3220,24 @@ var init_SetList = __esm({
   }
 });
 
-// official/collectors-archive/ui/native/dialog.ts
+// .validation/companion-plugins/official/collectors-archive/ui/native/dialog.ts
 var useConfirm, usePrompt;
 var init_dialog = __esm({
-  "official/collectors-archive/ui/native/dialog.ts"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/native/dialog.ts"() {
     init_host();
     useConfirm = () => (options) => host().confirm(options);
     usePrompt = () => (options) => host().prompt(options);
   }
 });
 
-// official/collectors-archive/ui/views/SetDetail.vue
+// .validation/companion-plugins/official/collectors-archive/ui/views/SetDetail.vue
 var SetDetail_exports = {};
 __export(SetDetail_exports, {
   default: () => SetDetail_default
 });
 var _hoisted_160, _hoisted_211, _hoisted_311, _hoisted_411, _hoisted_511, _hoisted_611, _hoisted_711, _hoisted_811, _hoisted_911, _hoisted_1011, _hoisted_1110, component4, SetDetail_default;
 var init_SetDetail = __esm({
-  "official/collectors-archive/ui/views/SetDetail.vue"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/views/SetDetail.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_plugin_vue();
@@ -3428,7 +3428,7 @@ var init_SetDetail = __esm({
   }
 });
 
-// official/collectors-archive/ui/services/media.ts
+// .validation/companion-plugins/official/collectors-archive/ui/services/media.ts
 async function listGameScreenshots(gameId) {
   const media = [];
   let offset = 0;
@@ -3440,19 +3440,19 @@ async function listGameScreenshots(gameId) {
   }
 }
 var init_media = __esm({
-  "official/collectors-archive/ui/services/media.ts"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/services/media.ts"() {
     init_host();
   }
 });
 
-// official/collectors-archive/ui/views/Bounties.vue
+// .validation/companion-plugins/official/collectors-archive/ui/views/Bounties.vue
 var Bounties_exports = {};
 __export(Bounties_exports, {
   default: () => Bounties_default
 });
-var _hoisted_161, _hoisted_212, _hoisted_312, _hoisted_412, _hoisted_512, _hoisted_612, _hoisted_712, _hoisted_812, _hoisted_912, _hoisted_1012, _hoisted_1111, _hoisted_1210, _hoisted_1310, _hoisted_1410, _hoisted_1510, _hoisted_162, _hoisted_172, _hoisted_182, _hoisted_192, _hoisted_202, _hoisted_213, _hoisted_223, _hoisted_232, _hoisted_242, _hoisted_252, _hoisted_262, _hoisted_272, _hoisted_282, _hoisted_292, _hoisted_302, _hoisted_313, _hoisted_323, _hoisted_332, _hoisted_342, _hoisted_352, _hoisted_362, _hoisted_372, _hoisted_382, _hoisted_392, _hoisted_402, _hoisted_413, _hoisted_423, _hoisted_432, _hoisted_442, _hoisted_452, _hoisted_462, _hoisted_472, _hoisted_482, _hoisted_492, _hoisted_502, _hoisted_513, _hoisted_523, _hoisted_532, _hoisted_542, _hoisted_552, _hoisted_562, _hoisted_572, _hoisted_582, _hoisted_592, _hoisted_602, _hoisted_613, _hoisted_623, _hoisted_632, _hoisted_642, _hoisted_652, _hoisted_662, _hoisted_672, _hoisted_682, _hoisted_692, _hoisted_702, _hoisted_713, _hoisted_723, _hoisted_732, _hoisted_742, _hoisted_752, _hoisted_762, _hoisted_772, _hoisted_782, _hoisted_792, _hoisted_802, _hoisted_813, _hoisted_823, _hoisted_832, _hoisted_842, _hoisted_852, _hoisted_862, _hoisted_872, _hoisted_882, _hoisted_892, _hoisted_902, _hoisted_913, _hoisted_923, _hoisted_932, _hoisted_942, _hoisted_952, _hoisted_962, _hoisted_972, _hoisted_982, _hoisted_992, _hoisted_1002, _hoisted_1013, _hoisted_1023, _hoisted_1032, _hoisted_1042, _hoisted_1052, _hoisted_1062, _hoisted_1072, _hoisted_1082, _hoisted_1092, _hoisted_1102, _hoisted_1112, _hoisted_1123, _hoisted_1132, _hoisted_1142, _hoisted_1152, _hoisted_1162, _hoisted_1172, _hoisted_1182, _hoisted_1192, _hoisted_1202, _hoisted_1212, _hoisted_1223, _hoisted_1232, _hoisted_1242, _hoisted_1252, _hoisted_1262, _hoisted_1272, component5, Bounties_default;
+var _hoisted_161, _hoisted_212, _hoisted_312, _hoisted_412, _hoisted_512, _hoisted_612, _hoisted_712, _hoisted_812, _hoisted_912, _hoisted_1012, _hoisted_1111, _hoisted_1210, _hoisted_1310, _hoisted_1410, _hoisted_1510, _hoisted_162, _hoisted_172, _hoisted_182, _hoisted_192, _hoisted_202, _hoisted_213, _hoisted_223, _hoisted_232, _hoisted_242, _hoisted_252, _hoisted_262, _hoisted_272, _hoisted_282, _hoisted_292, _hoisted_302, _hoisted_313, _hoisted_323, _hoisted_332, _hoisted_342, _hoisted_352, _hoisted_362, _hoisted_372, _hoisted_382, _hoisted_392, _hoisted_402, _hoisted_413, _hoisted_423, _hoisted_432, _hoisted_442, _hoisted_452, _hoisted_462, _hoisted_472, _hoisted_482, _hoisted_492, _hoisted_502, _hoisted_513, _hoisted_523, _hoisted_532, _hoisted_542, _hoisted_552, _hoisted_562, _hoisted_572, _hoisted_582, _hoisted_592, _hoisted_602, _hoisted_613, _hoisted_623, _hoisted_632, _hoisted_642, _hoisted_652, _hoisted_662, _hoisted_672, _hoisted_682, _hoisted_692, _hoisted_702, _hoisted_713, _hoisted_723, _hoisted_732, _hoisted_742, _hoisted_752, _hoisted_762, _hoisted_772, _hoisted_782, _hoisted_792, _hoisted_802, _hoisted_813, _hoisted_823, _hoisted_832, _hoisted_842, _hoisted_852, _hoisted_862, _hoisted_872, _hoisted_882, _hoisted_892, _hoisted_902, _hoisted_913, _hoisted_923, _hoisted_932, _hoisted_942, _hoisted_952, _hoisted_962, _hoisted_972, _hoisted_982, _hoisted_992, _hoisted_1002, _hoisted_1013, _hoisted_1023, _hoisted_1032, _hoisted_1042, _hoisted_1052, _hoisted_1062, _hoisted_1072, _hoisted_1082, _hoisted_1092, _hoisted_1102, _hoisted_1112, _hoisted_1123, _hoisted_1132, _hoisted_1142, _hoisted_1152, _hoisted_1162, _hoisted_1172, _hoisted_1182, _hoisted_1192, _hoisted_1202, _hoisted_1212, _hoisted_1223, _hoisted_1232, _hoisted_1242, _hoisted_1252, _hoisted_1262, _hoisted_1272, _hoisted_1282, _hoisted_1292, component5, Bounties_default;
 var init_Bounties = __esm({
-  "official/collectors-archive/ui/views/Bounties.vue"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/views/Bounties.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_router();
@@ -3468,237 +3468,243 @@ var init_Bounties = __esm({
     _hoisted_312 = ["aria-pressed"];
     _hoisted_412 = {
       key: 0,
+      class: "ui-alert",
+      role: "alert"
+    };
+    _hoisted_512 = ["disabled"];
+    _hoisted_612 = {
+      key: 1,
       class: "points-panel"
     };
-    _hoisted_512 = { class: "points-total" };
-    _hoisted_612 = {
+    _hoisted_712 = { class: "points-total" };
+    _hoisted_812 = {
       key: 0,
       class: "empty-state"
     };
-    _hoisted_712 = {
+    _hoisted_912 = {
       key: 1,
       class: "points-list"
     };
-    _hoisted_812 = { class: "points-amount" };
-    _hoisted_912 = { class: "points-reason" };
-    _hoisted_1012 = { class: "points-date" };
-    _hoisted_1111 = {
-      key: 1,
+    _hoisted_1012 = { class: "points-amount" };
+    _hoisted_1111 = { class: "points-reason" };
+    _hoisted_1210 = { class: "points-date" };
+    _hoisted_1310 = {
+      key: 2,
       class: "random-bounty-card"
     };
-    _hoisted_1210 = { class: "random-bounty-main" };
-    _hoisted_1310 = { class: "random-bounty-body" };
-    _hoisted_1410 = { class: "random-bounty-title" };
-    _hoisted_1510 = { class: "random-bounty-sub" };
-    _hoisted_162 = { class: "random-bounty-actions" };
-    _hoisted_172 = ["disabled"];
-    _hoisted_182 = ["disabled"];
-    _hoisted_192 = {
+    _hoisted_1410 = { class: "random-bounty-main" };
+    _hoisted_1510 = { class: "random-bounty-body" };
+    _hoisted_162 = { class: "random-bounty-title" };
+    _hoisted_172 = { class: "random-bounty-sub" };
+    _hoisted_182 = { class: "random-bounty-actions" };
+    _hoisted_192 = ["disabled"];
+    _hoisted_202 = ["disabled"];
+    _hoisted_213 = {
       key: 0,
       class: "random-bounty-alts"
     };
-    _hoisted_202 = ["disabled", "onClick"];
-    _hoisted_213 = { class: "random-bounty-alt-pts" };
-    _hoisted_223 = { class: "filter-row" };
-    _hoisted_232 = ["value"];
-    _hoisted_242 = ["value"];
+    _hoisted_223 = ["disabled", "onClick"];
+    _hoisted_232 = { class: "random-bounty-alt-pts" };
+    _hoisted_242 = { class: "filter-row" };
     _hoisted_252 = ["value"];
-    _hoisted_262 = { class: "status-tabs" };
-    _hoisted_272 = ["aria-pressed", "onClick"];
-    _hoisted_282 = {
-      key: 2,
-      class: "empty-state"
-    };
-    _hoisted_292 = {
+    _hoisted_262 = ["value"];
+    _hoisted_272 = ["value"];
+    _hoisted_282 = { class: "status-tabs" };
+    _hoisted_292 = ["aria-pressed", "onClick"];
+    _hoisted_302 = {
       key: 3,
       class: "empty-state"
     };
-    _hoisted_302 = {
+    _hoisted_313 = {
       key: 4,
+      class: "empty-state"
+    };
+    _hoisted_323 = {
+      key: 5,
       class: "bounty-list"
     };
-    _hoisted_313 = { class: "bounty-main" };
-    _hoisted_323 = { class: "bounty-meta-row" };
-    _hoisted_332 = { class: "bounty-type-pill" };
-    _hoisted_342 = {
+    _hoisted_332 = { class: "bounty-main" };
+    _hoisted_342 = { class: "bounty-meta-row" };
+    _hoisted_352 = { class: "bounty-type-pill" };
+    _hoisted_362 = {
       key: 2,
       class: "bounty-auto-pill",
       title: "Proposed automatically"
     };
-    _hoisted_352 = { class: "bounty-title" };
-    _hoisted_362 = {
+    _hoisted_372 = { class: "bounty-title" };
+    _hoisted_382 = {
       key: 0,
       class: "bounty-description"
     };
-    _hoisted_372 = {
+    _hoisted_392 = {
       key: 1,
       class: "bounty-target-note"
     };
-    _hoisted_382 = {
+    _hoisted_402 = {
       key: 2,
       class: "bounty-target-note"
     };
-    _hoisted_392 = {
+    _hoisted_413 = {
       key: 3,
       class: "bounty-target-note"
     };
-    _hoisted_402 = { class: "progress-row" };
-    _hoisted_413 = { class: "progress-track" };
-    _hoisted_423 = { class: "progress-label" };
-    _hoisted_432 = {
+    _hoisted_423 = { class: "progress-row" };
+    _hoisted_432 = { class: "progress-track" };
+    _hoisted_442 = { class: "progress-label" };
+    _hoisted_452 = {
       key: 4,
       class: "manual-progress"
     };
-    _hoisted_442 = ["disabled", "onClick"];
-    _hoisted_452 = ["onClick"];
-    _hoisted_462 = { class: "bounty-footer-row" };
-    _hoisted_472 = {
+    _hoisted_462 = ["disabled", "onClick"];
+    _hoisted_472 = ["onClick"];
+    _hoisted_482 = { class: "bounty-footer-row" };
+    _hoisted_492 = {
       key: 0,
       class: "bounty-points"
     };
-    _hoisted_482 = {
+    _hoisted_502 = {
       key: 1,
       class: "bounty-deadline"
     };
-    _hoisted_492 = { class: "bounty-date" };
-    _hoisted_502 = ["onClick"];
-    _hoisted_513 = { class: "bounty-actions" };
-    _hoisted_523 = ["disabled", "onClick"];
-    _hoisted_532 = ["disabled", "onClick"];
+    _hoisted_513 = { class: "bounty-date" };
+    _hoisted_523 = ["onClick"];
+    _hoisted_532 = { class: "bounty-actions" };
     _hoisted_542 = ["disabled", "onClick"];
     _hoisted_552 = ["disabled", "onClick"];
     _hoisted_562 = ["disabled", "onClick"];
-    _hoisted_572 = ["onClick"];
+    _hoisted_572 = ["disabled", "onClick"];
     _hoisted_582 = ["disabled", "onClick"];
-    _hoisted_592 = {
+    _hoisted_592 = ["onClick"];
+    _hoisted_602 = ["disabled", "onClick"];
+    _hoisted_613 = {
       key: 0,
       class: "bounty-details"
     };
-    _hoisted_602 = { class: "details-section" };
-    _hoisted_613 = { class: "details-header" };
-    _hoisted_623 = ["onClick"];
-    _hoisted_632 = {
+    _hoisted_623 = { class: "details-section" };
+    _hoisted_632 = { class: "details-header" };
+    _hoisted_642 = ["onClick"];
+    _hoisted_652 = {
       key: 0,
       class: "empty-state small"
     };
-    _hoisted_642 = {
+    _hoisted_662 = {
       key: 1,
       class: "objective-list"
     };
-    _hoisted_652 = ["checked", "disabled", "onChange"];
-    _hoisted_662 = {
+    _hoisted_672 = ["checked", "disabled", "onChange"];
+    _hoisted_682 = {
       key: 2,
       class: "objective-progress"
     };
-    _hoisted_672 = {
+    _hoisted_692 = {
       key: 3,
       class: "objective-progress"
     };
-    _hoisted_682 = ["disabled", "onClick"];
-    _hoisted_692 = {
+    _hoisted_702 = ["disabled", "onClick"];
+    _hoisted_713 = {
       key: 2,
       class: "inline-form"
     };
-    _hoisted_702 = ["value"];
-    _hoisted_713 = ["disabled"];
     _hoisted_723 = ["value"];
-    _hoisted_732 = {
+    _hoisted_732 = ["disabled"];
+    _hoisted_742 = ["value"];
+    _hoisted_752 = {
       key: 2,
       class: "form-error small"
     };
-    _hoisted_742 = { class: "inline-form-actions" };
-    _hoisted_752 = ["disabled", "onClick"];
-    _hoisted_762 = { class: "details-section" };
-    _hoisted_772 = { class: "details-header" };
-    _hoisted_782 = ["onClick"];
-    _hoisted_792 = {
+    _hoisted_762 = { class: "inline-form-actions" };
+    _hoisted_772 = ["disabled", "onClick"];
+    _hoisted_782 = { class: "details-section" };
+    _hoisted_792 = { class: "details-header" };
+    _hoisted_802 = ["onClick"];
+    _hoisted_813 = {
       key: 0,
       class: "empty-state small"
     };
-    _hoisted_802 = {
+    _hoisted_823 = {
       key: 1,
       class: "evidence-list"
     };
-    _hoisted_813 = { class: "evidence-kind" };
-    _hoisted_823 = ["href"];
-    _hoisted_832 = ["href"];
-    _hoisted_842 = {
+    _hoisted_832 = { class: "evidence-kind" };
+    _hoisted_842 = ["href"];
+    _hoisted_852 = ["href"];
+    _hoisted_862 = {
       key: 2,
       class: "evidence-text"
     };
-    _hoisted_852 = ["disabled", "onClick"];
-    _hoisted_862 = {
+    _hoisted_872 = ["disabled", "onClick"];
+    _hoisted_882 = {
       key: 2,
       class: "inline-form"
     };
-    _hoisted_872 = ["value"];
-    _hoisted_882 = ["disabled"];
-    _hoisted_892 = { value: "" };
-    _hoisted_902 = ["value"];
-    _hoisted_913 = {
+    _hoisted_892 = ["value"];
+    _hoisted_902 = ["disabled"];
+    _hoisted_913 = { value: "" };
+    _hoisted_923 = ["value"];
+    _hoisted_932 = {
       key: 3,
       class: "form-error small"
     };
-    _hoisted_923 = { class: "inline-form-actions" };
-    _hoisted_932 = ["disabled", "onClick"];
-    _hoisted_942 = { class: "details-section" };
-    _hoisted_952 = {
+    _hoisted_942 = { class: "inline-form-actions" };
+    _hoisted_952 = ["disabled", "onClick"];
+    _hoisted_962 = { class: "details-section" };
+    _hoisted_972 = {
       key: 0,
       class: "empty-state small"
     };
-    _hoisted_962 = {
+    _hoisted_982 = {
       key: 1,
       class: "journal-list"
     };
-    _hoisted_972 = { class: "journal-date" };
-    _hoisted_982 = { class: "journal-text" };
-    _hoisted_992 = ["disabled", "onClick"];
-    _hoisted_1002 = {
+    _hoisted_992 = { class: "journal-date" };
+    _hoisted_1002 = { class: "journal-text" };
+    _hoisted_1013 = ["disabled", "onClick"];
+    _hoisted_1023 = {
       key: 2,
       class: "inline-form"
     };
-    _hoisted_1013 = ["onUpdate:modelValue"];
-    _hoisted_1023 = { class: "inline-form-actions" };
-    _hoisted_1032 = ["disabled", "onClick"];
-    _hoisted_1042 = { class: "add-form" };
-    _hoisted_1052 = { class: "field-label" };
-    _hoisted_1062 = { class: "field-label" };
-    _hoisted_1072 = ["value"];
-    _hoisted_1082 = {
+    _hoisted_1032 = ["onUpdate:modelValue"];
+    _hoisted_1042 = { class: "inline-form-actions" };
+    _hoisted_1052 = ["disabled", "onClick"];
+    _hoisted_1062 = { class: "add-form" };
+    _hoisted_1072 = { class: "field-label" };
+    _hoisted_1082 = { class: "field-label" };
+    _hoisted_1092 = ["value"];
+    _hoisted_1102 = {
       key: 0,
       class: "field-label"
     };
-    _hoisted_1092 = ["value"];
-    _hoisted_1102 = {
+    _hoisted_1112 = ["value"];
+    _hoisted_1123 = {
       key: 1,
       class: "field-label"
     };
-    _hoisted_1112 = ["disabled"];
-    _hoisted_1123 = { value: "" };
-    _hoisted_1132 = ["value"];
-    _hoisted_1142 = {
+    _hoisted_1132 = ["disabled"];
+    _hoisted_1142 = { value: "" };
+    _hoisted_1152 = ["value"];
+    _hoisted_1162 = {
       key: 2,
       class: "field-label"
     };
-    _hoisted_1152 = { id: "collection-names" };
-    _hoisted_1162 = ["value"];
-    _hoisted_1172 = {
+    _hoisted_1172 = { id: "collection-names" };
+    _hoisted_1182 = ["value"];
+    _hoisted_1192 = {
       key: 3,
       class: "field-label"
     };
-    _hoisted_1182 = { class: "field-label" };
-    _hoisted_1192 = ["value"];
     _hoisted_1202 = { class: "field-label" };
-    _hoisted_1212 = { class: "field-hint" };
-    _hoisted_1223 = ["onClick"];
-    _hoisted_1232 = { class: "field-label" };
-    _hoisted_1242 = { class: "field-label" };
-    _hoisted_1252 = {
+    _hoisted_1212 = ["value"];
+    _hoisted_1223 = { class: "field-label" };
+    _hoisted_1232 = { class: "field-hint" };
+    _hoisted_1242 = ["onClick"];
+    _hoisted_1252 = { class: "field-label" };
+    _hoisted_1262 = { class: "field-label" };
+    _hoisted_1272 = {
       key: 4,
       class: "form-error"
     };
-    _hoisted_1262 = { class: "dialog-actions" };
-    _hoisted_1272 = ["disabled"];
+    _hoisted_1282 = { class: "dialog-actions" };
+    _hoisted_1292 = ["disabled"];
     component5 = /* @__PURE__ */ defineComponent({
       __name: "Bounties",
       setup(__props) {
@@ -3744,6 +3750,7 @@ var init_Bounties = __esm({
         const bounties = ref([]);
         const games = ref([]);
         const loading = ref(true);
+        const loadError = ref("");
         const actionPending = ref(null);
         const statusFilter = ref(
           "active"
@@ -3755,6 +3762,7 @@ var init_Bounties = __esm({
         const route = useRoute();
         async function loadAll() {
           loading.value = true;
+          loadError.value = "";
           try {
             const [b, g] = await Promise.all([fetchBounties(), fetchGames()]);
             bounties.value = b;
@@ -3764,6 +3772,8 @@ var init_Bounties = __esm({
               statusFilter.value = requested.status;
             }
             games.value = g.slice().sort((a, c) => a.title.localeCompare(c.title));
+          } catch (reason) {
+            loadError.value = reason instanceof Error ? reason.message : "Could not load your bounties.";
           } finally {
             loading.value = false;
           }
@@ -4304,8 +4314,21 @@ var init_Bounties = __esm({
               _: 1
               /* STABLE */
             }),
-            showPoints.value ? (openBlock(), createElementBlock("div", _hoisted_412, [
-              createElementVNode("div", _hoisted_512, [
+            loadError.value ? (openBlock(), createElementBlock("div", _hoisted_412, [
+              createTextVNode(
+                toDisplayString(loadError.value) + " ",
+                1
+                /* TEXT */
+              ),
+              createElementVNode("button", {
+                type: "button",
+                class: "ui-btn ui-btn-ghost",
+                disabled: loading.value,
+                onClick: loadAll
+              }, "Retry", 8, _hoisted_512)
+            ])) : createCommentVNode("v-if", true),
+            showPoints.value ? (openBlock(), createElementBlock("div", _hoisted_612, [
+              createElementVNode("div", _hoisted_712, [
                 _cache[28] || (_cache[28] = createTextVNode(
                   " Total ",
                   -1
@@ -4319,7 +4342,7 @@ var init_Bounties = __esm({
                   /* TEXT */
                 )
               ]),
-              pointsHistory.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_612, " No points earned yet. ")) : (openBlock(), createElementBlock("div", _hoisted_712, [
+              pointsHistory.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_812, " No points earned yet. ")) : (openBlock(), createElementBlock("div", _hoisted_912, [
                 (openBlock(true), createElementBlock(
                   Fragment,
                   null,
@@ -4330,21 +4353,21 @@ var init_Bounties = __esm({
                     }, [
                       createElementVNode(
                         "span",
-                        _hoisted_812,
+                        _hoisted_1012,
                         "+" + toDisplayString(t.amount),
                         1
                         /* TEXT */
                       ),
                       createElementVNode(
                         "span",
-                        _hoisted_912,
+                        _hoisted_1111,
                         toDisplayString(t.reason),
                         1
                         /* TEXT */
                       ),
                       createElementVNode(
                         "span",
-                        _hoisted_1012,
+                        _hoisted_1210,
                         toDisplayString(formatDate(t.created_at)),
                         1
                         /* TEXT */
@@ -4356,8 +4379,8 @@ var init_Bounties = __esm({
                 ))
               ]))
             ])) : createCommentVNode("v-if", true),
-            randomProposal.value ? (openBlock(), createElementBlock("div", _hoisted_1111, [
-              createElementVNode("div", _hoisted_1210, [
+            randomProposal.value ? (openBlock(), createElementBlock("div", _hoisted_1310, [
+              createElementVNode("div", _hoisted_1410, [
                 _cache[29] || (_cache[29] = createElementVNode(
                   "div",
                   { class: "random-bounty-label" },
@@ -4365,38 +4388,38 @@ var init_Bounties = __esm({
                   -1
                   /* CACHED */
                 )),
-                createElementVNode("div", _hoisted_1310, [
+                createElementVNode("div", _hoisted_1510, [
                   createElementVNode(
                     "span",
-                    _hoisted_1410,
+                    _hoisted_162,
                     toDisplayString(randomProposal.value.title),
                     1
                     /* TEXT */
                   ),
                   createElementVNode(
                     "span",
-                    _hoisted_1510,
+                    _hoisted_172,
                     toDisplayString(TYPE_LABELS[randomProposal.value.type]) + " \xB7 " + toDisplayString(randomProposal.value.game_title) + " \xB7 +" + toDisplayString(randomProposal.value.points_reward) + " pts",
                     1
                     /* TEXT */
                   )
                 ]),
-                createElementVNode("div", _hoisted_162, [
+                createElementVNode("div", _hoisted_182, [
                   createElementVNode("button", {
                     type: "button",
                     class: "save-btn",
                     disabled: randomAccepting.value,
                     onClick: acceptRandomProposal
-                  }, " Accept ", 8, _hoisted_172),
+                  }, " Accept ", 8, _hoisted_192),
                   createElementVNode("button", {
                     type: "button",
                     class: "cancel-btn",
                     disabled: randomLoading.value,
                     onClick: loadRandomProposal
-                  }, " Reroll ", 8, _hoisted_182)
+                  }, " Reroll ", 8, _hoisted_202)
                 ])
               ]),
-              suggestionAlternatives.value.length ? (openBlock(), createElementBlock("div", _hoisted_192, [
+              suggestionAlternatives.value.length ? (openBlock(), createElementBlock("div", _hoisted_213, [
                 _cache[30] || (_cache[30] = createElementVNode(
                   "span",
                   { class: "random-bounty-alts-label" },
@@ -4422,19 +4445,19 @@ var init_Bounties = __esm({
                       ),
                       createElementVNode(
                         "span",
-                        _hoisted_213,
+                        _hoisted_232,
                         "+" + toDisplayString(alt.points_reward),
                         1
                         /* TEXT */
                       )
-                    ], 8, _hoisted_202);
+                    ], 8, _hoisted_223);
                   }),
                   128
                   /* KEYED_FRAGMENT */
                 ))
               ])) : createCommentVNode("v-if", true)
             ])) : createCommentVNode("v-if", true),
-            createElementVNode("div", _hoisted_223, [
+            createElementVNode("div", _hoisted_242, [
               withDirectives(createElementVNode(
                 "input",
                 {
@@ -4473,7 +4496,7 @@ var init_Bounties = __esm({
                       return createElementVNode("option", {
                         key,
                         value: key
-                      }, toDisplayString(label), 9, _hoisted_232);
+                      }, toDisplayString(label), 9, _hoisted_252);
                     }),
                     64
                     /* STABLE_FRAGMENT */
@@ -4506,7 +4529,7 @@ var init_Bounties = __esm({
                       return createElementVNode("option", {
                         key,
                         value: key
-                      }, toDisplayString(label), 9, _hoisted_242);
+                      }, toDisplayString(label), 9, _hoisted_262);
                     }),
                     64
                     /* STABLE_FRAGMENT */
@@ -4539,7 +4562,7 @@ var init_Bounties = __esm({
                       return openBlock(), createElementBlock("option", {
                         key: g.id,
                         value: g.id
-                      }, toDisplayString(g.title), 9, _hoisted_252);
+                      }, toDisplayString(g.title), 9, _hoisted_272);
                     }),
                     128
                     /* KEYED_FRAGMENT */
@@ -4551,7 +4574,7 @@ var init_Bounties = __esm({
                 [vModelSelect, gameFilter.value]
               ])
             ]),
-            createElementVNode("div", _hoisted_262, [
+            createElementVNode("div", _hoisted_282, [
               (openBlock(), createElementBlock(
                 Fragment,
                 null,
@@ -4562,19 +4585,19 @@ var init_Bounties = __esm({
                     class: normalizeClass(["status-tab", { active: statusFilter.value === s }]),
                     "aria-pressed": statusFilter.value === s,
                     onClick: ($event) => statusFilter.value = s
-                  }, toDisplayString(s === "active" ? `Active (${activeCount.value})` : s.charAt(0).toUpperCase() + s.slice(1)), 11, _hoisted_272);
+                  }, toDisplayString(s === "active" ? `Active (${activeCount.value})` : s.charAt(0).toUpperCase() + s.slice(1)), 11, _hoisted_292);
                 }),
                 64
                 /* STABLE_FRAGMENT */
               ))
             ]),
-            loading.value ? (openBlock(), createElementBlock("div", _hoisted_282, "Loading\u2026")) : filteredBounties.value.length === 0 ? (openBlock(), createElementBlock(
+            loading.value ? (openBlock(), createElementBlock("div", _hoisted_302, "Loading\u2026")) : filteredBounties.value.length === 0 ? (openBlock(), createElementBlock(
               "div",
-              _hoisted_292,
+              _hoisted_313,
               toDisplayString(statusFilter.value === "active" ? "No active bounties yet. Set a goal for one of your games." : `No ${statusFilter.value} bounties.`),
               1
               /* TEXT */
-            )) : (openBlock(), createElementBlock("div", _hoisted_302, [
+            )) : (openBlock(), createElementBlock("div", _hoisted_323, [
               (openBlock(true), createElementBlock(
                 Fragment,
                 null,
@@ -4589,8 +4612,8 @@ var init_Bounties = __esm({
                         class: normalizeClass(["bounty-card", { muted: b.status !== "active" }])
                       },
                       [
-                        createElementVNode("div", _hoisted_313, [
-                          createElementVNode("div", _hoisted_323, [
+                        createElementVNode("div", _hoisted_332, [
+                          createElementVNode("div", _hoisted_342, [
                             b.game_id ? (openBlock(), createBlock(unref(RouterLink), {
                               key: 0,
                               to: `/games/${b.game_id}`,
@@ -4608,7 +4631,7 @@ var init_Bounties = __esm({
                             }, 1032, ["to"])) : createCommentVNode("v-if", true),
                             createElementVNode(
                               "span",
-                              _hoisted_332,
+                              _hoisted_352,
                               toDisplayString(TYPE_LABELS[b.type]),
                               1
                               /* TEXT */
@@ -4623,45 +4646,45 @@ var init_Bounties = __esm({
                               3
                               /* TEXT, CLASS */
                             )) : createCommentVNode("v-if", true),
-                            b.auto_generated ? (openBlock(), createElementBlock("span", _hoisted_342, "\u{1F916} Suggested")) : createCommentVNode("v-if", true)
+                            b.auto_generated ? (openBlock(), createElementBlock("span", _hoisted_362, "\u{1F916} Suggested")) : createCommentVNode("v-if", true)
                           ]),
                           createElementVNode(
                             "span",
-                            _hoisted_352,
+                            _hoisted_372,
                             toDisplayString(b.title),
                             1
                             /* TEXT */
                           ),
                           b.description ? (openBlock(), createElementBlock(
                             "p",
-                            _hoisted_362,
+                            _hoisted_382,
                             toDisplayString(b.description),
                             1
                             /* TEXT */
                           )) : createCommentVNode("v-if", true),
                           b.type === "achievement" && b.target_achievement_name ? (openBlock(), createElementBlock(
                             "p",
-                            _hoisted_372,
+                            _hoisted_392,
                             " Achievement: " + toDisplayString(b.target_achievement_name),
                             1
                             /* TEXT */
                           )) : createCommentVNode("v-if", true),
                           b.type === "collection" && b.target_collection_name ? (openBlock(), createElementBlock(
                             "p",
-                            _hoisted_382,
+                            _hoisted_402,
                             " Collection: " + toDisplayString(b.target_collection_name),
                             1
                             /* TEXT */
                           )) : createCommentVNode("v-if", true),
                           b.required_evidence_kinds.length ? (openBlock(), createElementBlock(
                             "p",
-                            _hoisted_392,
+                            _hoisted_413,
                             " Suggested evidence: " + toDisplayString(b.required_evidence_kinds.map((k) => EVIDENCE_KIND_LABELS[k]).join(", ")),
                             1
                             /* TEXT */
                           )) : createCommentVNode("v-if", true),
-                          createElementVNode("div", _hoisted_402, [
-                            createElementVNode("div", _hoisted_413, [
+                          createElementVNode("div", _hoisted_423, [
+                            createElementVNode("div", _hoisted_432, [
                               createElementVNode(
                                 "div",
                                 {
@@ -4675,13 +4698,13 @@ var init_Bounties = __esm({
                             ]),
                             createElementVNode(
                               "span",
-                              _hoisted_423,
+                              _hoisted_442,
                               toDisplayString(progressLabel(b)),
                               1
                               /* TEXT */
                             )
                           ]),
-                          b.status === "active" && b.objectives.length === 0 && !AUTOMATIC_TYPES.includes(b.type) ? (openBlock(), createElementBlock("div", _hoisted_432, [
+                          b.status === "active" && b.objectives.length === 0 && !AUTOMATIC_TYPES.includes(b.type) ? (openBlock(), createElementBlock("div", _hoisted_452, [
                             editingProgressId.value === b.id ? (openBlock(), createElementBlock(
                               Fragment,
                               { key: 0 },
@@ -4710,7 +4733,7 @@ var init_Bounties = __esm({
                                   class: "mini-btn",
                                   disabled: actionPending.value === b.id,
                                   onClick: ($event) => saveProgress(b)
-                                }, " Save ", 8, _hoisted_442),
+                                }, " Save ", 8, _hoisted_462),
                                 createElementVNode("button", {
                                   type: "button",
                                   class: "mini-btn",
@@ -4724,26 +4747,26 @@ var init_Bounties = __esm({
                               type: "button",
                               class: "mini-btn",
                               onClick: ($event) => startEditProgress(b)
-                            }, " Update progress ", 8, _hoisted_452))
+                            }, " Update progress ", 8, _hoisted_472))
                           ])) : createCommentVNode("v-if", true),
-                          createElementVNode("div", _hoisted_462, [
+                          createElementVNode("div", _hoisted_482, [
                             b.points_reward ? (openBlock(), createElementBlock(
                               "span",
-                              _hoisted_472,
+                              _hoisted_492,
                               "+" + toDisplayString(b.points_reward) + " pts",
                               1
                               /* TEXT */
                             )) : createCommentVNode("v-if", true),
                             deadlineLabel(b) ? (openBlock(), createElementBlock(
                               "span",
-                              _hoisted_482,
+                              _hoisted_502,
                               toDisplayString(deadlineLabel(b)),
                               1
                               /* TEXT */
                             )) : createCommentVNode("v-if", true),
                             createElementVNode(
                               "span",
-                              _hoisted_492,
+                              _hoisted_513,
                               "Set " + toDisplayString(formatDate(b.created_at)),
                               1
                               /* TEXT */
@@ -4752,10 +4775,10 @@ var init_Bounties = __esm({
                               type: "button",
                               class: "mini-btn",
                               onClick: ($event) => toggleExpand(b)
-                            }, toDisplayString(expandedId.value === b.id ? "Hide" : "Objectives & Evidence") + " (" + toDisplayString(b.objectives.length + b.evidence.length) + ") ", 9, _hoisted_502)
+                            }, toDisplayString(expandedId.value === b.id ? "Hide" : "Objectives & Evidence") + " (" + toDisplayString(b.objectives.length + b.evidence.length) + ") ", 9, _hoisted_523)
                           ])
                         ]),
-                        createElementVNode("div", _hoisted_513, [
+                        createElementVNode("div", _hoisted_532, [
                           b.status === "active" ? (openBlock(), createElementBlock(
                             Fragment,
                             { key: 0 },
@@ -4767,7 +4790,7 @@ var init_Bounties = __esm({
                                 title: "Mark complete",
                                 "aria-label": "Mark bounty complete",
                                 onClick: ($event) => doAction(b, "complete")
-                              }, " \u2713 ", 8, _hoisted_523),
+                              }, " \u2713 ", 8, _hoisted_542),
                               createElementVNode("button", {
                                 type: "button",
                                 class: "action-btn pause",
@@ -4775,7 +4798,7 @@ var init_Bounties = __esm({
                                 title: "Pause",
                                 "aria-label": "Pause bounty",
                                 onClick: ($event) => doAction(b, "pause")
-                              }, " \u23F8 ", 8, _hoisted_532),
+                              }, " \u23F8 ", 8, _hoisted_552),
                               createElementVNode("button", {
                                 type: "button",
                                 class: "action-btn abandon",
@@ -4783,7 +4806,7 @@ var init_Bounties = __esm({
                                 title: "Abandon",
                                 "aria-label": "Abandon bounty",
                                 onClick: ($event) => doAction(b, "abandon")
-                              }, " \u2715 ", 8, _hoisted_542)
+                              }, " \u2715 ", 8, _hoisted_562)
                             ],
                             64
                             /* STABLE_FRAGMENT */
@@ -4798,7 +4821,7 @@ var init_Bounties = __esm({
                                 title: "Resume",
                                 "aria-label": "Resume bounty",
                                 onClick: ($event) => doAction(b, "resume")
-                              }, " \u25B6 ", 8, _hoisted_552),
+                              }, " \u25B6 ", 8, _hoisted_572),
                               createElementVNode("button", {
                                 type: "button",
                                 class: "action-btn abandon",
@@ -4806,7 +4829,7 @@ var init_Bounties = __esm({
                                 title: "Abandon",
                                 "aria-label": "Abandon bounty",
                                 onClick: ($event) => doAction(b, "abandon")
-                              }, " \u2715 ", 8, _hoisted_562)
+                              }, " \u2715 ", 8, _hoisted_582)
                             ],
                             64
                             /* STABLE_FRAGMENT */
@@ -4818,7 +4841,7 @@ var init_Bounties = __esm({
                             title: "Save a shareable image",
                             "aria-label": "Save a shareable bounty image",
                             onClick: ($event) => shareBountyCard(b)
-                          }, " \u21E9 ", 8, _hoisted_572)) : createCommentVNode("v-if", true),
+                          }, " \u21E9 ", 8, _hoisted_592)) : createCommentVNode("v-if", true),
                           b.status !== "completed" ? (openBlock(), createElementBlock("button", {
                             key: 3,
                             type: "button",
@@ -4827,15 +4850,15 @@ var init_Bounties = __esm({
                             title: "Delete",
                             "aria-label": "Delete bounty",
                             onClick: ($event) => doAction(b, "delete")
-                          }, " \u{1F5D1} ", 8, _hoisted_582)) : createCommentVNode("v-if", true)
+                          }, " \u{1F5D1} ", 8, _hoisted_602)) : createCommentVNode("v-if", true)
                         ])
                       ],
                       2
                       /* CLASS */
                     ),
-                    expandedId.value === b.id ? (openBlock(), createElementBlock("div", _hoisted_592, [
-                      createElementVNode("div", _hoisted_602, [
-                        createElementVNode("div", _hoisted_613, [
+                    expandedId.value === b.id ? (openBlock(), createElementBlock("div", _hoisted_613, [
+                      createElementVNode("div", _hoisted_623, [
+                        createElementVNode("div", _hoisted_632, [
                           _cache[34] || (_cache[34] = createElementVNode(
                             "h4",
                             null,
@@ -4848,9 +4871,9 @@ var init_Bounties = __esm({
                             type: "button",
                             class: "mini-btn",
                             onClick: ($event) => openObjectiveForm(b)
-                          }, " + Add ", 8, _hoisted_623)) : createCommentVNode("v-if", true)
+                          }, " + Add ", 8, _hoisted_642)) : createCommentVNode("v-if", true)
                         ]),
-                        b.objectives.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_632, " No objectives, this is a simple goal. ")) : (openBlock(), createElementBlock("div", _hoisted_642, [
+                        b.objectives.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_652, " No objectives, this is a simple goal. ")) : (openBlock(), createElementBlock("div", _hoisted_662, [
                           (openBlock(true), createElementBlock(
                             Fragment,
                             null,
@@ -4869,7 +4892,7 @@ var init_Bounties = __esm({
                                     o.id,
                                     $event.target.checked
                                   )
-                                }, null, 40, _hoisted_652)) : (openBlock(), createElementBlock(
+                                }, null, 40, _hoisted_672)) : (openBlock(), createElementBlock(
                                   "span",
                                   {
                                     key: 1,
@@ -4890,26 +4913,26 @@ var init_Bounties = __esm({
                                 ),
                                 o.kind === "numeric" ? (openBlock(), createElementBlock(
                                   "span",
-                                  _hoisted_662,
+                                  _hoisted_682,
                                   toDisplayString(o.progress_value) + " / " + toDisplayString(o.progress_target ?? "?"),
                                   1
                                   /* TEXT */
                                 )) : createCommentVNode("v-if", true),
-                                o.kind === "achievement" ? (openBlock(), createElementBlock("span", _hoisted_672, "achievement")) : createCommentVNode("v-if", true),
+                                o.kind === "achievement" ? (openBlock(), createElementBlock("span", _hoisted_692, "achievement")) : createCommentVNode("v-if", true),
                                 b.status === "active" ? (openBlock(), createElementBlock("button", {
                                   key: 4,
                                   type: "button",
                                   class: "mini-btn danger",
                                   disabled: actionPending.value === o.id,
                                   onClick: ($event) => removeObjective(b, o.id)
-                                }, " \u2715 ", 8, _hoisted_682)) : createCommentVNode("v-if", true)
+                                }, " \u2715 ", 8, _hoisted_702)) : createCommentVNode("v-if", true)
                               ]);
                             }),
                             128
                             /* KEYED_FRAGMENT */
                           ))
                         ])),
-                        showObjectiveForm.value === b.id ? (openBlock(), createElementBlock("div", _hoisted_692, [
+                        showObjectiveForm.value === b.id ? (openBlock(), createElementBlock("div", _hoisted_713, [
                           withDirectives(createElementVNode(
                             "input",
                             {
@@ -4939,7 +4962,7 @@ var init_Bounties = __esm({
                                   return createElementVNode("option", {
                                     key,
                                     value: key
-                                  }, toDisplayString(label), 9, _hoisted_702);
+                                  }, toDisplayString(label), 9, _hoisted_723);
                                 }),
                                 64
                                 /* STABLE_FRAGMENT */
@@ -4991,22 +5014,22 @@ var init_Bounties = __esm({
                                 return openBlock(), createElementBlock("option", {
                                   key: a.id,
                                   value: a.id
-                                }, toDisplayString(a.name), 9, _hoisted_723);
+                                }, toDisplayString(a.name), 9, _hoisted_742);
                               }),
                               128
                               /* KEYED_FRAGMENT */
                             ))
-                          ], 8, _hoisted_713)), [
+                          ], 8, _hoisted_732)), [
                             [vModelSelect, objAchievementId.value]
                           ]) : createCommentVNode("v-if", true),
                           objError.value ? (openBlock(), createElementBlock(
                             "p",
-                            _hoisted_732,
+                            _hoisted_752,
                             toDisplayString(objError.value),
                             1
                             /* TEXT */
                           )) : createCommentVNode("v-if", true),
-                          createElementVNode("div", _hoisted_742, [
+                          createElementVNode("div", _hoisted_762, [
                             createElementVNode("button", {
                               type: "button",
                               class: "mini-btn",
@@ -5017,12 +5040,12 @@ var init_Bounties = __esm({
                               class: "mini-btn primary",
                               disabled: objSaving.value,
                               onClick: ($event) => submitObjective(b)
-                            }, toDisplayString(objSaving.value ? "Saving\u2026" : "Add"), 9, _hoisted_752)
+                            }, toDisplayString(objSaving.value ? "Saving\u2026" : "Add"), 9, _hoisted_772)
                           ])
                         ])) : createCommentVNode("v-if", true)
                       ]),
-                      createElementVNode("div", _hoisted_762, [
-                        createElementVNode("div", _hoisted_772, [
+                      createElementVNode("div", _hoisted_782, [
+                        createElementVNode("div", _hoisted_792, [
                           _cache[36] || (_cache[36] = createElementVNode(
                             "h4",
                             null,
@@ -5035,9 +5058,9 @@ var init_Bounties = __esm({
                             type: "button",
                             class: "mini-btn",
                             onClick: ($event) => openEvidenceForm(b)
-                          }, " + Add ", 8, _hoisted_782)) : createCommentVNode("v-if", true)
+                          }, " + Add ", 8, _hoisted_802)) : createCommentVNode("v-if", true)
                         ]),
-                        b.evidence.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_792, " No evidence attached. ")) : (openBlock(), createElementBlock("div", _hoisted_802, [
+                        b.evidence.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_813, " No evidence attached. ")) : (openBlock(), createElementBlock("div", _hoisted_823, [
                           (openBlock(true), createElementBlock(
                             Fragment,
                             null,
@@ -5048,7 +5071,7 @@ var init_Bounties = __esm({
                               }, [
                                 createElementVNode(
                                   "span",
-                                  _hoisted_813,
+                                  _hoisted_832,
                                   toDisplayString(EVIDENCE_KIND_LABELS[e.kind]),
                                   1
                                   /* TEXT */
@@ -5059,15 +5082,15 @@ var init_Bounties = __esm({
                                   target: "_blank",
                                   rel: "noopener",
                                   class: "evidence-link"
-                                }, toDisplayString(e.media_filename), 9, _hoisted_823)) : e.url ? (openBlock(), createElementBlock("a", {
+                                }, toDisplayString(e.media_filename), 9, _hoisted_842)) : e.url ? (openBlock(), createElementBlock("a", {
                                   key: 1,
                                   href: e.url,
                                   target: "_blank",
                                   rel: "noopener",
                                   class: "evidence-link"
-                                }, toDisplayString(e.url), 9, _hoisted_832)) : e.text ? (openBlock(), createElementBlock(
+                                }, toDisplayString(e.url), 9, _hoisted_852)) : e.text ? (openBlock(), createElementBlock(
                                   "span",
-                                  _hoisted_842,
+                                  _hoisted_862,
                                   toDisplayString(e.text),
                                   1
                                   /* TEXT */
@@ -5077,14 +5100,14 @@ var init_Bounties = __esm({
                                   class: "mini-btn danger",
                                   disabled: actionPending.value === e.id,
                                   onClick: ($event) => removeEvidence(b, e.id)
-                                }, " \u2715 ", 8, _hoisted_852)
+                                }, " \u2715 ", 8, _hoisted_872)
                               ]);
                             }),
                             128
                             /* KEYED_FRAGMENT */
                           ))
                         ])),
-                        showEvidenceForm.value === b.id ? (openBlock(), createElementBlock("div", _hoisted_862, [
+                        showEvidenceForm.value === b.id ? (openBlock(), createElementBlock("div", _hoisted_882, [
                           withDirectives(createElementVNode(
                             "select",
                             {
@@ -5099,7 +5122,7 @@ var init_Bounties = __esm({
                                   return createElementVNode("option", {
                                     key,
                                     value: key
-                                  }, toDisplayString(label), 9, _hoisted_872);
+                                  }, toDisplayString(label), 9, _hoisted_892);
                                 }),
                                 64
                                 /* STABLE_FRAGMENT */
@@ -5148,7 +5171,7 @@ var init_Bounties = __esm({
                           }, [
                             createElementVNode(
                               "option",
-                              _hoisted_892,
+                              _hoisted_913,
                               toDisplayString(evMediaOptions.value.length === 0 ? "No media in this game's gallery yet" : "Select a file\u2026"),
                               1
                               /* TEXT */
@@ -5160,22 +5183,22 @@ var init_Bounties = __esm({
                                 return openBlock(), createElementBlock("option", {
                                   key: m.id,
                                   value: m.id
-                                }, toDisplayString(m.filename), 9, _hoisted_902);
+                                }, toDisplayString(m.filename), 9, _hoisted_923);
                               }),
                               128
                               /* KEYED_FRAGMENT */
                             ))
-                          ], 8, _hoisted_882)), [
+                          ], 8, _hoisted_902)), [
                             [vModelSelect, evMediaId.value]
                           ]) : createCommentVNode("v-if", true),
                           evError.value ? (openBlock(), createElementBlock(
                             "p",
-                            _hoisted_913,
+                            _hoisted_932,
                             toDisplayString(evError.value),
                             1
                             /* TEXT */
                           )) : createCommentVNode("v-if", true),
-                          createElementVNode("div", _hoisted_923, [
+                          createElementVNode("div", _hoisted_942, [
                             createElementVNode("button", {
                               type: "button",
                               class: "mini-btn",
@@ -5186,11 +5209,11 @@ var init_Bounties = __esm({
                               class: "mini-btn primary",
                               disabled: evSaving.value,
                               onClick: ($event) => submitEvidence(b)
-                            }, toDisplayString(evSaving.value ? "Saving\u2026" : "Add"), 9, _hoisted_932)
+                            }, toDisplayString(evSaving.value ? "Saving\u2026" : "Add"), 9, _hoisted_952)
                           ])
                         ])) : createCommentVNode("v-if", true)
                       ]),
-                      createElementVNode("div", _hoisted_942, [
+                      createElementVNode("div", _hoisted_962, [
                         _cache[37] || (_cache[37] = createElementVNode(
                           "div",
                           { class: "details-header" },
@@ -5200,7 +5223,7 @@ var init_Bounties = __esm({
                           -1
                           /* CACHED */
                         )),
-                        b.journal.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_952, " No journal entries yet. ")) : (openBlock(), createElementBlock("div", _hoisted_962, [
+                        b.journal.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_972, " No journal entries yet. ")) : (openBlock(), createElementBlock("div", _hoisted_982, [
                           (openBlock(true), createElementBlock(
                             Fragment,
                             null,
@@ -5211,14 +5234,14 @@ var init_Bounties = __esm({
                               }, [
                                 createElementVNode(
                                   "span",
-                                  _hoisted_972,
+                                  _hoisted_992,
                                   toDisplayString(formatDate(j.created_at)),
                                   1
                                   /* TEXT */
                                 ),
                                 createElementVNode(
                                   "span",
-                                  _hoisted_982,
+                                  _hoisted_1002,
                                   toDisplayString(j.text),
                                   1
                                   /* TEXT */
@@ -5228,29 +5251,29 @@ var init_Bounties = __esm({
                                   class: "mini-btn danger",
                                   disabled: actionPending.value === j.id,
                                   onClick: ($event) => removeJournalEntry(b, j.id)
-                                }, " \u2715 ", 8, _hoisted_992)
+                                }, " \u2715 ", 8, _hoisted_1013)
                               ]);
                             }),
                             128
                             /* KEYED_FRAGMENT */
                           ))
                         ])),
-                        b.status === "active" ? (openBlock(), createElementBlock("div", _hoisted_1002, [
+                        b.status === "active" ? (openBlock(), createElementBlock("div", _hoisted_1023, [
                           withDirectives(createElementVNode("textarea", {
                             "onUpdate:modelValue": ($event) => journalDraft.value[b.id] = $event,
                             class: "field-input",
                             rows: "2",
                             placeholder: "What happened today?"
-                          }, null, 8, _hoisted_1013), [
+                          }, null, 8, _hoisted_1032), [
                             [vModelText, journalDraft.value[b.id]]
                           ]),
-                          createElementVNode("div", _hoisted_1023, [
+                          createElementVNode("div", _hoisted_1042, [
                             createElementVNode("button", {
                               type: "button",
                               class: "mini-btn primary",
                               disabled: actionPending.value === `journal-${b.id}`,
                               onClick: ($event) => addJournalEntry(b)
-                            }, " Add entry ", 8, _hoisted_1032)
+                            }, " Add entry ", 8, _hoisted_1052)
                           ])
                         ])) : createCommentVNode("v-if", true)
                       ])
@@ -5262,14 +5285,14 @@ var init_Bounties = __esm({
               ))
             ])),
             showAddForm.value ? (openBlock(), createBlock(unref(UiModal), {
-              key: 5,
+              key: 6,
               title: "New bounty",
               dismissible: !saving.value,
               onClose: _cache[27] || (_cache[27] = ($event) => showAddForm.value = false)
             }, {
               default: withCtx(() => [
-                createElementVNode("div", _hoisted_1042, [
-                  createElementVNode("label", _hoisted_1052, [
+                createElementVNode("div", _hoisted_1062, [
+                  createElementVNode("label", _hoisted_1072, [
                     _cache[38] || (_cache[38] = createTextVNode(
                       "Title ",
                       -1
@@ -5291,7 +5314,7 @@ var init_Bounties = __esm({
                       [vModelText, newTitle.value]
                     ])
                   ]),
-                  createElementVNode("label", _hoisted_1062, [
+                  createElementVNode("label", _hoisted_1082, [
                     _cache[39] || (_cache[39] = createTextVNode(
                       "Type ",
                       -1
@@ -5312,7 +5335,7 @@ var init_Bounties = __esm({
                             return createElementVNode("option", {
                               key,
                               value: key
-                            }, toDisplayString(label), 9, _hoisted_1072);
+                            }, toDisplayString(label), 9, _hoisted_1092);
                           }),
                           64
                           /* STABLE_FRAGMENT */
@@ -5324,7 +5347,7 @@ var init_Bounties = __esm({
                       [vModelSelect, newType.value]
                     ])
                   ]),
-                  needsGame.value || newType.value === "challenge" || newType.value === "watch" ? (openBlock(), createElementBlock("label", _hoisted_1082, [
+                  needsGame.value || newType.value === "challenge" || newType.value === "watch" ? (openBlock(), createElementBlock("label", _hoisted_1102, [
                     createTextVNode(
                       " Target Game" + toDisplayString(needsGame.value ? "" : " (optional)") + " ",
                       1
@@ -5351,7 +5374,7 @@ var init_Bounties = __esm({
                             return openBlock(), createElementBlock("option", {
                               key: g.id,
                               value: g.id
-                            }, toDisplayString(g.title), 9, _hoisted_1092);
+                            }, toDisplayString(g.title), 9, _hoisted_1112);
                           }),
                           128
                           /* KEYED_FRAGMENT */
@@ -5363,7 +5386,7 @@ var init_Bounties = __esm({
                       [vModelSelect, newGameId.value]
                     ])
                   ])) : createCommentVNode("v-if", true),
-                  newType.value === "achievement" ? (openBlock(), createElementBlock("label", _hoisted_1102, [
+                  newType.value === "achievement" ? (openBlock(), createElementBlock("label", _hoisted_1123, [
                     _cache[41] || (_cache[41] = createTextVNode(
                       "Target Achievement ",
                       -1
@@ -5376,7 +5399,7 @@ var init_Bounties = __esm({
                     }, [
                       createElementVNode(
                         "option",
-                        _hoisted_1123,
+                        _hoisted_1142,
                         toDisplayString(loadingAchievements.value ? "Loading\u2026" : "Select one\u2026"),
                         1
                         /* TEXT */
@@ -5388,16 +5411,16 @@ var init_Bounties = __esm({
                           return openBlock(), createElementBlock("option", {
                             key: a.id,
                             value: a.id
-                          }, toDisplayString(a.name) + toDisplayString(a.unlockedAt ? " (already unlocked)" : ""), 9, _hoisted_1132);
+                          }, toDisplayString(a.name) + toDisplayString(a.unlockedAt ? " (already unlocked)" : ""), 9, _hoisted_1152);
                         }),
                         128
                         /* KEYED_FRAGMENT */
                       ))
-                    ], 8, _hoisted_1112), [
+                    ], 8, _hoisted_1132), [
                       [vModelSelect, newAchievementId.value]
                     ])
                   ])) : createCommentVNode("v-if", true),
-                  newType.value === "collection" ? (openBlock(), createElementBlock("label", _hoisted_1142, [
+                  newType.value === "collection" ? (openBlock(), createElementBlock("label", _hoisted_1162, [
                     _cache[42] || (_cache[42] = createTextVNode(
                       "Target Collection ",
                       -1
@@ -5418,7 +5441,7 @@ var init_Bounties = __esm({
                     ), [
                       [vModelText, newCollectionName.value]
                     ]),
-                    createElementVNode("datalist", _hoisted_1152, [
+                    createElementVNode("datalist", _hoisted_1172, [
                       (openBlock(true), createElementBlock(
                         Fragment,
                         null,
@@ -5426,14 +5449,14 @@ var init_Bounties = __esm({
                           return openBlock(), createElementBlock("option", {
                             key: c,
                             value: c
-                          }, null, 8, _hoisted_1162);
+                          }, null, 8, _hoisted_1182);
                         }),
                         128
                         /* KEYED_FRAGMENT */
                       ))
                     ])
                   ])) : createCommentVNode("v-if", true),
-                  !isAutomatic.value ? (openBlock(), createElementBlock("label", _hoisted_1172, [
+                  !isAutomatic.value ? (openBlock(), createElementBlock("label", _hoisted_1192, [
                     _cache[43] || (_cache[43] = createTextVNode(
                       'Progress Target (optional, numeric goals like "10 games") ',
                       -1
@@ -5460,7 +5483,7 @@ var init_Bounties = __esm({
                       ]
                     ])
                   ])) : createCommentVNode("v-if", true),
-                  createElementVNode("label", _hoisted_1182, [
+                  createElementVNode("label", _hoisted_1202, [
                     _cache[45] || (_cache[45] = createTextVNode(
                       "Difficulty (optional) ",
                       -1
@@ -5487,7 +5510,7 @@ var init_Bounties = __esm({
                             return createElementVNode("option", {
                               key,
                               value: key
-                            }, toDisplayString(label), 9, _hoisted_1192);
+                            }, toDisplayString(label), 9, _hoisted_1212);
                           }),
                           64
                           /* STABLE_FRAGMENT */
@@ -5499,7 +5522,7 @@ var init_Bounties = __esm({
                       [vModelSelect, newDifficulty.value]
                     ])
                   ]),
-                  createElementVNode("label", _hoisted_1202, [
+                  createElementVNode("label", _hoisted_1223, [
                     _cache[47] || (_cache[47] = createTextVNode(
                       "Points Reward ",
                       -1
@@ -5524,7 +5547,7 @@ var init_Bounties = __esm({
                         { number: true }
                       ]
                     ]),
-                    createElementVNode("span", _hoisted_1212, [
+                    createElementVNode("span", _hoisted_1232, [
                       _cache[46] || (_cache[46] = createTextVNode(
                         " Points are entirely up to you, a rough scale to stay consistent: ",
                         -1
@@ -5539,14 +5562,14 @@ var init_Bounties = __esm({
                             type: "button",
                             class: "points-suggestion",
                             onClick: ($event) => newPoints.value = pts
-                          }, toDisplayString(DIFFICULTY_LABELS[key]) + " " + toDisplayString(pts), 9, _hoisted_1223);
+                          }, toDisplayString(DIFFICULTY_LABELS[key]) + " " + toDisplayString(pts), 9, _hoisted_1242);
                         }),
                         64
                         /* STABLE_FRAGMENT */
                       ))
                     ])
                   ]),
-                  createElementVNode("label", _hoisted_1232, [
+                  createElementVNode("label", _hoisted_1252, [
                     _cache[48] || (_cache[48] = createTextVNode(
                       "Deadline (optional) ",
                       -1
@@ -5566,7 +5589,7 @@ var init_Bounties = __esm({
                       [vModelText, newDeadline.value]
                     ])
                   ]),
-                  createElementVNode("label", _hoisted_1242, [
+                  createElementVNode("label", _hoisted_1262, [
                     _cache[49] || (_cache[49] = createTextVNode(
                       "Description (optional) ",
                       -1
@@ -5589,12 +5612,12 @@ var init_Bounties = __esm({
                   ]),
                   formError.value ? (openBlock(), createElementBlock(
                     "p",
-                    _hoisted_1252,
+                    _hoisted_1272,
                     toDisplayString(formError.value),
                     1
                     /* TEXT */
                   )) : createCommentVNode("v-if", true),
-                  createElementVNode("div", _hoisted_1262, [
+                  createElementVNode("div", _hoisted_1282, [
                     createElementVNode("button", {
                       type: "button",
                       class: "cancel-btn",
@@ -5605,7 +5628,7 @@ var init_Bounties = __esm({
                       class: "save-btn",
                       disabled: saving.value,
                       onClick: submitNewBounty
-                    }, toDisplayString(saving.value ? "Saving\u2026" : "Create"), 9, _hoisted_1272)
+                    }, toDisplayString(saving.value ? "Saving\u2026" : "Create"), 9, _hoisted_1292)
                   ])
                 ])
               ]),
@@ -5621,14 +5644,14 @@ var init_Bounties = __esm({
   }
 });
 
-// official/collectors-archive/ui/GoalsWidget.vue
+// .validation/companion-plugins/official/collectors-archive/ui/GoalsWidget.vue
 var GoalsWidget_exports = {};
 __export(GoalsWidget_exports, {
   default: () => GoalsWidget_default
 });
 var _hoisted_163, _hoisted_214, _hoisted_314, _hoisted_414, _hoisted_514, component6, GoalsWidget_default;
 var init_GoalsWidget = __esm({
-  "official/collectors-archive/ui/GoalsWidget.vue"() {
+  ".validation/companion-plugins/official/collectors-archive/ui/GoalsWidget.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_plugin_vue();
@@ -5759,7 +5782,7 @@ var init_GoalsWidget = __esm({
   }
 });
 
-// official/collectors-archive/ui/app.ts
+// .validation/companion-plugins/official/collectors-archive/ui/app.ts
 init_plugin_vue();
 init_plugin_vue();
 init_plugin_ui();
