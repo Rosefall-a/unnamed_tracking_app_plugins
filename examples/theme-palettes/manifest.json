@@ -35,6 +35,10 @@
     }
   ],
   "dependencies": [],
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": ["native/style.css"]
+  },
   "ui": {
     "settings": [],
     "actions": [],
