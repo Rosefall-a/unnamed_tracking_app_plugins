@@ -33,7 +33,7 @@ var init_plugin_ui = __esm({
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/native/host.ts
+// official/collectors-archive/ui/native/host.ts
 function configureHost(value) {
   context = value;
 }
@@ -104,11 +104,11 @@ async function pluginRequest(path, options = {}) {
 }
 var context;
 var init_host = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/native/host.ts"() {
+  "official/collectors-archive/ui/native/host.ts"() {
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/native/router.ts
+// official/collectors-archive/ui/native/router.ts
 function archivePath(path) {
   const [pathname, query] = path.split("?");
   const match = pathname.match(/^\/(cards|sets)(?:\/([^/]+))?$/);
@@ -130,7 +130,7 @@ function useRoute() {
 }
 var RouterLink;
 var init_router = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/native/router.ts"() {
+  "official/collectors-archive/ui/native/router.ts"() {
     init_plugin_vue();
     init_host();
     RouterLink = defineComponent({
@@ -146,7 +146,7 @@ var init_router = __esm({
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/services/cards.ts
+// official/collectors-archive/ui/services/cards.ts
 function toIso(seconds) {
   return new Date(seconds * 1e3).toISOString();
 }
@@ -230,12 +230,12 @@ async function generatePrestigeChallenge(id) {
   return mapBackendCard(raw);
 }
 var init_cards = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/services/cards.ts"() {
+  "official/collectors-archive/ui/services/cards.ts"() {
     init_host();
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/services/games.ts
+// official/collectors-archive/ui/services/games.ts
 function mapGame(raw) {
   const assets = raw.assets;
   const total = Number(raw.achievement_total ?? 0);
@@ -315,12 +315,12 @@ async function fetchGameAchievements(id) {
   return (await gameData(id)).achievements.map(mapAchievement);
 }
 var init_games = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/services/games.ts"() {
+  "official/collectors-archive/ui/services/games.ts"() {
     init_host();
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/services/bounties.ts
+// official/collectors-archive/ui/services/bounties.ts
 async function handle2(response, action) {
   if (!response.ok) {
     const body = await response.json().catch(() => null);
@@ -518,19 +518,19 @@ async function fetchRandomBountyProposal() {
   return body.proposal;
 }
 var init_bounties = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/services/bounties.ts"() {
+  "official/collectors-archive/ui/services/bounties.ts"() {
     init_host();
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/views/CardCollection.vue
+// official/collectors-archive/ui/views/CardCollection.vue
 var CardCollection_exports = {};
 __export(CardCollection_exports, {
   default: () => CardCollection_default
 });
 var _hoisted_1, _hoisted_2, _hoisted_3, _hoisted_4, _hoisted_5, _hoisted_6, _hoisted_7, _hoisted_8, _hoisted_9, _hoisted_10, _hoisted_11, _hoisted_12, _hoisted_13, component, CardCollection_default;
 var init_CardCollection = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/views/CardCollection.vue"() {
+  "official/collectors-archive/ui/views/CardCollection.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_plugin_ui();
@@ -766,7 +766,7 @@ var init_CardCollection = __esm({
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/services/set.ts
+// official/collectors-archive/ui/services/set.ts
 function toIso2(seconds) {
   return new Date(seconds * 1e3).toISOString();
 }
@@ -843,16 +843,16 @@ async function deleteSet(id) {
   }
 }
 var init_set = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/services/set.ts"() {
+  "official/collectors-archive/ui/services/set.ts"() {
     init_host();
     init_cards();
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/types/card.ts
+// official/collectors-archive/ui/types/card.ts
 var DEFAULT_CARD_CUSTOMIZATION, CARD_SYMBOLS, CARD_SYMBOL_ORDER;
 var init_card = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/types/card.ts"() {
+  "official/collectors-archive/ui/types/card.ts"() {
     DEFAULT_CARD_CUSTOMIZATION = {
       frontTemplate: "classic",
       backTemplate: "emblem",
@@ -914,14 +914,14 @@ var init_card = __esm({
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/views/CardDetail.vue
+// official/collectors-archive/ui/views/CardDetail.vue
 var CardDetail_exports = {};
 __export(CardDetail_exports, {
   default: () => CardDetail_default
 });
 var _hoisted_14, _hoisted_22, _hoisted_32, _hoisted_42, _hoisted_52, _hoisted_62, _hoisted_72, _hoisted_82, _hoisted_92, _hoisted_102, _hoisted_112, _hoisted_122, _hoisted_132, _hoisted_142, _hoisted_15, _hoisted_16, _hoisted_17, _hoisted_18, _hoisted_19, _hoisted_20, _hoisted_21, _hoisted_222, _hoisted_23, _hoisted_24, _hoisted_25, _hoisted_26, _hoisted_27, _hoisted_28, _hoisted_29, _hoisted_30, _hoisted_31, _hoisted_322, _hoisted_33, _hoisted_34, _hoisted_35, _hoisted_36, _hoisted_37, _hoisted_38, _hoisted_39, _hoisted_40, _hoisted_41, _hoisted_422, _hoisted_43, _hoisted_44, _hoisted_45, _hoisted_46, _hoisted_47, _hoisted_48, _hoisted_49, _hoisted_50, _hoisted_51, _hoisted_522, _hoisted_53, _hoisted_54, _hoisted_55, _hoisted_56, _hoisted_57, _hoisted_58, _hoisted_59, _hoisted_60, _hoisted_61, _hoisted_622, _hoisted_63, _hoisted_64, _hoisted_65, _hoisted_66, _hoisted_67, _hoisted_68, _hoisted_69, _hoisted_70, _hoisted_71, _hoisted_722, _hoisted_73, _hoisted_74, _hoisted_75, _hoisted_76, _hoisted_77, _hoisted_78, _hoisted_79, _hoisted_80, _hoisted_81, _hoisted_822, _hoisted_83, _hoisted_84, _hoisted_85, _hoisted_86, _hoisted_87, _hoisted_88, _hoisted_89, _hoisted_90, _hoisted_91, _hoisted_922, _hoisted_93, _hoisted_94, _hoisted_95, _hoisted_96, _hoisted_97, _hoisted_98, _hoisted_99, _hoisted_100, _hoisted_101, _hoisted_1022, _hoisted_103, _hoisted_104, _hoisted_105, _hoisted_106, _hoisted_107, _hoisted_108, _hoisted_109, _hoisted_110, _hoisted_111, _hoisted_1122, _hoisted_113, _hoisted_114, _hoisted_115, _hoisted_116, _hoisted_117, _hoisted_118, _hoisted_119, _hoisted_120, _hoisted_121, _hoisted_1222, _hoisted_123, _hoisted_124, _hoisted_125, _hoisted_126, _hoisted_127, _hoisted_128, _hoisted_129, _hoisted_130, _hoisted_131, _hoisted_1322, _hoisted_133, _hoisted_134, _hoisted_135, _hoisted_136, _hoisted_137, _hoisted_138, _hoisted_139, _hoisted_140, _hoisted_141, _hoisted_1422, _hoisted_143, _hoisted_144, _hoisted_145, _hoisted_146, _hoisted_147, _hoisted_148, _hoisted_149, _hoisted_150, _hoisted_151, _hoisted_152, _hoisted_153, _hoisted_154, _hoisted_155, _hoisted_156, _hoisted_157, _hoisted_158, MAX_TILT, component2, CardDetail_default;
 var init_CardDetail = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/views/CardDetail.vue"() {
+  "official/collectors-archive/ui/views/CardDetail.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_router();
@@ -3024,14 +3024,14 @@ var init_CardDetail = __esm({
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/views/SetList.vue
+// official/collectors-archive/ui/views/SetList.vue
 var SetList_exports = {};
 __export(SetList_exports, {
   default: () => SetList_default
 });
 var _hoisted_159, _hoisted_210, _hoisted_310, _hoisted_410, _hoisted_510, _hoisted_610, _hoisted_710, _hoisted_810, _hoisted_910, _hoisted_1010, component3, SetList_default;
 var init_SetList = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/views/SetList.vue"() {
+  "official/collectors-archive/ui/views/SetList.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_plugin_ui();
@@ -3220,24 +3220,24 @@ var init_SetList = __esm({
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/native/dialog.ts
+// official/collectors-archive/ui/native/dialog.ts
 var useConfirm, usePrompt;
 var init_dialog = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/native/dialog.ts"() {
+  "official/collectors-archive/ui/native/dialog.ts"() {
     init_host();
     useConfirm = () => (options) => host().confirm(options);
     usePrompt = () => (options) => host().prompt(options);
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/views/SetDetail.vue
+// official/collectors-archive/ui/views/SetDetail.vue
 var SetDetail_exports = {};
 __export(SetDetail_exports, {
   default: () => SetDetail_default
 });
 var _hoisted_160, _hoisted_211, _hoisted_311, _hoisted_411, _hoisted_511, _hoisted_611, _hoisted_711, _hoisted_811, _hoisted_911, _hoisted_1011, _hoisted_1110, component4, SetDetail_default;
 var init_SetDetail = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/views/SetDetail.vue"() {
+  "official/collectors-archive/ui/views/SetDetail.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_plugin_vue();
@@ -3428,7 +3428,7 @@ var init_SetDetail = __esm({
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/services/media.ts
+// official/collectors-archive/ui/services/media.ts
 async function listGameScreenshots(gameId) {
   const media = [];
   let offset = 0;
@@ -3440,19 +3440,19 @@ async function listGameScreenshots(gameId) {
   }
 }
 var init_media = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/services/media.ts"() {
+  "official/collectors-archive/ui/services/media.ts"() {
     init_host();
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/views/Bounties.vue
+// official/collectors-archive/ui/views/Bounties.vue
 var Bounties_exports = {};
 __export(Bounties_exports, {
   default: () => Bounties_default
 });
 var _hoisted_161, _hoisted_212, _hoisted_312, _hoisted_412, _hoisted_512, _hoisted_612, _hoisted_712, _hoisted_812, _hoisted_912, _hoisted_1012, _hoisted_1111, _hoisted_1210, _hoisted_1310, _hoisted_1410, _hoisted_1510, _hoisted_162, _hoisted_172, _hoisted_182, _hoisted_192, _hoisted_202, _hoisted_213, _hoisted_223, _hoisted_232, _hoisted_242, _hoisted_252, _hoisted_262, _hoisted_272, _hoisted_282, _hoisted_292, _hoisted_302, _hoisted_313, _hoisted_323, _hoisted_332, _hoisted_342, _hoisted_352, _hoisted_362, _hoisted_372, _hoisted_382, _hoisted_392, _hoisted_402, _hoisted_413, _hoisted_423, _hoisted_432, _hoisted_442, _hoisted_452, _hoisted_462, _hoisted_472, _hoisted_482, _hoisted_492, _hoisted_502, _hoisted_513, _hoisted_523, _hoisted_532, _hoisted_542, _hoisted_552, _hoisted_562, _hoisted_572, _hoisted_582, _hoisted_592, _hoisted_602, _hoisted_613, _hoisted_623, _hoisted_632, _hoisted_642, _hoisted_652, _hoisted_662, _hoisted_672, _hoisted_682, _hoisted_692, _hoisted_702, _hoisted_713, _hoisted_723, _hoisted_732, _hoisted_742, _hoisted_752, _hoisted_762, _hoisted_772, _hoisted_782, _hoisted_792, _hoisted_802, _hoisted_813, _hoisted_823, _hoisted_832, _hoisted_842, _hoisted_852, _hoisted_862, _hoisted_872, _hoisted_882, _hoisted_892, _hoisted_902, _hoisted_913, _hoisted_923, _hoisted_932, _hoisted_942, _hoisted_952, _hoisted_962, _hoisted_972, _hoisted_982, _hoisted_992, _hoisted_1002, _hoisted_1013, _hoisted_1023, _hoisted_1032, _hoisted_1042, _hoisted_1052, _hoisted_1062, _hoisted_1072, _hoisted_1082, _hoisted_1092, _hoisted_1102, _hoisted_1112, _hoisted_1123, _hoisted_1132, _hoisted_1142, _hoisted_1152, _hoisted_1162, _hoisted_1172, _hoisted_1182, _hoisted_1192, _hoisted_1202, _hoisted_1212, _hoisted_1223, _hoisted_1232, _hoisted_1242, _hoisted_1252, _hoisted_1262, _hoisted_1272, _hoisted_1282, _hoisted_1292, component5, Bounties_default;
 var init_Bounties = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/views/Bounties.vue"() {
+  "official/collectors-archive/ui/views/Bounties.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_router();
@@ -5644,14 +5644,14 @@ var init_Bounties = __esm({
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/GoalsWidget.vue
+// official/collectors-archive/ui/GoalsWidget.vue
 var GoalsWidget_exports = {};
 __export(GoalsWidget_exports, {
   default: () => GoalsWidget_default
 });
 var _hoisted_163, _hoisted_214, _hoisted_314, _hoisted_414, _hoisted_514, component6, GoalsWidget_default;
 var init_GoalsWidget = __esm({
-  ".validation/companion-plugins/official/collectors-archive/ui/GoalsWidget.vue"() {
+  "official/collectors-archive/ui/GoalsWidget.vue"() {
     init_plugin_vue();
     init_plugin_vue();
     init_plugin_vue();
@@ -5782,7 +5782,7 @@ var init_GoalsWidget = __esm({
   }
 });
 
-// .validation/companion-plugins/official/collectors-archive/ui/app.ts
+// official/collectors-archive/ui/app.ts
 init_plugin_vue();
 init_plugin_vue();
 init_plugin_ui();

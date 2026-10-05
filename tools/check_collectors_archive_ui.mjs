@@ -94,6 +94,7 @@ await admin.addCookies(
   cookies.map(({ name, value }) => ({ name, value, url: origin })),
 );
 let reviewPage;
+let archiveDisabled = false;
 const contexts = [],
   errors = [];
 const checkpoint = (message) => {
@@ -458,10 +459,12 @@ try {
     "Home goals show real records and earned points; a deadline reminder opens the exact bounty",
   );
   await http(admin, "POST", `/plugins/${plugin}/disable`);
+  archiveDisabled = true;
   await page.goto(origin + "/");
   await page.locator(".archive-goals").waitFor({ state: "hidden" });
   await page.locator(".widget-unavailable").waitFor();
   await http(admin, "POST", `/plugins/${plugin}/enable`);
+  archiveDisabled = false;
   await page.reload();
   await page
     .locator(".archive-goals")
@@ -493,7 +496,7 @@ try {
   );
   throw error;
 } finally {
-  await http(admin, "POST", `/plugins/${plugin}/enable`);
+  if (archiveDisabled) await http(admin, "POST", `/plugins/${plugin}/enable`);
   for (const id of users.reverse())
     await http(admin, "DELETE", `/auth/users/${id}`);
   for (const id of disabled) await http(admin, "POST", `/plugins/${id}/enable`);

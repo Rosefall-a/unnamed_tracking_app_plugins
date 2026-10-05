@@ -15,6 +15,7 @@ const modules = {
   "@unnamed/plugin-ui": ["PageHeader", "UiModal", "AppIcon", "AccountChip", "PasswordInput"],
 };
 const results = await build({
+  absWorkingDir: root,
   entryPoints: [path.join(source, "ui/app.ts")], bundle: true, write: false,
   format: "esm", target: "es2022", minify: false, legalComments: "none",
   define: { "import.meta.env.VITE_USE_MOCK_DATA": "false" },
