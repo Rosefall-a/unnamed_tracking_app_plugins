@@ -29,6 +29,32 @@ test("opaque frontend appearance bridge trusts only its parent and versioned cos
   assert.equal(root.dataset.theme, "light");
 });
 
+test("sandbox forwards remapped active combinations and respects an empty binding snapshot", () => {
+  const events = new Map(), messages = [];
+  const parent = { postMessage: message => messages.push(message) };
+  const root = { style: { setProperty() {} }, dataset: {}, classList: { toggle() {} } };
+  vm.runInNewContext(readFileSync(new URL("../sdk/frontend_appearance.js", import.meta.url), "utf8"), {
+    crypto: { randomUUID: () => "request" }, document: { documentElement: root },
+    window: { parent, addEventListener: (type, callback) => events.set(type, callback) },
+  });
+  const apply = keyboard_shortcuts => events.get("message")({ source: parent, data: { type: "plugin-appearance-changed",
+    appearance: { api_contract_version: "1.1.0", mode: "light", tokens: {}, navigation_shortcuts: ["g"], keyboard_shortcuts } } });
+  const key = changes => { let prevented = false; events.get("keydown")({ key: "g", code: "KeyG", ctrlKey: false,
+    metaKey: false, altKey: true, shiftKey: false, getModifierState: () => false,
+    preventDefault: () => { prevented = true; }, ...changes }); return prevented; };
+  apply([{ id: "nav.g", key: "Alt+Shift+G" }, { id: "app.search", key: "CtrlOrMeta+J" }]);
+  assert.equal(key({}), false);
+  assert.equal(key({ shiftKey: true }), true);
+  assert.equal(messages.at(-1).payload.id, "nav.g");
+  assert.equal(messages.at(-1).payload.key, "Alt+Shift+G");
+  assert.equal(key({ key: "j", altKey: false, metaKey: true }), true);
+  assert.equal(messages.at(-1).payload.id, "app.search");
+  assert.equal(key({ key: "j", altKey: false, metaKey: true, ctrlKey: true }), false);
+  assert.equal(key({ shiftKey: true, target: { isContentEditable: true } }), false);
+  apply([]);
+  assert.equal(key({}), false, "Disabled host keys do not fall back to old snapshot hints");
+});
+
 test("opaque frame reports intrinsic content sizing without repeating unchanged requests", () => {
   const messages = [];
   let measure, height = 1200;

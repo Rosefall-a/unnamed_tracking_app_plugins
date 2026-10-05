@@ -2,6 +2,7 @@
 (() => {
   let navigationKeys = new Set();
   let globalKeys = new Set();
+  let bindings = null;
   function apply(appearance) {
     if (!appearance || appearance.api_contract_version !== "1.1.0" ||
         !["light", "dark"].includes(appearance.mode) || !appearance.tokens) return;
@@ -10,6 +11,8 @@
       ? appearance.navigation_shortcuts.filter(key => typeof key === "string" && /^[a-z]$/.test(key)) : []);
     globalKeys = new Set(Array.isArray(appearance.global_shortcuts)
       ? appearance.global_shortcuts.filter(key => key === "help" || key === "search") : []);
+    bindings = Array.isArray(appearance.keyboard_shortcuts) ? appearance.keyboard_shortcuts.filter(item =>
+      item && typeof item.id === "string" && item.id.length <= 300 && typeof item.key === "string" && item.key.length <= 64) : null;
     root.style.colorScheme = appearance.mode;
     root.dataset.theme = appearance.mode;
     root.classList.toggle("high-contrast", appearance.high_contrast === true);
@@ -36,6 +39,21 @@
     if (event.target?.closest?.("input, textarea, select, [role=combobox]") || event.target?.isContentEditable) return;
     const letter = /^[a-z]$/i.test(event.key) ? event.key.toLowerCase()
       : /^Key[A-Z]$/.test(event.code) ? event.code.slice(3).toLowerCase() : "";
+    if (bindings) {
+      const binding = bindings.find(item => {
+        const parts = item.key.split("+"), key = parts.pop(), portable = parts.includes("CtrlOrMeta");
+        if (portable ? event.ctrlKey === event.metaKey
+          : event.ctrlKey !== parts.includes("Ctrl") || event.metaKey !== parts.includes("Meta")) return false;
+        if (event.altKey !== parts.includes("Alt") || (key !== "?" && event.shiftKey !== parts.includes("Shift"))) return false;
+        const actual = event.key === " " ? "Space" : event.key === "+" ? "Plus" : event.key;
+        return actual.toUpperCase() === key.toUpperCase() || (event.altKey && /^[A-Z]$/.test(key) && event.code === `Key${key}`);
+      });
+      if (!binding) return;
+      event.preventDefault();
+      window.parent.postMessage({ type: "plugin-api-request", requestId: identifier(),
+        method: "plugin.shortcut", payload: binding }, "*");
+      return;
+    }
     const key = event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && navigationKeys.has(letter) ? letter
       : !event.altKey && !event.ctrlKey && !event.metaKey && event.key === "?" && globalKeys.has("help") ? "help"
       : !event.altKey && !event.shiftKey && (event.ctrlKey || event.metaKey) && letter === "k" && globalKeys.has("search") ? "search" : "";

@@ -50,6 +50,7 @@
         "frontend.page.extend",
         "frontend.home.widgets",
         "frontend.themes",
+        "frontend.shortcuts",
         "frontend.page.replace.home",
         "frontend.page.replace.settings",
         "frontend.routes",
@@ -1216,6 +1217,123 @@
       "title": "UiSettingsSection",
       "type": "object"
     },
+    "UiShortcut": {
+      "additionalProperties": false,
+      "description": "A permission-gated binding to a declared plugin target or visible page control.",
+      "properties": {
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "group": {
+          "default": "Extensions",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Group",
+          "type": "string"
+        },
+        "keys": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 4,
+          "minItems": 1,
+          "title": "Keys",
+          "type": "array"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Id"
+        },
+        "route_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Route Id"
+        },
+        "action_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action Id"
+        },
+        "control": {
+          "anyOf": [
+            {
+              "enum": [
+                "search",
+                "create"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Control"
+        },
+        "when_route_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "When Route Id"
+        },
+        "visibility": {
+          "$ref": "#/$defs/UiVisibility"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "keys"
+      ],
+      "title": "UiShortcut",
+      "type": "object"
+    },
     "UiTable": {
       "additionalProperties": false,
       "description": "A declarative read-only table.",
@@ -1684,6 +1802,15 @@
         "$ref": "#/$defs/UiDocumentReader"
       },
       "title": "Document Readers",
+      "type": "array"
+    },
+    "shortcuts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/UiShortcut"
+      },
+      "maxItems": 64,
+      "title": "Shortcuts",
       "type": "array"
     }
   },

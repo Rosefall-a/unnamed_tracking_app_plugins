@@ -80,6 +80,7 @@
         "frontend.page.extend",
         "frontend.home.widgets",
         "frontend.themes",
+        "frontend.shortcuts",
         "frontend.page.replace.home",
         "frontend.page.replace.settings",
         "frontend.routes",
