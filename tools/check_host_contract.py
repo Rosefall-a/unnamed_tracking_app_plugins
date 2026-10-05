@@ -37,7 +37,11 @@ def main() -> None:
     # Evaluate the actual public catalogue entry model without loading database
     # configuration or the API server. Additional distribution fields remain
     # additive to its v1 contract; this does not imply old hosts consume them.
-    api_source = args.host_root / "src/backend/src/api/routes/plugins.py"
+    api_source = args.host_root / "src/backend/src/api/routes/plugin_manager/models.py"
+    if not api_source.exists():
+        # Hosts before the route responsibility split keep these public models
+        # in the composed route module. Both layouts expose the same contract.
+        api_source = args.host_root / "src/backend/src/api/routes/plugins.py"
     tree = ast.parse(api_source.read_text(encoding="utf-8"))
     models = [n for n in tree.body if isinstance(n, ast.ClassDef) and n.name in {"PluginCatalogRelease", "PluginCatalogEntry"}]
     namespace = {"BaseModel": BaseModel, "Field": Field, "PluginDependency": PluginDependency}
