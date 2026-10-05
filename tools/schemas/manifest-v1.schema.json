@@ -39,6 +39,7 @@
         "games",
         "games.read",
         "games.write",
+        "library.legacy.read",
         "media",
         "media.read",
         "media.write",

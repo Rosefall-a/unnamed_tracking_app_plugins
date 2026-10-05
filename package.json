@@ -1,6 +1,17 @@
 {
   "name": "unnamed-tracking-plugin-browser-tests",
   "private": true,
-  "scripts": {"test": "node --test tests/document_viewer.browser.test.cjs", "check": "node --check examples/scoped-document-viewer/frontend/app.js && node --check examples/scoped-document-viewer/frontend/office.js"},
-  "devDependencies": {"playwright": "1.62.1", "pdf-lib": "1.17.1"}
+  "scripts": {
+    "test": "node --test tests/document_viewer.browser.test.cjs",
+    "check": "node --check examples/scoped-document-viewer/frontend/app.js && node --check examples/scoped-document-viewer/frontend/office.js",
+    "build:native": "node tools/build_native_frontends.mjs",
+    "check:native": "node tools/build_native_frontends.mjs --check"
+  },
+  "devDependencies": {
+    "@vue/compiler-sfc": "3.5.41",
+    "esbuild": "0.28.1",
+    "pdf-lib": "1.17.1",
+    "playwright": "1.62.1",
+    "vue": "3.5.41"
+  }
 }

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "publisher": "Unnamed Tracking official plugins",
+  "tags": [
+    "official",
+    "preview",
+    "games",
+    "collections"
+  ],
+  "icon": "icon.svg",
+  "automatic_update": false,
+  "release_notes": "Preserves Cards, Sets and Bounties as a native official plugin. Legacy imports retain original IDs, archive numbers, customization, goals, evidence, journal and point history; server originals remain untouched."
+}

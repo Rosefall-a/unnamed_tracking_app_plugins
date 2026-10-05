@@ -1,0 +1,175 @@
+{
+  "manifest_version": 1,
+  "api_contract_version": "1.1.0",
+  "plugin_id": "official.collectors-archive",
+  "name": "Collector's Archive",
+  "version": "0.0.1",
+  "description": "Official Cards, Sets and Bounties, preserving personal archives, the full card designer, prestige challenges, objectives, evidence, journals and rewards.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": "^1.1.0",
+  "application_version_range": "^1.0.0",
+  "capabilities": [
+    {
+      "name": "games.read",
+      "version": 1
+    },
+    {
+      "name": "media.read",
+      "version": 1
+    },
+    {
+      "name": "library.legacy.read",
+      "version": 1
+    },
+    {
+      "name": "plugin.storage",
+      "version": 1
+    },
+    {
+      "name": "frontend.native",
+      "version": 1
+    },
+    {
+      "name": "frontend.navigation.main",
+      "version": 1
+    },
+    {
+      "name": "frontend.navigation.settings",
+      "version": 1
+    },
+    {
+      "name": "frontend.settings",
+      "version": 1
+    },
+    {
+      "name": "frontend.routes",
+      "version": 1
+    },
+    {
+      "name": "frontend.context.game",
+      "version": 1
+    },
+    {
+      "name": "frontend.home.widgets",
+      "version": 1
+    }
+  ],
+  "permissions": [
+    {
+      "capability": {
+        "name": "games.read",
+        "version": 1
+      },
+      "rationale": "Read your game metadata and achievement progress for cards, prestige and automatic goals."
+    },
+    {
+      "capability": {
+        "name": "media.read",
+        "version": 1
+      },
+      "rationale": "Read your owned game screenshots and clips when attaching bounty evidence."
+    },
+    {
+      "capability": {
+        "name": "library.legacy.read",
+        "version": 1
+      },
+      "rationale": "Import only your retained Cards, Sets and Bounties records from older host versions, without deleting the originals."
+    },
+    {
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      },
+      "rationale": "Keep each user's cards, sets, objectives, evidence, journal and reward history in this plugin's own storage."
+    },
+    {
+      "capability": {
+        "name": "frontend.native",
+        "version": 1
+      },
+      "rationale": "Render the complete card designer and bounty board using the shared native UI runtime."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.main",
+        "version": 1
+      },
+      "rationale": "Add Cards, Sets and Bounties to the main navigation."
+    },
+    {
+      "capability": {
+        "name": "frontend.navigation.settings",
+        "version": 1
+      },
+      "rationale": "Add the personal archive import and backup page to settings."
+    },
+    {
+      "capability": {
+        "name": "frontend.settings",
+        "version": 1
+      },
+      "rationale": "Offer archive import status and recovery guidance in Account settings."
+    },
+    {
+      "capability": {
+        "name": "frontend.routes",
+        "version": 1
+      },
+      "rationale": "Open the archive's own list and detail pages."
+    },
+    {
+      "capability": {
+        "name": "frontend.context.game",
+        "version": 1
+      },
+      "rationale": "Create a card from a completed game through the game action menu."
+    },
+    {
+      "capability": {
+        "name": "frontend.home.widgets",
+        "version": 1
+      },
+      "rationale": "Restore your personal goals widget, weekly completed goal count and reward points on Home."
+    }
+  ],
+  "dependencies": [],
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": [
+      "native/style.css"
+    ]
+  },
+  "storage": {
+    "quota_mb": 64
+  },
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "key_id": null,
+    "signature": null
+  },
+  "ui": {
+    "actions": [
+      "api",
+      "games",
+      "game-media",
+      "migration-status",
+      "import-legacy",
+      "create-game-card",
+      "transport-write",
+      "transport-read",
+      "transport-drop"
+    ],
+    "pages": [
+      "cards",
+      "card-detail",
+      "sets",
+      "set-detail",
+      "bounties",
+      "migration",
+      "goals"
+    ],
+    "menus": [],
+    "settings": []
+  }
+}
