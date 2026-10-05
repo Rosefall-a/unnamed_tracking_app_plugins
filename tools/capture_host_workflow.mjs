@@ -81,7 +81,7 @@ try {
   // Capture the persisted response rather than the initial empty form.
   await page.waitForFunction(() => [...document.querySelectorAll("input")]
     .some((input) => input.value.startsWith("http://127.0.0.1:")));
-  const masterCredential = page.getByLabel("Server credential · blank keeps existing");
+  const masterCredential = page.getByLabel("Server credential", { exact: true });
   const legacyCredential = page.getByLabel("API key or access token (blank keeps existing token)");
   const credential = await masterCredential.count() ? masterCredential : legacyCredential;
   assert.equal(await credential.getAttribute("type"), "password");
