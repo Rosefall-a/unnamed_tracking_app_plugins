@@ -1,0 +1,33 @@
+/* Optional global CSS uses the host's selected-theme scope. */
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] {
+  --ui-radius-control: 2px;
+  --ui-radius-card: 3px;
+  --ui-radius-row: 2px;
+  --ui-radius-panel: 3px;
+  --ui-font-family: "Trebuchet MS", Verdana, sans-serif;
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .ui-btn, .pill, .sidebar-nav, .sidebar-nav a, .nav-item, .nav-mobile-tab,
+  .segmented-tabs, .segmented-tabs button, .ui-modal, .ui-modal-dialog,
+  .game-card, .collection-card, .home-widget, .settings-card, .page-header,
+  .palette-preview, .preview-card, .preview-menu button, .preview-row,
+  .preview-dropdown, .preview-dropdown button, input, select, textarea
+) {
+  border-radius: 2px !important;
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .game-card, .collection-card, .home-widget, .settings-card, .preview-card
+) {
+  border: 2px solid var(--ui-border-strong);
+  box-shadow: 4px 4px 0 var(--ui-accent-soft);
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .ui-btn, .nav-item, .preview-menu button, .preview-dropdown button
+) {
+  font-weight: 700;
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .page-header h1, .page-header h2, .preview-card h3
+) {
+  letter-spacing: 0.03em;
+}

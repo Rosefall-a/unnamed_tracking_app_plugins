@@ -2,7 +2,7 @@
   "schema_version": "v1",
   "api_contract_version": "1.1.0",
   "plugin_id": "example.theme-palettes",
-  "title": "Blue Hour Palettes",
+  "title": "Blue Hour and Purple Blocks",
   "themes": [
     {
       "id": "blue-hour",
@@ -37,6 +37,46 @@
         }
       },
       "order": 0
+    },
+    {
+      "id": "purple-blocks",
+      "label": "Purple Blocks",
+      "description": "A gloriously purple interface with square controls, bold borders and blocky cards.",
+      "colors": {
+        "light": {
+          "background": "#efe1ff",
+          "surface": "#fbf5ff",
+          "surface_alt": "#e5caff",
+          "text": "#321047",
+          "muted": "#664078",
+          "accent": "#7600b8",
+          "success": "#235b42",
+          "warning": "#754800",
+          "error": "#b12743",
+          "info": "#594aad",
+          "purple": "#8500c4"
+        },
+        "dark": {
+          "background": "#1e082b",
+          "surface": "#30103f",
+          "surface_alt": "#48175b",
+          "text": "#faeaff",
+          "muted": "#d2abdf",
+          "accent": "#dd9bff",
+          "success": "#a9dfbd",
+          "warning": "#f4d197",
+          "error": "#ffacbe",
+          "info": "#c7bdff",
+          "purple": "#e2aaff"
+        }
+      },
+      "order": 10
     }
-  ]
+  ],
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": [
+      "native/style.css"
+    ]
+  }
 }

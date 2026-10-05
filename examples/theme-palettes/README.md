@@ -1,18 +1,25 @@
-# Blue Hour Palettes
+# Blue Hour and Purple Blocks
 
-An executable Plugin API v1.1 example that adds a personal palette under
-**Settings → Appearance & interface → Color palette**. Install its verified
-`.utp`, approve only `frontend.themes`, and enable it. Preview both modes,
-choose **Apply palette**, or **Edit these colors** to customize it. The host
-saves a personal copy; disabling, revoking or uninstalling the plugin removes
-its preset choice while preserving each account's selected colors.
+An executable Plugin API v1.1 example under **Settings → Appearance & interface → Color palette**.
+Blue Hour offers calm blue colours. Purple Blocks makes the interface purple, adds bold borders,
+and changes rounded controls and cards into blocks. Both provide light and dark modes.
 
-`ui.json` provides both light and dark semantic color roles. No CSS, native
-JavaScript, iframe, private data permission, or application import is needed.
-Theme permission is independent of other frontend registration grants.
+Install a verified `.utp` or the CI `unsigned-dist` preview using the host's unsigned-package
+consent. Approve `frontend.themes` to expose palettes. Approving the separate privileged
+`frontend.native` permission also loads the optional native stylesheet. Native JavaScript can
+access the signed-in application; palette-only plugins do not need that permission.
 
-Palette downloads use the host's standard portable JSON format. System mode
-continues to follow the device. Contrast checks remain advisory.
+Choose Purple Blocks to preview menus and cards, then **Apply palette**. The CSS is scoped to
+`[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"]`, which the host applies only
+when the saved light and dark palette matches this active, approved contribution. Switching
+presets or editing colours removes the shape override. Disabling, revoking or uninstalling the
+plugin removes its stylesheet and preset choices while preserving the account's saved colours.
 
-Build and validate using the repository's normal distribution commands. This
-source is a demo identity, not an official production release or trust claim.
+`native/style.css` demonstrates overrides of public tokens and host selectors. Theme plugins
+can use their own CSS for wider interface changes when their native permission is approved.
+Keep overrides scoped, retain focus indicators, and test desktop and touch layouts in both modes.
+The preview carries the same theme scope. No application source imports are required.
+
+Palette export/import uses the portable host JSON format; system mode follows the device.
+Contrast checks remain advisory. This source is an example identity, not an official release.
+Build and validate using the repository's normal distribution commands.
