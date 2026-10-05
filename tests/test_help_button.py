@@ -14,6 +14,7 @@ def test_help_contributions_and_minimal_permissions():
         "frontend.navigation.main",
         "frontend.navigation.settings",
         "frontend.settings",
+        "frontend.placement.settings.preferences",
         "frontend.overlay",
         "frontend.dialog",
         "frontend.context.game",

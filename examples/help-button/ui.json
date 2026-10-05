@@ -152,7 +152,10 @@
       "page_id": "help",
       "order": 900,
       "area": "preferences",
-      "group": "Help & shortcuts"
+      "group": "Preferences",
+      "folders": [
+        "Help & shortcuts"
+      ]
     }
   ],
   "overlays": [

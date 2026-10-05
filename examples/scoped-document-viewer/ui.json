@@ -116,7 +116,10 @@
         "admin_only": true
       },
       "area": "administration",
-      "group": "Documents"
+      "group": "Server management",
+      "folders": [
+        "Documents"
+      ]
     }
   ],
   "navigation": [

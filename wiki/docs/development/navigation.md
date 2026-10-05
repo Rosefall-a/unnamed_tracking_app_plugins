@@ -1,5 +1,35 @@
 # Navigation: expose a declared page
 
+## Headers and nested folders
+
+Navigation and `settings_sections` entries accept a `group` and up to three
+plain-text `folders`. Settings entries also select `area`: `account`,
+`preferences` or `administration`. Administration entries must set
+`visibility.admin_only: true`.
+
+Joining a built-in header needs a separate permission in both manifest
+`capabilities` and `permissions`, with a clear rationale:
+
+| Area | Permission |
+| --- | --- |
+| Sidebar | `frontend.placement.sidebar` |
+| Administration settings | `frontend.placement.settings.admin` |
+| Account settings | `frontend.placement.settings.account` |
+| Preferences | `frontend.placement.settings.preferences` |
+
+Each grant covers that entire area, including its headers and subfolders.
+For example, `group: "Your library", folders: ["Games", "Challenges"]`
+uses the sidebar permission; it does not request a Games-subtree permission.
+Settings can join Account, Preferences/Library/Information, or Server management
+in the corresponding area. Ordinary registration permissions and `full_api`
+do not imply placement permission.
+
+Without the relevant grant, the host keeps the page under Extensions. Custom
+headers and folders do not require approval to join a built-in area. Revocation
+removes built-in placement immediately without deleting the page or its data.
+Collector's Archive and the maintained Jellyfin, document and session examples
+demonstrate placement within the four separately approved areas.
+
 ## Goal
 
 Make a plugin page discoverable in the host sidebar.

@@ -123,7 +123,10 @@
       "page_id": "sessions",
       "order": 50,
       "area": "account",
-      "group": "Sessions"
+      "group": "Account",
+      "folders": [
+        "Sessions"
+      ]
     },
     {
       "id": "admin-sessions",
@@ -134,7 +137,10 @@
         "admin_only": true
       },
       "area": "administration",
-      "group": "Sessions"
+      "group": "Server management",
+      "folders": [
+        "Sessions"
+      ]
     }
   ]
 }

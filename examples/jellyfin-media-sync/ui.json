@@ -172,7 +172,12 @@
       "location": "main.sidebar",
       "label": "Jellyfin Sync",
       "route_id": "sync-route",
-      "order": 60
+      "order": 60,
+      "group": "Your library",
+      "folders": [
+        "Media",
+        "Example integrations"
+      ]
     },
     {
       "id": "sync-settings-link",
@@ -189,7 +194,10 @@
       "page_id": "sync",
       "order": 60,
       "area": "account",
-      "group": "Media integrations"
+      "group": "Account",
+      "folders": [
+        "Media integrations"
+      ]
     }
   ],
   "routes": [

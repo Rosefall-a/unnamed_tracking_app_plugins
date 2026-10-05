@@ -51,6 +51,10 @@
     {
       "name": "frontend.navigation.settings",
       "version": 1
+    },
+    {
+      "name": "frontend.placement.settings.admin",
+      "version": 1
     }
   ],
   "dependencies": [],
@@ -116,6 +120,13 @@
         "version": 1
       },
       "rationale": "Link to document reader settings in the Settings navigation."
+    },
+    {
+      "capability": {
+        "name": "frontend.placement.settings.admin",
+        "version": 1
+      },
+      "rationale": "Place these settings beneath the built-in administration headings. Approval covers this settings area and its folders, not other settings areas or backend actions."
     }
   ],
   "plugin_id": "example.scoped-document-viewer",

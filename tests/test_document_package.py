@@ -34,6 +34,7 @@ def test_document_package_contains_current_source_and_pinned_libraries(current_p
             "frontend.native",
             "frontend.settings",
             "frontend.navigation.settings",
+            "frontend.placement.settings.admin",
         }
         for path in (SOURCE / "frontend").rglob("*"):
             if path.is_file():

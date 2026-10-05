@@ -5,6 +5,7 @@ import zipfile
 from pathlib import Path
 
 import pytest
+import yaml
 
 from tools.build_unsigned_previews import build
 from tools.distribution import ROOT
@@ -30,3 +31,17 @@ def test_branch_previews_have_no_signer_and_leave_published_files_untouched(tmp_
 def test_branch_previews_reject_published_output():
     with pytest.raises(ValueError, match="published"):
         build(ROOT, ROOT / "dist")
+
+
+def test_workflows_parse_and_unsigned_previews_run_for_all_branch_pushes():
+    workflows = ROOT / ".github/workflows"
+    for path in workflows.glob("*.yml"):
+        assert isinstance(yaml.load(path.read_text(), Loader=yaml.BaseLoader), dict)
+    checks = yaml.load((workflows / "ci.yml").read_text(), Loader=yaml.BaseLoader)
+    assert "push" in checks["on"] and checks["on"]["push"] in ("", {})
+    assert "pull_request" in checks["on"]
+    preview = checks["jobs"]["unsigned-dist"]
+    assert "if" not in preview
+    assert any(step.get("with", {}).get("name") == "unsigned-dist" for step in preview["steps"])
+    publication = yaml.load((workflows / "publish.yml").read_text(), Loader=yaml.BaseLoader)
+    assert publication["on"]["push"]["branches"] == ["**"]

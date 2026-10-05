@@ -53,6 +53,10 @@
     {
       "name": "notifications.send",
       "version": 1
+    },
+    {
+      "name": "frontend.placement.settings.preferences",
+      "version": 1
     }
   ],
   "dependencies": [],
@@ -64,7 +68,7 @@
     "signature": null
   },
   "manifest_version": 1,
-  "name": "Help Button · Capability Showcase",
+  "name": "Help Button \u00b7 Capability Showcase",
   "native_frontend": {
     "entry": "native/app.js",
     "styles": [
@@ -162,6 +166,13 @@
         "version": 1
       },
       "rationale": "Send a real current-user host notification on demand."
+    },
+    {
+      "capability": {
+        "name": "frontend.placement.settings.preferences",
+        "version": 1
+      },
+      "rationale": "Place these settings beneath the built-in preferences headings. Approval covers this settings area and its folders, not other settings areas or backend actions."
     }
   ],
   "plugin_id": "example.help-button",

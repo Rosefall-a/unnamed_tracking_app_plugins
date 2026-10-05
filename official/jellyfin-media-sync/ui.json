@@ -228,7 +228,12 @@
       "location": "main.sidebar",
       "label": "Jellyfin",
       "route_id": "accounts-route",
-      "order": 60
+      "order": 60,
+      "group": "Your library",
+      "folders": [
+        "Media",
+        "Jellyfin"
+      ]
     },
     {
       "id": "admin-settings",
@@ -251,7 +256,10 @@
         "admin_only": true
       },
       "area": "administration",
-      "group": "Media integrations"
+      "group": "Server management",
+      "folders": [
+        "Media integrations"
+      ]
     }
   ],
   "routes": [

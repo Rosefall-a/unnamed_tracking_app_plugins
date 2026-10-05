@@ -26,7 +26,8 @@ def load_plugin(name: str):
         (
             "scoped-document-viewer",
             {"documents.read", "backend.routes.plugin", "frontend.context.documents", "plugin.settings",
-             "frontend.native", "frontend.settings", "frontend.navigation.settings"},
+             "frontend.native", "frontend.settings", "frontend.navigation.settings",
+             "frontend.placement.settings.admin"},
         ),
         (
             "self-service-session-manager",
@@ -37,6 +38,8 @@ def load_plugin(name: str):
                 "sessions.admin.revoke",
                 "backend.routes.plugin",
                 "frontend.settings",
+                "frontend.placement.settings.account",
+                "frontend.placement.settings.admin",
                 "frontend.native",
                 "sessions.geoip.read",
                 "sessions.geoip.configure",

@@ -236,21 +236,36 @@
       "location": "main.sidebar",
       "label": "Cards",
       "route_id": "cards-route",
-      "order": 20
+      "order": 20,
+      "group": "Your library",
+      "folders": [
+        "Games",
+        "Collector's Archive"
+      ]
     },
     {
       "id": "sets-nav",
       "location": "main.sidebar",
       "label": "Sets",
       "route_id": "sets-route",
-      "order": 21
+      "order": 21,
+      "group": "Your library",
+      "folders": [
+        "Games",
+        "Collector's Archive"
+      ]
     },
     {
       "id": "bounties-nav",
       "location": "main.sidebar",
       "label": "Bounties",
       "route_id": "bounties-route",
-      "order": 22
+      "order": 22,
+      "group": "Your library",
+      "folders": [
+        "Games",
+        "Collector's Archive"
+      ]
     }
   ],
   "settings_sections": [
@@ -259,8 +274,11 @@
       "label": "Collector's Archive",
       "page_id": "migration",
       "area": "account",
-      "group": "Library data",
-      "order": 40
+      "group": "Account",
+      "order": 40,
+      "folders": [
+        "Library data"
+      ]
     }
   ],
   "contextual_actions": [
