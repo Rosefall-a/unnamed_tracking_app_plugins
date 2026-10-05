@@ -1,9 +1,11 @@
 # Keyboard shortcuts
 
 Plugin API v1.1 adds the optional `frontend.shortcuts` permission. It does not
-grant data access or native execution. Existing shortcuts keep working when a
-new binding conflicts; the new key is paused and highlighted in Preferences →
-Keyboard shortcuts. Each user can disable or remap bindings, and a master switch
+grant data access or native execution. The oldest enabled shortcut keeps its keys
+when a new or re-enabled binding conflicts. The newcomer is disabled and a popup
+links to its editor in Preferences → Keyboard shortcuts. Activation order and
+disabled state are saved to the account and survive plugin refreshes. Each user
+can disable or remap bindings, and a master switch
 pauses all shortcuts. Help, hover hints and the quick tour use those active keys.
 
 Declare `shortcuts` in `ui.json` with a stable `id`, `label`, one to four `keys`

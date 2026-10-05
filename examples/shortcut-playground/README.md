@@ -4,7 +4,7 @@ This is an **example**, not an official feature. It requires Plugin API **1.1.0*
 
 Open **Extensions → Shortcut playground** after installation and approval. Add or remove up to five random Alt+Shift shortcuts. Each binding opens this page and reports which action ran. The host owns dispatch, personal enable/disable choices, remapping, conflict detection and help.
 
-The plugin deliberately requests **Ctrl/Cmd+K**, which conflicts with Search library. Search keeps working and the example binding is highlighted and paused. Open **Preferences → Keyboard shortcuts**, expand **Shortcut playground**, and change its keys to try it. Removing a binding or stopping the plugin removes it from dispatch and help; account preferences are retained for a later reinstall.
+The plugin deliberately requests **Ctrl/Cmd+K**, which conflicts with Search library. The oldest enabled binding keeps its keys; the newcomer is disabled and a notice links directly to its key editor. Remap the example, or disable Search and enable the example. Re-enabling Search later leaves Search disabled while the older example keeps working. Removing a binding or stopping the plugin removes it from dispatch and help; account preferences and activation priority are retained for a later reinstall.
 
 Permissions:
 

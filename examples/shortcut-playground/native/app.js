@@ -33,7 +33,7 @@ export function activate(context) {
       h("p", "These are host-managed shortcuts, not private key listeners. You can enable, disable and remap them in your personal settings."),
       h("aside", { class: "shortcut-demo-conflict" }, [
         h("strong", "Intentional Ctrl/Cmd + K conflict"),
-        h("p", "Search library keeps working. The example binding starts paused and is highlighted in shortcut settings. Remap it, or disable the original Search binding, to try it."),
+        h("p", "The oldest enabled shortcut keeps these keys. This example starts disabled when Search owns them, with a notice linking to its key editor. Remap it, or disable Search and enable this binding. Re-enabling Search later cannot take the keys back."),
       ]),
       h("div", { class: "shortcut-demo-actions" }, [
         h("button", { type: "button", class: "ui-btn ui-btn-primary", disabled: bindings.value.length >= 5, onClick: add }, "Add random shortcut"),
