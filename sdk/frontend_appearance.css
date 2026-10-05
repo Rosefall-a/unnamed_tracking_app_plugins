@@ -19,3 +19,8 @@
  --ui-danger:var(--ui-error); --ui-danger-soft:color-mix(in srgb,var(--ui-error) 12%,var(--ui-surface));
 }
 .reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation-duration:0.01ms!important; transition-duration:0.01ms!important; }
+* { scrollbar-width:thin; scrollbar-color:var(--ui-border-strong) var(--ui-surface-2); }
+::-webkit-scrollbar { width:10px; height:10px; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background:var(--ui-surface-2); }
+::-webkit-scrollbar-thumb { background:var(--ui-border-strong); border:2px solid var(--ui-surface-2); border-radius:var(--ui-radius-control,10px); }
+::-webkit-scrollbar-thumb:hover { background:var(--ui-dim); }

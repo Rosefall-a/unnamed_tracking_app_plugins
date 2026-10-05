@@ -294,7 +294,7 @@ def validate_current_contract(manifest: dict, files: dict[str, bytes]) -> None:
     for route in manifest.get("backend_routes", []):
         handler_exists(route["handler"])
     if "ui.json" not in files:
-        if any(manifest.get("ui", {}).values()):
+        if any(manifest.get("ui", {}).values()) or manifest.get("scheduled_tasks"):
             raise ValueError("declared UI contributions require ui.json")
         return
     document = json.loads(files["ui.json"])
@@ -322,6 +322,7 @@ def validate_current_contract(manifest: dict, files: dict[str, bytes]) -> None:
                 raise ValueError(f"page refers to missing {field}")
     declared = {c["name"] for c in manifest["capabilities"]}
     granted = {p["capability"]["name"] for p in manifest["permissions"]}
+    validate_scheduled_tasks(manifest, document, contract_version, granted)
     required = set()
     if document.get("shortcuts"):
         required.add("frontend.shortcuts")
@@ -341,6 +342,31 @@ def validate_current_contract(manifest: dict, files: dict[str, bytes]) -> None:
         required.add("plugin.settings")
     if not required <= declared & granted:
         raise ValueError("UI contributions require declared frontend/settings permissions")
+
+
+def validate_scheduled_tasks(
+    manifest: dict, document: dict, contract_version: tuple[int, ...], granted: set[str]
+) -> None:
+    """Match bounded host schedules to non-confirmed actions and explicit background consent."""
+    tasks = manifest.get("scheduled_tasks", [])
+    if not tasks:
+        return
+    if contract_version < (1, 1, 0) or "tasks.background" not in granted:
+        raise ValueError("scheduled tasks require v1.1 and explicit tasks.background permission")
+    identifiers = [task["id"] for task in tasks]
+    if len(identifiers) != len(set(identifiers)):
+        raise ValueError("duplicate scheduled tasks")
+    actions = {action["id"]: action for action in document.get("actions", [])}
+    for task in tasks:
+        action = actions.get(task["action_id"])
+        if action is None or not action.get("handler") or action.get("confirmation") is not None:
+            raise ValueError("scheduled task action must exist and have no confirmation")
+        if (
+            not task.get("min_interval_minutes", 5)
+            <= task.get("default_interval_minutes", 60)
+            <= task.get("max_interval_minutes", 43_200)
+        ):
+            raise ValueError("scheduled task interval is outside its bounds")
 
 
 def validate_shortcut_targets(document: dict, contract_version: tuple[int, ...]) -> None:
