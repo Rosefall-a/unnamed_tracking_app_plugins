@@ -4,6 +4,7 @@
   "unreleased_plugins": [
     "example.home-widgets",
     "example.theme-palettes",
+    "example.shortcut-playground",
     "official.collectors-archive"
   ]
 }

@@ -78,6 +78,7 @@ Use the [tutorial map](wiki/docs/development/index.md) for one-feature exercises
 | [UI/API](examples/ui-api/README.md) | Small reference: declarative page, setting and library action |
 | [Home Widgets](examples/home-widgets/README.md) | v1.1 personal widget options, separate phone layout and embedded media demo |
 | [Blue Hour and Purple Blocks](examples/theme-palettes/README.md) | Personal light/dark palettes and optional square-control CSS with a separate native permission |
+| [Shortcut Playground](examples/shortcut-playground/README.md) | v1.1.x host-managed random bindings, removal and a deliberate Search conflict |
 | [Playtime Report](examples/playtime-report/README.md) | Read → calculate → persist a user-scoped report |
 | [Recently Played Notifier](examples/recently-played-notifier/README.md) | Library data and host notifications |
 | [Metadata Curator](examples/metadata-curator/README.md) | Settings, metadata search and normalized state |

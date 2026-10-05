@@ -60,6 +60,10 @@
     {
       "name": "frontend.placement.settings.account",
       "version": 1
+    },
+    {
+      "name": "frontend.shortcuts",
+      "version": 1
     }
   ],
   "permissions": [
@@ -153,6 +157,13 @@
         "version": 1
       },
       "rationale": "Place these settings beneath the built-in account headings. Approval covers this settings area and its folders, not other settings areas or backend actions."
+    },
+    {
+      "capability": {
+        "name": "frontend.shortcuts",
+        "version": 1
+      },
+      "rationale": "Offer editable shortcuts for Cards, Sets and Bounties only while this plugin is enabled."
     }
   ],
   "dependencies": [],

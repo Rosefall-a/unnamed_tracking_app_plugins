@@ -49,6 +49,7 @@ nav:
       - Plugin-owned UI and pages: development/ui.md
       - Native frontend: development/native.md
       - Navigation: development/navigation.md
+      - Keyboard shortcuts: development/shortcuts.md
       - Routes: development/routes.md
       - External links: development/external-links.md
       - Error handling: development/errors.md

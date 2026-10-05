@@ -1,5 +1,11 @@
 # Collector's Archive
 
+With optional `frontend.shortcuts` access, Alt+E opens Cards, Alt+S opens Sets,
+and Alt+B opens Bounties. N opens the create control on those plugin pages.
+These bindings appear in host help and personal shortcut settings only while
+the plugin is enabled and authorized; users can disable or remap them. Existing
+bindings keep working if one of these keys conflicts.
+
 Official preview of **Cards, Sets and Bounties**, moved together out of the host.
 It preserves the complete card designer (front/back templates, symbols, uploaded
 art, rarity, set placement and print status), archive numbers, prestige challenges,

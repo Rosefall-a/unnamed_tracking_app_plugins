@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "publisher": "Unnamed Tracking Examples",
+  "tags": ["example", "frontend", "shortcuts"],
+  "icon": "icon.svg",
+  "automatic_update": null,
+  "release_notes": "v1.1.x-only dynamic shortcut demo with personal remapping and an intentional Search conflict."
+}

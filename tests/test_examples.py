@@ -8,6 +8,7 @@ PLUGINS = (
     "ui-api",
     "home-widgets",
     "theme-palettes",
+    "shortcut-playground",
     "scoped-document-viewer",
     "self-service-session-manager",
     "discord-delivery-provider",
@@ -61,7 +62,14 @@ def test_real_plugin_manifests_declare_required_capabilities():
         "metadata-curator": {"games.read", "plugin.settings", "plugin.storage"},
         "ui-playground": {"notifications.send"},
         "help-button": set(),
-        "jellyfin-media-sync": {"media.write", "plugin.storage", "tasks.background", "network.outbound", "frontend.context.media", "frontend.page.extend"},
+        "jellyfin-media-sync": {
+            "media.write",
+            "plugin.storage",
+            "tasks.background",
+            "network.outbound",
+            "frontend.context.media",
+            "frontend.page.extend",
+        },
     }
     for name, capabilities in expected.items():
         data = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
@@ -93,7 +101,9 @@ def test_ui_playground_manifest_points_to_real_frontend_entry():
 
 def test_every_example_has_an_executable_entrypoint_source():
     for name in PLUGINS:
-        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
+        manifest = json.loads(
+            (ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8")
+        )
         module, function = manifest["entrypoint"].split(":")
         assert module == "plugin"
         assert function == "main"
@@ -102,7 +112,9 @@ def test_every_example_has_an_executable_entrypoint_source():
 
 def test_permissions_are_declared_capabilities():
     for name in PLUGINS:
-        manifest = json.loads((ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8"))
+        manifest = json.loads(
+            (ROOT / "examples" / name / "manifest.json").read_text(encoding="utf-8")
+        )
         capabilities = {
             (item["name"], item["version"]) for item in manifest.get("capabilities", [])
         }
@@ -119,9 +131,7 @@ def test_ui_playground_has_every_required_runtime_capability():
     )
     capability_names = {item["name"] for item in manifest["capabilities"]}
     assert {"notifications.send", "plugin.storage"} <= capability_names
-    assert {
-        item["capability"]["name"] for item in manifest["permissions"]
-    } <= capability_names
+    assert {item["capability"]["name"] for item in manifest["permissions"]} <= capability_names
     assert manifest["frontend"]["entry"] == "frontend/index.html"
 
 
@@ -165,8 +175,18 @@ def test_help_button_declares_global_overlay_and_home_extension() -> None:
 
 
 def test_jellyfin_declares_secret_storage_and_background_capabilities() -> None:
-    manifest = json.loads((ROOT / "examples" / "jellyfin-media-sync" / "manifest.json").read_text(encoding="utf-8"))
+    manifest = json.loads(
+        (ROOT / "examples" / "jellyfin-media-sync" / "manifest.json").read_text(encoding="utf-8")
+    )
     capabilities = {item["name"] for item in manifest["capabilities"]}
-    assert {"media.write", "plugin.storage", "tasks.background", "network.outbound", "frontend.context.media"} <= capabilities
-    ui = json.loads((ROOT / "examples" / "jellyfin-media-sync" / "ui.json").read_text(encoding="utf-8"))
+    assert {
+        "media.write",
+        "plugin.storage",
+        "tasks.background",
+        "network.outbound",
+        "frontend.context.media",
+    } <= capabilities
+    ui = json.loads(
+        (ROOT / "examples" / "jellyfin-media-sync" / "ui.json").read_text(encoding="utf-8")
+    )
     assert any(action["id"] == "watch-now" for action in ui["actions"])

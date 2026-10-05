@@ -299,5 +299,64 @@
       "configuration": [],
       "order": 40
     }
+  ],
+  "shortcuts": [
+    {
+      "id": "open-cards",
+      "label": "Go to Cards",
+      "group": "Cards",
+      "keys": [
+        "Alt+E"
+      ],
+      "route_id": "cards-route"
+    },
+    {
+      "id": "create-cards",
+      "label": "Create a card",
+      "group": "Cards",
+      "keys": [
+        "N"
+      ],
+      "control": "create",
+      "when_route_id": "cards-route"
+    },
+    {
+      "id": "open-sets",
+      "label": "Go to Sets",
+      "group": "Sets",
+      "keys": [
+        "Alt+S"
+      ],
+      "route_id": "sets-route"
+    },
+    {
+      "id": "create-sets",
+      "label": "Create a set",
+      "group": "Sets",
+      "keys": [
+        "N"
+      ],
+      "control": "create",
+      "when_route_id": "sets-route"
+    },
+    {
+      "id": "open-bounties",
+      "label": "Go to Bounties",
+      "group": "Bounties",
+      "keys": [
+        "Alt+B"
+      ],
+      "route_id": "bounties-route"
+    },
+    {
+      "id": "create-bounties",
+      "label": "Create a bounty",
+      "group": "Bounties",
+      "keys": [
+        "N"
+      ],
+      "control": "create",
+      "when_route_id": "bounties-route"
+    }
   ]
 }

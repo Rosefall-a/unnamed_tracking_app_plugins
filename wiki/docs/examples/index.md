@@ -18,6 +18,7 @@ The catalogue is generated from their actual packages, not this table.
 | [Scoped Document Viewer](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/main/examples/scoped-document-viewer) | Feature demo: scoped sandboxed content reader | domain, document package, real browser, parity |
 | [Session Manager](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/main/examples/self-service-session-manager) | Privileged feature demo: own/admin session Settings/maps | session, routes, native UI, package |
 | [Home Widgets](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/feat/ui-ux-redevelopment/examples/home-widgets) | Account-persisted widget choices/options, responsive layouts and embedded media demo | theme/widget contracts, signed host lifecycle and account isolation |
+| [Shortcut Playground](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/feat/ui-ux-redevelopment/examples/shortcut-playground) | v1.1.x dynamic shortcuts and intentional Ctrl/Cmd+K conflict | native lifecycle, host permission enforcement, remapping and account isolation |
 | [Blue Hour Palettes](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/tree/feat/ui-ux-redevelopment/examples/theme-palettes) | Optional semantic light/dark palettes with personal copies and separate permission | package/source, palette grants, signed native/iframe acceptance and withdrawal |
 
 Use the smallest example that teaches your requirement. Every real demo's README
