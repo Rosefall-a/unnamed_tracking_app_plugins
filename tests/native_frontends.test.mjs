@@ -12,7 +12,7 @@ function all(tree) {
 }
 const flush = () => new Promise(resolve => setImmediate(resolve));
 
-async function fixture(name, respond = () => ({}), entry = "app.js") {
+async function fixture(name, respond = () => ({}), entry = "app.js", ui = {}) {
   const source = await readFile(new URL(`../examples/${name}/native/${entry}`, import.meta.url), "utf8");
   const { activate } = await import("data:text/javascript;base64," + Buffer.from(source).toString("base64"));
   const components = {}, cleanup = [], calls = [], timers = new Map();
@@ -25,7 +25,7 @@ async function fixture(name, respond = () => ({}), entry = "app.js") {
     async navigate(path) { calls.push(["navigate", path]); },
     openDialog(id) { calls.push(["dialog", id]); },
   };
-  activate({ pluginId: `example.${name}`, vue: { h, ref: value => ({ value }), reactive: x => x, defineComponent: x => x,
+  activate({ pluginId: `example.${name}`, ui, vue: { h, ref: value => ({ value }), reactive: x => x, defineComponent: x => x,
     onBeforeUnmount: fn => cleanup.push(fn) },
     host, registerComponent: (id, component) => { components[id] = component; }, onCleanup: fn => cleanup.push(fn) });
   await flush();
@@ -149,5 +149,20 @@ test("Document settings recover from errors and ignore responses after unmount",
     f.close(); release({ value: 99 }); await pending;
     assert.equal(all(render()).find(x => x.tag === "input").props.value, 0);
     assert(!all(render()).some(x => x.props.role === "status"));
+  } finally { f.close(); }
+});
+
+
+test("Demo Jellyfin uses the shared replacement password box and clears saved credentials", async () => {
+  const PasswordInput = { name: "PasswordInput" };
+  const f = await fixture("jellyfin-media-sync", id => id === "get-config" ? {is_admin: true, master: {}, profile: {}, users: []} : {}, "app.js", {PasswordInput});
+  try {
+    const render = f.components.sync.setup({host: f.host}); await flush();
+    const password = () => all(render()).find(x => x.tag === PasswordInput);
+    assert.equal(password().props.mode, "replace");
+    password().props["onUpdate:modelValue"]("DisposableCredential");
+    await all(render()).find(x => x.tag === "button" && x.children === "Save server").props.onClick();
+    assert.equal(f.calls.find(x => x[0] === "save-master")[1].api_key, "DisposableCredential");
+    assert.equal(password().props.modelValue, "");
   } finally { f.close(); }
 });

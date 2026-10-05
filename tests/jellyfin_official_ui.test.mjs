@@ -12,7 +12,8 @@ function h(tag, props, children) {
 function all(tree) {
   return tree && typeof tree === "object" ? [tree, ...[tree.children].flat(Infinity).flatMap(all)] : [];
 }
-function fixture(admin = false) {
+function fixture(admin = false, nativePassword = false) {
+  const PasswordInput = { name: "PasswordInput" };
   const components = {}, cleanup = [], unmount = [], calls = [], timers = new Map();
   const original = [global.setTimeout, global.clearTimeout];
   global.setTimeout = fn => { const id = timers.size + 1; timers.set(id, fn); return id; };
@@ -25,9 +26,9 @@ function fixture(admin = false) {
     calls.push([id, values]);
     return id === "get-config" ? config : id === "status" ? { accounts: { account: { phase: "idle" } } } : { ok: true };
   } };
-  activate({ version: "0.0.2", vue: { h, ref: value => ({ value }), reactive: x => x, defineComponent: x => x, onBeforeUnmount: fn => unmount.push(fn) },
+  activate({ version: "0.0.2", ui: nativePassword ? { PasswordInput } : {}, vue: { h, ref: value => ({ value }), reactive: x => x, defineComponent: x => x, onBeforeUnmount: fn => unmount.push(fn) },
     registerComponent: (id, component) => { components[id] = component; }, onCleanup: fn => cleanup.push(fn) });
-  return { components, host, config, calls, timers, unmount, close() {
+  return { components, host, config, calls, timers, unmount, PasswordInput, close() {
     cleanup.forEach(fn => fn());
     [global.setTimeout, global.clearTimeout] = original;
   } };
@@ -97,5 +98,19 @@ test("Polling refreshes review decisions without overwriting unsaved account pre
     await flush();
     f.unmount.forEach(fn => fn());
     assert.equal(f.timers.size, 0);
+  } finally { f.close(); }
+});
+
+
+test("Shared native password box updates and clears Jellyfin secrets", async () => {
+  const f = fixture(true, true);
+  try {
+    const render = f.components.accounts.setup({ host: f.host }); await flush();
+    const password = () => all(render()).find(x => x.tag === f.PasswordInput);
+    assert.equal(password().props.inputAriaLabel, "Password");
+    password().props["onUpdate:modelValue"]("DisposableSecret");
+    all(render()).find(x => x.tag === "button" && x.children === "Sign in").props.onClick();
+    assert.equal(f.calls.find(x => x[0] === "login")[1].password, "DisposableSecret");
+    assert.equal(password().props.modelValue, "");
   } finally { f.close(); }
 });

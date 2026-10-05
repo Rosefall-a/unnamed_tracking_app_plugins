@@ -130,7 +130,11 @@ export function activate(context) {
         const field = (target, key, label, type = "text") =>
           h("label", { class: "jf-field" }, [
             h("span", label),
-            h("input", {
+            type === "password" && context.ui?.PasswordInput ? h(context.ui.PasswordInput, {
+              modelValue: target[key], disabled: busy.value, mode: "replace",
+              inputAriaLabel: label, autocomplete: "new-password",
+              "onUpdate:modelValue": value => { target[key] = value; },
+            }) : h("input", {
               type,
               value: target[key],
               disabled: busy.value,

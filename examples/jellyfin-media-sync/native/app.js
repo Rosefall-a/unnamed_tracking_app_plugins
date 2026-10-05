@@ -60,7 +60,9 @@ export function activate(context) {
         config.value.is_admin ? h("div", { class: "jf-panel", "data-testid": "jf-admin" }, [
           h("h3", "Installation server"), h("p", "Configure once for everyone. Use a Jellyfin server API key with access to users and libraries."),
           input("server_url", "Jellyfin server URL"), input("sync_interval_minutes", "Sync interval (5–1440 minutes)", "number"),
-          h("label", [h("span", "Server credential · blank keeps existing"), h("input", { id: "jf-token", type: "password", autocomplete: "new-password", value: token.value, onInput: e => { token.value = e.target.value; } })]),
+          h("label", [h("span", "Server credential · blank keeps existing"), context.ui?.PasswordInput
+            ? h(context.ui.PasswordInput, { id: "jf-token", modelValue: token.value, mode: "replace", inputAriaLabel: "Server credential", autocomplete: "new-password", "onUpdate:modelValue": value => { token.value = value; } })
+            : h("input", { id: "jf-token", type: "password", autocomplete: "new-password", value: token.value, onInput: e => { token.value = e.target.value; } })]),
           button("Save server", "save-master", () => { const api_key = token.value; token.value = ""; return { server_url: form.server_url, sync_interval_minutes: form.sync_interval_minutes, api_key }; }),
           button("Test connection & discover", "test-connection"), h("p", `Connection: ${config.value.connection || "untested"}`),
           config.value.master?.error ? h("p", { class: "jf-error" }, config.value.master.error) : null,
