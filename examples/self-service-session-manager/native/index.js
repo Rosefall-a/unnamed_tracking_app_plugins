@@ -150,6 +150,7 @@ export function activate(context) {
         "select",
         {
           value,
+          "aria-label": label,
           onChange: (event) => change(event.target.value),
         },
         options.map(([id, title]) => h("option", { value: id }, title)),

@@ -124,9 +124,7 @@
       "order": 50,
       "area": "account",
       "group": "Account",
-      "folders": [
-        "Sessions"
-      ]
+      "folders": []
     },
     {
       "id": "admin-sessions",
@@ -138,9 +136,7 @@
       },
       "area": "administration",
       "group": "Server management",
-      "folders": [
-        "Sessions"
-      ]
+      "folders": []
     }
   ]
 }

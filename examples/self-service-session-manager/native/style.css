@@ -1,5 +1,6 @@
 .ssm {
   color: var(--ui-text);
+  min-width: 0;
   max-width: 100%;
 }
 .ssm header,
@@ -34,7 +35,7 @@
   background: var(--ui-surface);
   color: inherit;
   border: 1px solid var(--ui-border-strong);
-  border-radius: 7px;
+  border-radius: var(--ui-radius-control, 7px);
   padding: 8px 10px;
 }
 .ssm button,
@@ -60,7 +61,7 @@
 .ssm-map-card {
   padding: 16px;
   border: 1px solid var(--ui-border);
-  border-radius: 10px;
+  border-radius: var(--ui-radius-card, 10px);
   margin-block: 12px;
   background: var(--ui-surface);
 }
@@ -129,7 +130,7 @@
   cursor: grab;
   touch-action: none;
   user-select: none;
-  border-radius: 8px;
+  border-radius: var(--ui-radius-control, 8px);
 }
 .ssm .ssm-tile {
   position: absolute;
