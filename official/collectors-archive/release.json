@@ -9,5 +9,5 @@
   ],
   "icon": "icon.svg",
   "automatic_update": false,
-  "release_notes": "Preserves Cards, Sets and Bounties as a native official plugin. Legacy imports retain original IDs, archive numbers, customization, goals, evidence, journal and point history; server originals remain untouched."
+  "release_notes": "Cards, Sets and Bounties now appear directly under Games, with a direct Account entry for legacy import. Preserves original IDs, archive numbers, customization, goals, evidence, journal and point history; server originals remain untouched. Requires the host's configured private plugin gateway for authenticated actions."
 }

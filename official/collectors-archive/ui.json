@@ -239,8 +239,7 @@
       "order": 20,
       "group": "Your library",
       "folders": [
-        "Games",
-        "Collector's Archive"
+        "Games"
       ]
     },
     {
@@ -251,8 +250,7 @@
       "order": 21,
       "group": "Your library",
       "folders": [
-        "Games",
-        "Collector's Archive"
+        "Games"
       ]
     },
     {
@@ -263,8 +261,7 @@
       "order": 22,
       "group": "Your library",
       "folders": [
-        "Games",
-        "Collector's Archive"
+        "Games"
       ]
     }
   ],
@@ -275,10 +272,7 @@
       "page_id": "migration",
       "area": "account",
       "group": "Account",
-      "order": 40,
-      "folders": [
-        "Library data"
-      ]
+      "order": 40
     }
   ],
   "contextual_actions": [

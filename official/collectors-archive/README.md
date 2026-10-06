@@ -20,7 +20,9 @@ retrying never overwrites an imported or edited record. Each account imports its
 own records. The host retains the original tables, and importing does not modify
 or delete them. Keep a database backup until you've checked your archive.
 
-Cards, Sets and Bounties appear in the main menu while the plugin is enabled.
+Cards, Sets and Bounties appear directly under **Games** while the plugin is
+enabled, with no additional archive folder. The import entry appears directly in
+**Account** settings.
 Completed-game context actions can create cards. On phones, use the hamburger to
 open those entries. The existing native appearance tokens, modal controls and
 headings work in Light, Dark, System, preset and custom palettes.
@@ -30,9 +32,14 @@ modules, declare database models or access the database directly. The public
 `library.legacy.read` grant permits the one-time, read-only legacy export.
 `games.read` supplies owned game and achievement data; `media.read` supplies
 owned evidence metadata. Withdrawing a required permission stops the contribution
-through the normal host lifecycle. The source starts at **0.0.1** and remains a
+through the normal host lifecycle. The source is **0.0.2** and remains a
 preview pending the official signing/release process. Branch archives are
 untrusted previews and require explicit installation consent.
+
+All authenticated actions require the host's private plugin gateway. If pages
+report that it is not configured, check Plugin Manager's platform health and set
+`PLUGIN_GATEWAY_URL` on the app or runtime service. Reinstalling the plugin does
+not repair shared deployment configuration.
 
 Use the plugin manager's storage backup/restore controls before updating or
 removing the plugin. Disable retains its namespace. Uninstalling with data deletion
