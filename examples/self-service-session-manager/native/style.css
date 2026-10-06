@@ -2,6 +2,11 @@
   color: var(--ui-text);
   min-width: 0;
   max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.ssm,
+.ssm * {
+  box-sizing: border-box;
 }
 .ssm header,
 .ssm-toolbar {
@@ -12,7 +17,8 @@
   margin-bottom: 14px;
 }
 .ssm header > div {
-  flex: 1;
+  flex: 1 1 220px;
+  min-width: 0;
 }
 .ssm h2,
 .ssm h3 {
@@ -28,15 +34,31 @@
   align-items: center;
   gap: 8px;
   font-size: 12px;
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+.ssm label.ssm-select {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 220px;
+}
+.ssm .ssm-select select {
+  width: 100%;
+  padding-right: 34px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .ssm input,
 .ssm select,
 .ssm button {
-  background: var(--ui-surface);
+  background-color: var(--ui-surface);
   color: inherit;
   border: 1px solid var(--ui-border-strong);
   border-radius: var(--ui-radius-control, 7px);
   padding: 8px 10px;
+  min-width: 0;
+  max-width: 100%;
 }
 .ssm button,
 .ssm summary {
@@ -67,7 +89,7 @@
 }
 .ssm dl {
   display: grid;
-  grid-template-columns: minmax(100px, 150px) 1fr;
+  grid-template-columns: minmax(100px, 150px) minmax(0, 1fr);
   gap: 6px 14px;
   font-size: 13px;
 }
@@ -82,8 +104,13 @@
   margin-block: 10px;
   flex-wrap: wrap;
 }
+.ssm .ssm-file input {
+  width: 100%;
+}
 .ssm-table-wrap {
   overflow: auto;
+  min-width: 0;
+  width: 100%;
   max-width: 100%;
   margin-block: 14px;
 }
@@ -166,7 +193,8 @@
   margin-top: 12px;
 }
 @media (max-width: 650px) {
-  .ssm-toolbar label {
+  .ssm-toolbar label,
+  .ssm label.ssm-select {
     width: 100%;
   }
   .ssm-toolbar input:not([type="checkbox"]) {
@@ -174,7 +202,7 @@
     min-width: 0;
   }
   .ssm dl {
-    grid-template-columns: 100px 1fr;
+    grid-template-columns: 100px minmax(0, 1fr);
   }
 }
 

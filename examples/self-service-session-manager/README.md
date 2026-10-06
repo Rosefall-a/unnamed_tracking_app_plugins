@@ -6,6 +6,11 @@ The 2.x series ports application [PR #248](https://github.com/Rosefall-a/unnamed
 
 The primary experience is **Account → Sessions** (`/settings?area=account&section=sessions`) and administrator-only **Administration → Session Manager** (`/settings?area=administration&section=admin-sessions`). Each is a direct entry under its existing host heading, without an extra Sessions folder. Generic Settings contributions register native Vue components using the host runtime. Controls use native palette and shape tokens; no host code selects this plugin by ID.
 
+The 2.3.1 preview bounds native controls to the host panel. User selectors use
+the shared field style, long values wrap or stay within their control, and
+expanded GeoIP uploads fit narrow screens. The wide administration table keeps
+its own horizontal scroller; it does not widen the surrounding settings page.
+
 | PR #248 behavior | Current native plugin |
 | --- | --- |
 | Current session; active/expired/revoked records | Reproduced with backend state filtering |
