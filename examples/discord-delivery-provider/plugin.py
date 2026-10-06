@@ -1,12 +1,15 @@
+"""Register a Discord provider while core retains delivery ownership."""
+
 from __future__ import annotations
 
 import os
-from pathlib import Path
+import sys
 import time
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
-from sdk.plugin_protocol import request
+from sdk.plugin_protocol import GatewayRequestError, request
 
 PLUGIN_ID = "example.discord-delivery-provider"
 PROVIDER_ID = f"{PLUGIN_ID}.discord"
@@ -53,16 +56,36 @@ def check_configuration(_values: dict[str, Any]) -> dict[str, Any]:
     return {"configured": True, "valid_destination": valid}
 
 
+def _register_provider() -> None:
+    """Retry idempotent registration while the host callback becomes available."""
+    delay = 1
+    while True:
+        try:
+            request(
+                "notification_providers.register",
+                "notification_providers.register",
+                {
+                    "provider_id": PROVIDER_ID,
+                    "name": "Discord (plugin)",
+                    "action_id": "deliver",
+                },
+            )
+            return
+        except GatewayRequestError as exc:
+            if exc.code != "unavailable":
+                raise
+            print(
+                "Waiting for the host gateway before registering the Discord provider.",
+                file=sys.stderr,
+                flush=True,
+            )
+            time.sleep(delay)
+            delay = min(delay * 2, 30)
+
+
 def main() -> None:
-    request(
-        "notification_providers.register",
-        "notification_providers.register",
-        {
-            "provider_id": PROVIDER_ID,
-            "name": "Discord (plugin)",
-            "action_id": "deliver",
-        },
-    )
+    """Register the provider, then remain available for supervised delivery actions."""
+    _register_provider()
     while True:
         time.sleep(3600)
 
