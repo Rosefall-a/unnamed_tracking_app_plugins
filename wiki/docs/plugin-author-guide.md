@@ -13,9 +13,19 @@ if you maintain a list of other authors' packages.
 ## Host compatibility
 
 The public manifest/UI schemas originated from host `plugin-manager` revision
-`f1165fcc805e57ee428e7bc42fa6b83f4a6caf25`. CI checks conformance against the current
-`plugin-manager` branch. Install and test against that Plugin Manager build;
+`f1165fcc805e57ee428e7bc42fa6b83f4a6caf25`. The v1.1 host is now merged into
+`main`. Contract CI checks that branch by default, prefers a matching feature branch when
+available, and accepts an explicit host revision for coordinated development.
+Install and test against the current host build;
 the frozen schemas describe the v1 authoring contract, not current host behavior.
+
+Runtime integration temporarily pins verified host revision
+`a2d1c898f4fdfb0270234dad58d73f3eee051568` (current main plus validation fixes)
+while [host #432](https://github.com/Rosefall-a/unnamed_tracking_app/pull/432)
+awaits its required review. This fixes selection of the retained signed v1.0
+archive after v1.1 publication advances the catalogue. The same explicit-ref and
+matching-branch options remain available. Once #432 is merged, the default
+runtime ref can return to `main`.
 
 The current host accepts `list.json` version 1 and `.utp` v1. It consumes the
 current identity, name, description, version, package URL, dependencies, release

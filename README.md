@@ -112,6 +112,24 @@ and historical records remain unchanged. Do not manually edit generated lists,
 re-sign old ZIPs, or remove historical packages to tidy the repository. GitHub
 Releases distributes/presents these same outputs; repository history is retained.
 
+### Reproduce and share validation outputs
+
+A fresh clone does not need anyone else's `.validation` folder. The committed
+`tools/` and `tests/` recreate preview packages from maintained source;
+cross-repository workflows explicitly check out their host/mobile dependencies.
+Run the development commands above to regenerate `.validation/dist`, `list.json`
+and release metadata. Package filenames follow the version in each preview's
+manifest; signed publication can advance source versions, so do not assume a
+fixed filename from an earlier release.
+
+For sharing, download **unsigned-dist** or **validated-plugin-distribution** from
+the [Plugin checks run](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/actions/workflows/ci.yml).
+These artifacts include the generated packages/catalogue and contain no private
+signing keys. Public conformance tools and dated review evidence live in `tools/`
+and `wiki/docs/`. Keep local environment files, credentials, cookies and private
+deployment logs out of shared artifacts; the whole `.validation` folder is not
+a distribution input.
+
 Official features and examples use the same SDK, package validator, permission
 review and sandbox. [Jellyfin's official preview](official/jellyfin-media-sync/README.md)
 starts at 0.0.1 with a separate identity; the original Jellyfin package stays a demo.
