@@ -11,6 +11,7 @@ import zipfile
 
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
 from tools.distribution import (
     ROOT,
     load_histories,
@@ -23,6 +24,7 @@ from tools.validate_packages import validate_package
 
 @pytest.fixture
 def checkout(tmp_path):
+    """Create an isolated real source checkout with an example-only test signer."""
     shutil.copyfile(ROOT / ".gitignore", tmp_path / ".gitignore")
     for name in ("tools", "sdk", "publishers"):
         shutil.copytree(
@@ -73,6 +75,7 @@ def checkout(tmp_path):
 
 
 def commit(root, message):
+    """Record a simulated source or publication change in the owned checkout."""
     subprocess.run(
         ["git", "-C", str(root), "add", "."], check=True, capture_output=True
     )
@@ -84,6 +87,7 @@ def commit(root, message):
 
 
 def run_build(root, env, *flags, check=True):
+    """Run the real builder with the fixture's scoped signing environment."""
     result = subprocess.run(
         [sys.executable, str(root / "tools/build_packages.py"), *flags],
         env=env,
@@ -97,6 +101,7 @@ def run_build(root, env, *flags, check=True):
 
 
 def records(root):
+    """Read the generated release history used by versioning assertions."""
     return json.loads(
         (root / "releases/example.help-button.json").read_text(encoding="utf-8")
     )["releases"]
@@ -106,6 +111,7 @@ def records(root):
 def test_unreleased_official_preview_is_installable_without_expanding_signer_scope(
     checkout, version
 ):
+    """Advanced source versions still produce valid unsigned official previews."""
     root, env = checkout
     shutil.copytree(
         ROOT / "official/jellyfin-media-sync", root / "official/jellyfin-media-sync"
