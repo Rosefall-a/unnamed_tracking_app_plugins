@@ -2,8 +2,8 @@
 
 The maintained official PWA integrates the existing mobile repository's PWA
 assets with the complete Unnamed Tracking web application. Initial version:
-**0.0.1**. The v1.1 host contract and theme migration uses plugin release **0.0.2**
-with reviewed mobile assets at **0.0.2**. Stable 1.0.0 requires an
+**0.0.1**. The current v1.1 preview uses plugin release **0.0.4**
+with reviewed mobile assets at **0.0.4**. Stable 1.0.0 requires an
 explicit human release decision.
 
 Install its `.utp` through Plugin Manager, review `frontend.pwa`, and enable it.

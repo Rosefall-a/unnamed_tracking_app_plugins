@@ -85,6 +85,16 @@ def scoped_checkout_fixture(tmp_path):
     return tmp_path, env
 
 
+@pytest.fixture(name="pwa_version")
+def pwa_version_fixture(scoped_checkout):
+    """Use the reviewed source patch while preserving the PWA's 0.0.x boundary."""
+    root, _ = scoped_checkout
+    version = json.loads((root / "official/pwa/manifest.json").read_text())["version"]
+    assert version.startswith("0.0.")
+    assert version.removeprefix("0.0.").isdigit()
+    return version
+
+
 def test_real_publish_uses_three_independent_keys(scoped_checkout):
     root, env = scoped_checkout
     result = build(root, env, "--publish")
@@ -215,25 +225,25 @@ def test_official_signing_failure_never_publishes_or_downgrades(scoped_checkout,
     assert not (root / "dist").exists()
 
 
-def test_unsigned_preview_is_explicit_and_keeps_zero_zero_version(scoped_checkout):
+def test_unsigned_preview_is_explicit_and_keeps_zero_zero_version(scoped_checkout, pwa_version):
     """The explicit patch keeps unsigned UI previews on the v1.1 contract."""
     root, env = scoped_checkout
     env = {k: v for k, v in env.items() if "SIGNING_KEY" not in k}
     env["PLUGIN_SIGNING_FALLBACK"] = "unsigned"
     result = build(root, env)
     assert result.returncode == 0, result.stderr
-    with zipfile.ZipFile(root / ".validation/dist/official.pwa-0.0.3.utp") as archive:
+    with zipfile.ZipFile(root / f".validation/dist/official.pwa-{pwa_version}.utp") as archive:
         manifest = json.loads(archive.read("manifest.json"))
-        assert manifest["version"] == "0.0.3"
+        assert manifest["version"] == pwa_version
         assert manifest["api_contract_version"] == "1.1.0"
-        assert json.loads(archive.read("payload/pwa/version.json"))["version"] == "0.0.3"
-        assert json.loads(archive.read("payload/pwa/provenance.json"))["version"] == "0.0.3"
+        assert json.loads(archive.read("payload/pwa/version.json"))["version"] == pwa_version
+        assert json.loads(archive.read("payload/pwa/provenance.json"))["version"] == pwa_version
         assert manifest["integrity"]["signature"] is None
         assert manifest["integrity"]["key_id"] is None
     assert not (root / "list.json").exists()
 
 
-def test_changed_pwa_needs_explicit_patch_even_after_breaking_commit(scoped_checkout):
+def test_changed_pwa_needs_explicit_patch_even_after_breaking_commit(scoped_checkout, pwa_version):
     """A breaking commit cannot bypass manual 0.0.x PWA release selection."""
     root, env = scoped_checkout
     result = build(root, env, "--publish")
@@ -256,7 +266,7 @@ def test_changed_pwa_needs_explicit_patch_even_after_breaking_commit(scoped_chec
     assert result.returncode != 0
     assert "explicit new 0.0.x patch" in result.stderr
     assert {p.name for p in (root / "dist").glob("official.pwa-*.utp")} == {
-        "official.pwa-0.0.3.utp"
+        f"official.pwa-{pwa_version}.utp"
     }
 
 
@@ -273,12 +283,12 @@ def test_pwa_stable_promotion_is_rejected(scoped_checkout, version):
     assert not (root / ".validation/list.json").exists()
 
 
-def test_packaged_pwa_rejects_source_provenance_drift(scoped_checkout):
+def test_packaged_pwa_rejects_source_provenance_drift(scoped_checkout, pwa_version):
     """Changed offline assets invalidate the reviewed source hashes."""
     root, env = scoped_checkout
     result = build(root, env)
     assert result.returncode == 0, result.stderr
-    source = root / ".validation/dist/official.pwa-0.0.3.utp"
+    source = root / f".validation/dist/official.pwa-{pwa_version}.utp"
     changed = root / "changed.utp"
     with zipfile.ZipFile(source) as original, zipfile.ZipFile(changed, "w") as archive:
         for name in original.namelist():

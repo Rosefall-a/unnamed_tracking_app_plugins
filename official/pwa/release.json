@@ -9,5 +9,5 @@
   ],
   "icon": "pwa/pwa-icon.svg",
   "automatic_update": true,
-  "release_notes": "Plugin API v1.1 migration with reviewed 0.0.2 mobile assets. Complete themed web app and sign-in, palette-aware neutral offline page, isolated caches and normal session authentication."
+  "release_notes": "Reviewed 0.0.4 mobile assets. Offline installed themes take precedence over native palette overrides, with personal-color fallback when theme CSS is unavailable; private data remains uncached."
 }

@@ -1,15 +1,15 @@
 {
   "repository": "Rosefall-a/unnamed-tracking-mobile-app",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "source_path": "pwa",
   "sha256": {
     "manifest.webmanifest": "3c847628081be385d87a887d5df7fa7c2994e0c7a67ceba9613f77d566606a3a",
     "service-worker.js": "2ba8182aed87d897b4c5b8de8ea34d70bfcaae538c5dce825d6e33641ce1cac4",
-    "offline.html": "4f91aff2089cd9a13282942fca6f32d04f16e8d8659c125077db2e3e7aaad28f",
+    "offline.html": "4e63bf271a608a1d9673e6466283eac2d47c5116d98f0c75e1795712a84dda3e",
     "pwa-icon.svg": "33d30871e87f333c9ccef6618c6783424481f354f6b6c09ef8dec9c0d209963a",
     "icon-192.png": "54de1241522aa6f6c1a218e409fb071cbbf63fdc7f4e77bd790a8d55c28acf51",
     "icon-512.png": "7242124f181675e97adf040c373cb46004e27f87ffb74de0fcf8ad4b29c7b6c4",
-    "version.json": "e4008f069f0873db7883cb4765c976a07b761ffbf89523b60fad9104c8090508",
-    "README.md": "a13b95bd03ebf52482f8f7cb1737ebf9ad2ea610502e9a11c72ceb91572bf451"
+    "version.json": "b764057f0047c5aef6a25092c3be9305abd45602af5142ee8fd0f7f1ebe423eb",
+    "README.md": "31c7a772cab1086ae042e792df5b7aef45cea5adcbf787051e4c9d88d402d1a8"
   }
 }
