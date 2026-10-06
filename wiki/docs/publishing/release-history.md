@@ -16,6 +16,15 @@ second compares baseline package bytes and append-only record prefixes, and
 rejects disappearance of a baseline plugin from the generated current catalogue.
 The preview check also binds each latest record to the current source digest.
 
+Retirement is an explicit reviewed decision in the repository-root
+`retired_plugins.json`. Each record names a plugin ID, has `status: retired` and
+explains the reason. Advanced, Events and Lifecycle are the only retired
+references; the maintained examples remain available. A retired ID must have no
+maintained source or current catalogue entry, and must retain its release history.
+The baseline check still requires every historical archive byte and release
+record prefix to remain unchanged. Retirement does not uninstall an existing
+plugin or erase its published package URLs.
+
 | Field | Authoritative evidence |
 | --- | --- |
 | `package_sha256`, size and filename | Exact final archive bytes and plugin ID/version |

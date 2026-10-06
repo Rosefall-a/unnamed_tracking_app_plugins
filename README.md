@@ -104,6 +104,7 @@ Small references stay small; real demos document supported behavior and host lim
 | `publishers/` | Reviewed public keys/registry; never private signing keys |
 | `dist/` | Generated immutable installable `.utp` versions |
 | `releases/` | Append-only generated release metadata/history, including retired plugins |
+| `retired_plugins.json` | Reviewed retirement decisions; historical archives and release records stay immutable |
 | `catalogue.json` | Authored display name and HTTPS hosting base URL |
 | `list.json` | Generated current catalogue with complete per-plugin histories |
 

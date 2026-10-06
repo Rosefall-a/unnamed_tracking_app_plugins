@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "plugins": [
+    {
+      "plugin_id": "example.advanced",
+      "status": "retired",
+      "reason": "Legacy reference package; source implementation is no longer maintained."
+    },
+    {
+      "plugin_id": "example.events",
+      "status": "retired",
+      "reason": "Legacy reference package; source implementation is no longer maintained."
+    },
+    {
+      "plugin_id": "example.lifecycle",
+      "status": "retired",
+      "reason": "Legacy reference package; source implementation is no longer maintained."
+    }
+  ]
+}
