@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       host_ref:
-        description: "Host ref (defaults to the Plugin API v1.1 UI branch until it merges; matching feature branches take precedence)"
+        description: "Host ref (defaults to main; matching feature branches take precedence)"
         type: string
         required: false
 
@@ -48,9 +48,9 @@ jobs:
         run: |
           ref="$REQUESTED_REF"
           if [ -z "$ref" ]; then
-            ref=feat/ui-ux-redevelopment
-            # These packages require Plugin API v1.1. The foundational
-            # plugin-manager branch intentionally remains API v1.0.
+            ref=main
+            # Plugin API v1.1 is now merged. Check the current released host;
+            # explicit overrides and matching feature branches remain supported.
             if [ "$COMPANION_BRANCH" != main ] && git ls-remote --exit-code --heads https://github.com/Rosefall-a/unnamed_tracking_app.git "refs/heads/$COMPANION_BRANCH" >/dev/null; then
               ref="$COMPANION_BRANCH"
             fi
