@@ -13,8 +13,10 @@ if you maintain a list of other authors' packages.
 ## Host compatibility
 
 The public manifest/UI schemas originated from host `plugin-manager` revision
-`f1165fcc805e57ee428e7bc42fa6b83f4a6caf25`. CI checks conformance against the current
-`plugin-manager` branch. Install and test against that Plugin Manager build;
+`f1165fcc805e57ee428e7bc42fa6b83f4a6caf25`. The v1.1 host is now merged into
+`main`. CI checks that branch by default, prefers a matching feature branch when
+available, and accepts an explicit host revision for coordinated development.
+Install and test against the current host build;
 the frozen schemas describe the v1 authoring contract, not current host behavior.
 
 The current host accepts `list.json` version 1 and `.utp` v1. It consumes the
