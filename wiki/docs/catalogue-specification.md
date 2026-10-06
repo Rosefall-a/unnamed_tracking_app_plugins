@@ -8,9 +8,9 @@ runtime, manifest, package and signing details.
 
 ## Current host consumption
 
-The current host `plugin-manager` consumes the following contract. The frozen
+The current host on `main` consumes the following contract. The frozen
 manifest/UI schema revision is `f1165fcc805e57ee428e7bc42fa6b83f4a6caf25`; CI
-also checks the latest host branch rather than treating that older snapshot as
+also checks the current host rather than treating that older snapshot as
 the current implementation.
 
 * Administrators configure catalogue endpoints; catalogues are independent of

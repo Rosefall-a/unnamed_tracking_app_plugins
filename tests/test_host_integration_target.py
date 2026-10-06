@@ -13,9 +13,9 @@ ROOT = Path(__file__).resolve().parents[1]
 @pytest.mark.parametrize(
     "scenario",
     [
-        ("", "main", "main", "feat/ui-ux-redevelopment"),
+        ("", "main", "main", "main"),
         ("", "feature/example", "feature/example", "feature/example"),
-        ("", "feature/example", "main", "feat/ui-ux-redevelopment"),
+        ("", "feature/example", "main", "main"),
         ("pinned-host-sha", "main", "main", "pinned-host-sha"),
         ("main", "main", "main", "main"),
     ],
@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
     "workflow_name,job", [("host-integration.yml", "lifecycle"), ("ci.yml", "test-and-build")]
 )
 def test_workflow_selects_owned_host_target(tmp_path, scenario, workflow_name, job):
-    """Both workflows prefer explicit refs, then matching branches, then the v1.1 host."""
+    """Both workflows prefer explicit refs, then matching branches, then merged main."""
     requested, branch, remote_branch, expected = scenario
     workflow = yaml.safe_load((ROOT / ".github/workflows" / workflow_name).read_text())
     selector = next(
