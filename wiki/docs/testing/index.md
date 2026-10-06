@@ -42,7 +42,7 @@ build must produce identical bytes for the same source/commit/signer.
 
 ## Exercise the real host contract
 
-Clone `Rosefall-a/unnamed_tracking_app` at `plugin-manager` into `.validation/host`
+Clone `Rosefall-a/unnamed_tracking_app` at `main` into `.validation/host`
 and run `python tools/check_host_contract.py --host-root .validation/host` after
 building the preview. It uses actual validators/verifier/registry; it never
 enables code during inspection.
@@ -61,9 +61,28 @@ The required `host-integration.yml` job provisions PostgreSQL and runs the host'
 It builds the actual Plugin Manager frontend and verifies consent, effective
 grants, new-scope staging, release policy, rollback and failed worker restoration.
 Then it runs the additional reference lifecycle check. Use the host's
-[validation instructions](https://github.com/Rosefall-a/unnamed_tracking_app/blob/plugin-manager/wiki/docs/development/plugin-validation.md)
+[validation instructions](https://github.com/Rosefall-a/unnamed_tracking_app/blob/main/wiki/docs/development/plugin-validation.md)
 for database, Linux, environment and frontend prerequisites. Never replace this
 with a pretend gateway or fake host to get a green lifecycle claim.
+
+## Remaining checks after the host CI fix merges
+
+Runtime CI currently uses verified host commit
+`a2d1c898f4fdfb0270234dad58d73f3eee051568`, containing current main and the
+validation fixes in [host #432](https://github.com/Rosefall-a/unnamed_tracking_app/pull/432).
+The host PR is ready for its required approving review; contract CI continues
+checking main. No private `.validation` checkout is needed.
+
+After #432 is merged:
+
+1. Check that main's production image build and its dependent published-image
+   runtime smoke both pass, using the exact `sha-<commit>` image tag.
+2. Return `DEFAULT_HOST_REF` in `host-integration.yml` to `main`, update the
+   fallback expectation in `tests/test_host_integration_target.py`, and run its
+   actual shell-selector scenarios.
+3. Run runtime integration on main after signed publication. The retained signed
+   v1.0 worker and verified v1.1 upgrade must both pass even when the catalogue's
+   latest release is v1.1.
 
 ## Add tests for a new plugin
 
