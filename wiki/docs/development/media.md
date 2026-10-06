@@ -8,7 +8,7 @@ Read a bounded media preview without requesting write or network authority.
 
 Use a complete plugin with `media.read` v1 and its permission rationale. Add the
 handler to a declared action and page. Jellyfin's `list_media` is a maintained
-example; its additional sync permissions are not needed for this read action.
+demo; its additional sync permissions are not needed for this read action.
 
 ## Minimal code
 
@@ -42,3 +42,26 @@ movies shows the signed-in user's data after the read grant is approved.
 Copying every Jellyfin permission into a read-only plugin; assuming media write
 includes read; accepting a caller-supplied user ID as authority; making an external
 request when the host already provides the data.
+
+## Provider sync and enrichment
+
+The demo uses the provider-neutral `media.sync` DTO. The separate
+`official/jellyfin-media-sync` preview opts into `sync_mode: "enrich"`, which
+supports owned record matching, provider identities, playback percentage/counts,
+bounded episode progress and truthful individual sessions. Exact provider IDs or
+unique title/year matches may merge; ambiguous/incomplete matches return candidates
+for review. Collection IDs do not identify individual films. Stable host links,
+episode identities and atomic accepted snapshots prevent duplicate records after
+restart. Local ratings fill only when absent; local watch edits require review
+when Jellyfin subsequently changes watch state.
+
+These are generic v1 additions on `media.write`; neither plugin gets extra host
+access. See the host's [full public contract](https://github.com/Rosefall-a/unnamed_tracking_app/blob/plugin-manager/docs/plugin-api-v1.md)
+for fields and bounds. Credentials use the private storage broker, and JSON login
+POST uses `network.request` under `network.outbound` with verified TLS. A subscribed
+background user may receive `notifications.send` only with that separate live grant.
+
+```sh
+python -m pytest tests/test_jellyfin_official.py
+node --test tests/jellyfin_official_ui.test.mjs
+```

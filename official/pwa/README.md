@@ -2,7 +2,9 @@
 
 The maintained official PWA integrates the existing mobile repository's PWA
 assets with the complete Unnamed Tracking web application. Initial version:
-**0.0.1**. Stable 1.0.0 requires an explicit human release decision.
+**0.0.1**. The current v1.1 preview uses plugin release **0.0.4**
+with reviewed mobile assets at **0.0.4**. Stable 1.0.0 requires an
+explicit human release decision.
 
 Install its `.utp` through Plugin Manager, review `frontend.pwa`, and enable it.
 The permission publishes public install metadata and icons and enables the
@@ -21,6 +23,12 @@ Passwords are never saved by this plugin. Session expiry returns to normal login
 Offline navigation displays a neutral waiting-for-internet page, never account
 data. No `/api/` response is cached. Reconnect restores normal navigation.
 
+The full application, sign-in/SSO redirects and neutral offline page follow
+Light, Dark or System and the last device palette, including Orange, Green and
+custom colors. Only cosmetic color roles are cached locally; saved account
+preferences take precedence online. Browser bars follow the current background.
+The public signed installation manifest never contains personal appearance data.
+
 Updates replace the host worker generation and remove only owned old caches.
 The offline page has no time expiry. Disable, permission revocation or uninstall
 withdraws the manifest/icons and retires the worker when the browser next reaches
@@ -30,7 +38,8 @@ guidance. Reinstallation gets a new installation/cache identity.
 
 Assets are synchronized from `unnamed-tracking-mobile-app/pwa` using
 `tools/sync_pwa.py --mobile-root PATH --host-root PATH`; `--check` validates exact
-provenance and version consistency. The host never executes a worker from an
+provenance and a plugin release that does not precede its mobile asset version.
+The host never executes a worker from an
 untrusted package: reviewed worker/offline infrastructure is shipped by the host.
 Metadata colors are typed for future theme support; no mobile UI redesign is
 included.

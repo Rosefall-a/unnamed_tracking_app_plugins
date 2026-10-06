@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       host_ref:
-        description: "Host ref (main uses plugin-manager; feature branches prefer a matching host branch)"
+        description: "Host ref (defaults to the Plugin API v1.1 UI branch until it merges; matching feature branches take precedence)"
         type: string
         required: false
 
@@ -48,8 +48,9 @@ jobs:
         run: |
           ref="$REQUESTED_REF"
           if [ -z "$ref" ]; then
-            ref=plugin-manager
-            # Repository main branches have different ownership targets.
+            ref=feat/ui-ux-redevelopment
+            # These packages require Plugin API v1.1. The foundational
+            # plugin-manager branch intentionally remains API v1.0.
             if [ "$COMPANION_BRANCH" != main ] && git ls-remote --exit-code --heads https://github.com/Rosefall-a/unnamed_tracking_app.git "refs/heads/$COMPANION_BRANCH" >/dev/null; then
               ref="$COMPANION_BRANCH"
             fi
@@ -73,6 +74,11 @@ jobs:
           python -m pip install -r .validation/host/src/backend/requirements.txt jsonschema
           sudo apt-get update
           sudo apt-get install -y bubblewrap
+          # The disposable runner must permit namespaces for strict sandbox tests.
+          if [ -f /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+          bwrap --unshare-all --ro-bind / / -- /bin/true
           sudo mkdir -p /data
           sudo chown "$(id -u):$(id -g)" /data
       - name: Prepare disposable database
@@ -100,6 +106,17 @@ jobs:
           # supervisor still probes and reports isolation; nothing is mocked.
           NONBUBBLE_ENV: 'true'
         run: python tools/check_reference_lifecycle.py --host-root .validation/host
+      - name: Verify actual legacy worker withdrawal and signed v1.1 upgrade
+        env:
+          NONBUBBLE_ENV: 'true'
+        run: |
+          python .validation/host/tools/check_plugin_contract_upgrade.py --plugins-root . \
+            --work-root "${{ runner.temp }}/contract-upgrade-acceptance"
+      - name: Test independently installed official Jellyfin preview
+        run: |
+          bash .validation/host/tools/run_strict_plugin_acceptance.sh \
+            "$GITHUB_WORKSPACE/.validation/host" "$GITHUB_WORKSPACE" \
+            "${{ runner.temp }}/jellyfin-official-acceptance"
       - name: Verify official PWA signing and real browser lifecycle
         run: |
           python .validation/host/tools/check_pwa_lifecycle.py --plugins-root . \
@@ -113,7 +130,11 @@ jobs:
             ${{ runner.temp }}/plugin-acceptance/conformance.json
             ${{ runner.temp }}/plugin-acceptance/**/*.png
             ${{ runner.temp }}/plugin-acceptance/workflow-captures.json
+            ${{ runner.temp }}/jellyfin-official-acceptance/*.log
+            ${{ runner.temp }}/jellyfin-official-acceptance/conformance.json
+            ${{ runner.temp }}/jellyfin-official-acceptance/screenshots/*.png
             ${{ runner.temp }}/pwa-acceptance/*.log
             ${{ runner.temp }}/pwa-acceptance/*.png
             ${{ runner.temp }}/pwa-acceptance/pwa-conformance.json
+            ${{ runner.temp }}/contract-upgrade-acceptance/conformance.json
           if-no-files-found: warn

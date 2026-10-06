@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "publisher": "Unnamed Tracking Official",
+  "tags": [
+    "demo",
+    "frontend",
+    "widgets"
+  ],
+  "icon": "icon.svg",
+  "automatic_update": null,
+  "release_notes": "Explicit v1.1 Home widget registration, personal configuration and phone pages."
+}

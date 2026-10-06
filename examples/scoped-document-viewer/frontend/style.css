@@ -1,9 +1,9 @@
 .settings-panel {
   margin: 0 0 20px;
   padding: 16px;
-  border: 1px solid #2c3947;
+  border: 1px solid var(--ui-border);
   border-radius: 10px;
-  background: #151c25;
+  background: var(--ui-surface);
 }
 .settings-panel label {
   display: grid;
@@ -14,8 +14,8 @@
 .settings-panel input {
   font: inherit;
   color: inherit;
-  background: #202a35;
-  border: 1px solid #3c4a5b;
+  background: var(--ui-surface-2);
+  border: 1px solid var(--ui-border-strong);
   border-radius: 8px;
   padding: 9px 13px;
 }
@@ -29,12 +29,12 @@
   font-size: 12px;
 }
 :root {
-  color-scheme: dark;
+  color-scheme: light dark;
   font:
     14px/1.5 system-ui,
     sans-serif;
-  background: #101419;
-  color: #e3e9f1;
+  background: var(--ui-bg);
+  color: var(--ui-text);
 }
 * {
   box-sizing: border-box;
@@ -101,7 +101,7 @@
 }
 .preview-note {
   padding: 10px;
-  border: 1px solid #3c4a5b;
+  border: 1px solid var(--ui-border-strong);
   border-radius: 5px;
   margin-bottom: 20px;
 }
@@ -122,7 +122,7 @@ main {
 .eyebrow {
   font-size: 11px;
   letter-spacing: 0.14em;
-  color: #79c6c0;
+  color: var(--ui-accent);
   margin: 0;
 }
 h1 {
@@ -136,25 +136,25 @@ h2 {
 }
 p {
   margin: 6px 0;
-  color: #a7b4c5;
+  color: var(--ui-dim);
 }
 button,
 select {
   font: inherit;
   color: inherit;
-  background: #202a35;
-  border: 1px solid #3c4a5b;
+  background: var(--ui-surface-2);
+  border: 1px solid var(--ui-border-strong);
   border-radius: 8px;
   padding: 9px 13px;
   cursor: pointer;
 }
 button:hover {
-  border-color: #79c6c0;
-  background: #263643;
+  border-color: var(--ui-accent);
+  background: var(--ui-accent-soft);
 }
 button:focus-visible,
 select:focus-visible {
-  outline: 2px solid #9fe6df;
+  outline: 2px solid var(--ui-accent);
   outline-offset: 3px;
 }
 button:disabled,
@@ -180,7 +180,7 @@ select:disabled {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #91a2b8;
+  color: var(--ui-dim);
   margin-bottom: 12px;
 }
 ul {
@@ -199,22 +199,22 @@ li button {
   text-align: left;
   gap: 4px;
   padding: 13px 15px;
-  background: #171e27;
+  background: var(--ui-surface);
 }
 li button[aria-pressed="true"] {
-  border-color: #79c6c0;
-  background: #203631;
+  border-color: var(--ui-accent);
+  background: var(--ui-accent-soft);
 }
 li strong {
   font-weight: 600;
   overflow-wrap: anywhere;
 }
 li span {
-  color: #a8bacb;
+  color: var(--ui-dim);
   font-size: 12px;
 }
 li small {
-  color: #889bb1;
+  color: var(--ui-dim);
   font-size: 11px;
   overflow-wrap: anywhere;
 }
@@ -223,17 +223,17 @@ li small {
   width: 100%;
 }
 .document-panel {
-  border: 1px solid #2c3947;
+  border: 1px solid var(--ui-border);
   border-radius: 12px;
   overflow: hidden;
-  background: #151c25;
+  background: var(--ui-surface);
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 .document-header {
   padding: 17px 20px;
-  border-bottom: 1px solid #2c3947;
+  border-bottom: 1px solid var(--ui-border);
 }
 .document-header h2 {
   overflow-wrap: anywhere;
@@ -248,7 +248,7 @@ li small {
   align-items: center;
   gap: 10px;
   padding: 10px 16px;
-  border-bottom: 1px solid #2c3947;
+  border-bottom: 1px solid var(--ui-border);
 }
 .toolbar button,
 .toolbar select {
@@ -293,7 +293,7 @@ pre {
 }
 .document-html td,
 .document-html th {
-  border: 1px solid #3c4a5b;
+  border: 1px solid var(--ui-border-strong);
   padding: 6px;
 }
 .state {
@@ -302,14 +302,14 @@ pre {
   min-height: 340px;
   text-align: center;
   padding: 20px;
-  color: #8fa2b9;
+  color: var(--ui-dim);
 }
 .error {
-  color: #ffb6a9;
+  color: var(--ui-error);
 }
 footer {
   font-size: 11px;
-  color: #788ca3;
+  color: var(--ui-dim);
   margin-top: 20px;
 }
 @media (max-width: 800px) {
@@ -332,3 +332,16 @@ footer {
     max-height: 560px;
   }
 }
+
+ button,  input:not([type=checkbox]):not([type=radio]),  select,  summary {
+  min-height: var(--ui-control-height, 44px);
+  box-sizing: border-box;
+  font: inherit;
+}
+
+ button:focus-visible,  input:focus-visible,  select:focus-visible,  summary:focus-visible {
+  outline: 3px solid var(--ui-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 560px) { main { padding: 16px; } .toolbar, header { flex-wrap: wrap; } }

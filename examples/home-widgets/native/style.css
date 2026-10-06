@@ -1,0 +1,12 @@
+.home-demo { min-width: 0; color: var(--ui-text); font: var(--ui-font-body)/1.5 var(--ui-font-family); }
+.home-demo-hint { color: var(--ui-dim); margin-block: 0 var(--ui-space-4); }
+.home-demo-games { display: grid; gap: var(--ui-space-2); margin: 0 0 var(--ui-space-4); padding: 0; list-style: none; }
+.home-demo-desktop .home-demo-games { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.home-demo-game { width: 100%; min-height: max(44px, var(--ui-control-height)); border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-row); color: var(--ui-text); background: var(--ui-surface-2);
+  padding: var(--ui-space-3); text-align: left; font: inherit; overflow-wrap: anywhere; cursor: pointer; }
+.home-demo-phone .home-demo-game { border-radius: 999px; padding-inline: var(--ui-space-5); }
+.home-demo-actions { display: flex; flex-wrap: wrap; gap: var(--ui-space-2); }
+.home-demo-actions .ui-btn { min-height: 44px; }
+.home-demo-media { aspect-ratio: 16 / 9; width: 100%; overflow: hidden; border-radius: var(--ui-radius-card); background: var(--ui-surface-2); }
+.home-demo-media iframe { width: 100%; height: 100%; border: 0; }

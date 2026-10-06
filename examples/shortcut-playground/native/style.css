@@ -1,0 +1,9 @@
+.shortcut-playground { display: grid; gap: var(--ui-space-4); color: var(--ui-text); }
+.shortcut-playground p { margin: 0; line-height: 1.6; }
+.shortcut-demo-conflict { padding: var(--ui-space-4); border: 1px solid var(--ui-warning); background: var(--ui-warning-soft); border-radius: var(--ui-radius-card); }
+.shortcut-demo-conflict strong { color: var(--ui-warning); }
+.shortcut-demo-actions, .shortcut-playground li, .shortcut-playground li > span { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ui-space-3); }
+.shortcut-playground ul { display: grid; gap: var(--ui-space-3); list-style: none; padding: 0; margin: 0; }
+.shortcut-playground li { justify-content: space-between; padding: var(--ui-space-4); border: 1px solid var(--ui-border); border-radius: var(--ui-radius-row); background: var(--ui-surface); }
+.shortcut-playground kbd { padding: 5px 8px; border: 1px solid var(--ui-border-strong); border-radius: var(--ui-radius-control); background: var(--ui-surface-2); }
+.shortcut-demo-hint { color: var(--ui-dim); font-size: var(--ui-font-small); }

@@ -2,7 +2,7 @@ import json
 import zipfile
 from pathlib import Path
 
-from tools.distribution import validate_distribution, version_key, discover_plugins
+from tools.distribution import discover_plugins, validate_distribution, version_key
 
 ROOT = Path(__file__).parents[1]
 

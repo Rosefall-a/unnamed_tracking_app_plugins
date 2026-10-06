@@ -50,6 +50,12 @@ The host owns mounting/unmounting declared surfaces. Your cleanup handles
 resources you create. Help Button demonstrates timer disposal and guards against
 updates after disposal. Scope CSS and avoid private application imports.
 
+The context supplies the installed package `version`. Use it for version badges
+instead of hard-coding a release number. `context.vue.onBeforeUnmount` disposes
+component resources when a user leaves a page; `context.onCleanup` disposes
+activation resources when the plugin is disabled or replaced. The official
+Jellyfin preview uses both so account polling cannot survive either transition.
+
 ## Test command
 
 ```sh

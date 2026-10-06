@@ -1,4 +1,5 @@
 /** Capture the installed plugin in the actual host frontend during acceptance. */
+import assert from "node:assert/strict";
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { writeFile, mkdir } from "node:fs/promises";
@@ -22,6 +23,10 @@ try {
   browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, colorScheme: "dark" });
   const login = await context.request.post(`${base}/api/auth/login`, { data: { username_or_email: process.env.PRIMARY_USER_USERNAME, password: process.env.PRIMARY_USER_PASSWORD } });
+  const preferences = await context.request.get(`${base}/api/preferences`);
+  assert(preferences.ok());
+  if (Object.hasOwn(await preferences.json(), "ui_welcome_completed"))
+    assert((await context.request.patch(`${base}/api/preferences`, { data: { ui_welcome_completed: true } })).ok());
   if (!login.ok()) throw new Error("Screenshot authentication failed");
   const page = await context.newPage();
   const errors = [];

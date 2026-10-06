@@ -12,7 +12,7 @@ Version **1.7.0** adds configurable preview limits to the game Docs reader. The 
 | `backend.routes.plugin` v1 | Publish authenticated JSON handlers under this plugin's namespace. |
 | `frontend.context.documents` v1 | Register the reader for game Docs entries; the host opens an owned document ID in a new tab. |
 
-No native frontend, full API, host route, network, filesystem, credential, or persistent-storage permission is requested. The viewer also requests `plugin.settings` so its preview-size preference can be persisted by the plugin runtime. The backend imports only the public SDK. Updates require normal host consent for the document-context grant. There is no mandatory Documents sidebar section.
+Native configuration uses explicitly reviewed `frontend.native`, `frontend.settings` and `frontend.navigation.settings` grants. Document rendering retains its opaque sandboxed iframe. No full API, host route, network, filesystem, credential, or persistent-storage permission is requested. The viewer also requests `plugin.settings` so its preview-size preference can be persisted by the plugin runtime. The backend imports only the public SDK. Updates require normal host consent for the document-context grant. There is no mandatory Documents sidebar section.
 
 ## Security model
 
@@ -84,3 +84,12 @@ Digest verification and secure request correlation also work on HTTP deployments
 ![Sandboxed PDF preview](../../wiki/docs/assets/screenshots/scoped-document-viewer.png)
 
 ![Direct game document reading preview](../../wiki/docs/assets/screenshots/scoped-document-reader-office.png)
+
+## Native configuration
+
+After granting the native and settings permissions, open **Settings → Document
+reader** to edit the preview limit, reload configuration or open the browser.
+The settings component uses only the public Vue and scoped action/settings SDK.
+The document browser's content remains sandboxed and follows the host palette
+through the public cosmetic bridge. Without native approval its existing
+sandboxed/declarative configuration remains available.

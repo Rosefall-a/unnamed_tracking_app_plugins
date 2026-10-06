@@ -1,0 +1,356 @@
+{
+  "schema_version": "v1",
+  "api_contract_version": "1.1.0",
+  "plugin_id": "official.collectors-archive",
+  "title": "Collector's Archive",
+  "settings": [],
+  "actions": [
+    {
+      "id": "api",
+      "label": "Archive records",
+      "handler": "plugin:api",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "games",
+      "label": "Game library",
+      "handler": "plugin:games",
+      "capability": {
+        "name": "games.read",
+        "version": 1
+      }
+    },
+    {
+      "id": "game-media",
+      "label": "Game evidence",
+      "handler": "plugin:game_media",
+      "capability": {
+        "name": "media.read",
+        "version": 1
+      }
+    },
+    {
+      "id": "migration-status",
+      "label": "Import status",
+      "handler": "plugin:migration_status",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "import-legacy",
+      "label": "Import legacy records",
+      "handler": "plugin:import_legacy",
+      "capability": {
+        "name": "library.legacy.read",
+        "version": 1
+      }
+    },
+    {
+      "id": "create-game-card",
+      "label": "Create card",
+      "handler": "plugin:create_game_card",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "transport-write",
+      "label": "Upload artwork chunk",
+      "handler": "transport:write",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "transport-read",
+      "label": "Read artwork chunk",
+      "handler": "transport:read",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    },
+    {
+      "id": "transport-drop",
+      "label": "Clear temporary artwork transfer",
+      "handler": "transport:drop",
+      "capability": {
+        "name": "plugin.storage",
+        "version": 1
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "cards",
+      "title": "Cards",
+      "description": "Your personal collector's archive.",
+      "settings": [],
+      "actions": [
+        "api",
+        "games",
+        "game-media",
+        "migration-status",
+        "import-legacy",
+        "create-game-card"
+      ],
+      "tables": [],
+      "dialogs": []
+    },
+    {
+      "id": "card-detail",
+      "title": "Card designer",
+      "description": "Your personal collector's archive.",
+      "settings": [],
+      "actions": [
+        "api",
+        "games",
+        "game-media",
+        "migration-status",
+        "import-legacy",
+        "create-game-card"
+      ],
+      "tables": [],
+      "dialogs": []
+    },
+    {
+      "id": "sets",
+      "title": "Sets",
+      "description": "Your personal collector's archive.",
+      "settings": [],
+      "actions": [
+        "api",
+        "games",
+        "game-media",
+        "migration-status",
+        "import-legacy",
+        "create-game-card"
+      ],
+      "tables": [],
+      "dialogs": []
+    },
+    {
+      "id": "set-detail",
+      "title": "Set detail",
+      "description": "Your personal collector's archive.",
+      "settings": [],
+      "actions": [
+        "api",
+        "games",
+        "game-media",
+        "migration-status",
+        "import-legacy",
+        "create-game-card"
+      ],
+      "tables": [],
+      "dialogs": []
+    },
+    {
+      "id": "bounties",
+      "title": "Bounties",
+      "description": "Your personal collector's archive.",
+      "settings": [],
+      "actions": [
+        "api",
+        "games",
+        "game-media",
+        "migration-status",
+        "import-legacy",
+        "create-game-card"
+      ],
+      "tables": [],
+      "dialogs": []
+    },
+    {
+      "id": "migration",
+      "title": "Archive import",
+      "description": "Your personal collector's archive.",
+      "settings": [],
+      "actions": [
+        "api",
+        "games",
+        "game-media",
+        "migration-status",
+        "import-legacy",
+        "create-game-card"
+      ],
+      "tables": [],
+      "dialogs": []
+    },
+    {
+      "id": "goals",
+      "title": "Goals & bounties",
+      "description": "Your active personal goals and rewards.",
+      "settings": [],
+      "actions": [
+        "api",
+        "migration-status",
+        "import-legacy"
+      ],
+      "tables": [],
+      "dialogs": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "cards-route",
+      "path": "cards",
+      "page_id": "cards"
+    },
+    {
+      "id": "card-detail-route",
+      "path": "card-detail",
+      "page_id": "card-detail"
+    },
+    {
+      "id": "sets-route",
+      "path": "sets",
+      "page_id": "sets"
+    },
+    {
+      "id": "set-detail-route",
+      "path": "set-detail",
+      "page_id": "set-detail"
+    },
+    {
+      "id": "bounties-route",
+      "path": "bounties",
+      "page_id": "bounties"
+    },
+    {
+      "id": "migration-route",
+      "path": "migration",
+      "page_id": "migration"
+    }
+  ],
+  "navigation": [
+    {
+      "id": "cards-nav",
+      "location": "main.sidebar",
+      "label": "Cards",
+      "route_id": "cards-route",
+      "order": 20,
+      "group": "Your library",
+      "folders": [
+        "Games"
+      ]
+    },
+    {
+      "id": "sets-nav",
+      "location": "main.sidebar",
+      "label": "Sets",
+      "route_id": "sets-route",
+      "order": 21,
+      "group": "Your library",
+      "folders": [
+        "Games"
+      ]
+    },
+    {
+      "id": "bounties-nav",
+      "location": "main.sidebar",
+      "label": "Bounties",
+      "route_id": "bounties-route",
+      "order": 22,
+      "group": "Your library",
+      "folders": [
+        "Games"
+      ]
+    }
+  ],
+  "settings_sections": [
+    {
+      "id": "collector-import",
+      "label": "Collector's Archive",
+      "page_id": "migration",
+      "area": "account",
+      "group": "Account",
+      "order": 40
+    }
+  ],
+  "contextual_actions": [
+    {
+      "id": "create-card",
+      "location": "game",
+      "label": "Create archive card",
+      "action_id": "create-game-card",
+      "order": 30
+    }
+  ],
+  "home_widgets": [
+    {
+      "id": "goals",
+      "title": "Goals & bounties",
+      "description": "Your active goals, completed goals this week and reward points.",
+      "page_id": "goals",
+      "configuration": [],
+      "order": 40
+    }
+  ],
+  "shortcuts": [
+    {
+      "id": "open-cards",
+      "label": "Go to Cards",
+      "group": "Cards",
+      "keys": [
+        "Alt+E"
+      ],
+      "route_id": "cards-route"
+    },
+    {
+      "id": "create-cards",
+      "label": "Create a card",
+      "group": "Cards",
+      "keys": [
+        "N"
+      ],
+      "control": "create",
+      "when_route_id": "cards-route"
+    },
+    {
+      "id": "open-sets",
+      "label": "Go to Sets",
+      "group": "Sets",
+      "keys": [
+        "Alt+S"
+      ],
+      "route_id": "sets-route"
+    },
+    {
+      "id": "create-sets",
+      "label": "Create a set",
+      "group": "Sets",
+      "keys": [
+        "N"
+      ],
+      "control": "create",
+      "when_route_id": "sets-route"
+    },
+    {
+      "id": "open-bounties",
+      "label": "Go to Bounties",
+      "group": "Bounties",
+      "keys": [
+        "Alt+B"
+      ],
+      "route_id": "bounties-route"
+    },
+    {
+      "id": "create-bounties",
+      "label": "Create a bounty",
+      "group": "Bounties",
+      "keys": [
+        "N"
+      ],
+      "control": "create",
+      "when_route_id": "bounties-route"
+    }
+  ]
+}

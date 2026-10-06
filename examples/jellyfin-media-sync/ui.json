@@ -1,7 +1,8 @@
 {
+  "api_contract_version": "1.1.0",
   "schema_version": "v1",
   "plugin_id": "example.jellyfin-media-sync",
-  "title": "Jellyfin Media Sync",
+  "title": "Jellyfin Media Sync (Demo)",
   "settings": [],
   "actions": [
     {
@@ -127,7 +128,7 @@
   "pages": [
     {
       "id": "sync",
-      "title": "Jellyfin Media Sync",
+      "title": "Jellyfin Media Sync (Demo)",
       "description": "One installation server. Your own Jellyfin identity and completion.",
       "settings": [],
       "actions": [
@@ -171,7 +172,12 @@
       "location": "main.sidebar",
       "label": "Jellyfin Sync",
       "route_id": "sync-route",
-      "order": 60
+      "order": 60,
+      "group": "Your library",
+      "folders": [
+        "Media",
+        "Example integrations"
+      ]
     },
     {
       "id": "sync-settings-link",
@@ -186,7 +192,12 @@
       "id": "jellyfin-sync",
       "label": "Jellyfin Sync",
       "page_id": "sync",
-      "order": 60
+      "order": 60,
+      "area": "account",
+      "group": "Account",
+      "folders": [
+        "Media integrations"
+      ]
     }
   ],
   "routes": [

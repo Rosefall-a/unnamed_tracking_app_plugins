@@ -59,6 +59,34 @@ def records(root):
     return json.loads((root / "releases/example.help-button.json").read_text(encoding="utf-8"))["releases"]
 
 
+def test_unreleased_official_preview_is_installable_without_expanding_signer_scope(checkout):
+    root, env = checkout
+    shutil.copytree(ROOT / "official/jellyfin-media-sync", root / "official/jellyfin-media-sync")
+    config = {"name": "Disposable catalogue", "base_url": "https://example.invalid/plugins",
+              "unreleased_plugins": ["official.jellyfin-media-sync"]}
+    (root / "catalogue.json").write_text(json.dumps(config))
+    commit(root, "feat: add independently installable preview")
+    # The real official source is built unsigned by the existing developer flow.
+    preview_env = {k: v for k, v in env.items() if not k.startswith("PLUGIN_SIGNING_")}
+    run_build(root, preview_env)
+    preview = root / ".validation/dist/official.jellyfin-media-sync-0.0.1.utp"
+    validate_package(preview)
+    with zipfile.ZipFile(preview) as archive:
+        preview_manifest = json.loads(archive.read("manifest.json"))
+    assert preview_manifest["plugin_id"] == "official.jellyfin-media-sync"
+    assert not preview_manifest["integrity"].get("signature")
+    validate_distribution(root / ".validation", source_root=root, include_unreleased=True)
+    run_build(root, env, "--publish")
+    assert {p["plugin_id"] for p in json.loads((root / "list.json").read_text())["plugins"]} == {"example.help-button"}
+    assert not (root / "releases/official.jellyfin-media-sync.json").exists()
+    commit(root, "chore: retain reviewed distribution")
+    config["unreleased_plugins"] = []
+    (root / "catalogue.json").write_text(json.dumps(config))
+    commit(root, "feat: request official publication")
+    denied = run_build(root, env, "--publish", check=False)
+    assert denied.returncode != 0 and "scope" in denied.stderr.lower()
+
+
 def test_signed_releases_preserve_history_and_release_specific_opt_out(checkout):
     root, env = checkout
     metadata_path = root / "examples/help-button/release.json"
@@ -160,7 +188,7 @@ def test_preview_build_never_overwrites_published_distribution(built_distributio
             assert (built_distribution / "dist" / filename).read_bytes() == (ROOT / "dist" / filename).read_bytes()
 
 
-@pytest.mark.parametrize("plugin_id", ["example.help-button"])
+@pytest.mark.parametrize("plugin_id", ["example.ui-api", "example.playtime-report", "example.recently-played-notifier", "example.metadata-curator"])
 def test_packaged_workers_report_ready_and_remain_alive(current_packages, tmp_path, plugin_id):
     with zipfile.ZipFile(current_packages[plugin_id]) as archive:
         for name in archive.namelist():
@@ -183,7 +211,7 @@ def test_packaged_workers_report_ready_and_remain_alive(current_packages, tmp_pa
 
 @pytest.mark.parametrize("defect", ["handler", "ui_shape", "risk", "range", "metadata_version", "missing_readme"])
 def test_incompatible_new_packages_are_rejected(current_packages, tmp_path, defect):
-    with zipfile.ZipFile(current_packages["example.help-button"]) as archive:
+    with zipfile.ZipFile(current_packages["example.playtime-report"]) as archive:
         members = {name: archive.read(name) for name in archive.namelist()}
     manifest = json.loads(members["manifest.json"])
     document = json.loads(members["payload/ui.json"])
@@ -238,7 +266,7 @@ def test_ci_rejects_source_and_catalogue_removal_even_with_retained_history(chec
     catalogue = json.loads((root / "list.json").read_bytes())
     catalogue["plugins"] = []
     (root / "list.json").write_text(json.dumps(catalogue), encoding="utf-8")
-    with pytest.raises(ValueError, match="without retirement policy"):
+    with pytest.raises(ValueError, match="disappeared from catalogue"):
         validate_immutable_history(root, root, "HEAD")
 
 
@@ -256,25 +284,6 @@ def test_every_release_metadata_field_is_checked_against_package(built_distribut
         validate_distribution(root)
 
 
-def test_ci_allows_explicitly_retired_catalogue_entries(checkout):
-    root, env = checkout
-    run_build(root, env, "--publish")
-    commit(root, "chore: publish release")
-    (root / "retired_plugins.json").write_text(json.dumps({
-        "version": 1,
-        "plugins": [{
-            "plugin_id": "example.help-button",
-            "status": "retired",
-            "reason": "Replaced by a newer maintained reference implementation.",
-        }],
-    }))
-    shutil.rmtree(root / "examples/help-button")
-    catalogue = json.loads((root / "list.json").read_bytes())
-    catalogue["plugins"] = []
-    (root / "list.json").write_text(json.dumps(catalogue), encoding="utf-8")
-    validate_immutable_history(root, root, "HEAD")
-
-
 def test_package_generation_rejects_unindexed_output(built_distribution, tmp_path):
     root = tmp_path / "candidate"
     shutil.copytree(built_distribution, root)
@@ -282,3 +291,20 @@ def test_package_generation_rejects_unindexed_output(built_distribution, tmp_pat
     shutil.copyfile(original, root / "dist/unindexed.utp")
     with pytest.raises(ValueError, match="untracked packages"):
         validate_distribution(root)
+
+
+def test_new_example_requires_explicit_unreleased_identity(tmp_path):
+    from tools.distribution import catalogue_document
+    source = tmp_path / "examples/new-example"
+    source.mkdir(parents=True)
+    manifest = {"plugin_id": "example.new-example"}
+    with pytest.raises(ValueError, match="missing release history"):
+        catalogue_document(tmp_path, [(source, manifest)], {})
+    config = {"name": "Preview", "base_url": "https://example.invalid/plugins",
+              "unreleased_plugins": ["example.new-example"]}
+    (tmp_path / "catalogue.json").write_text(json.dumps(config))
+    assert catalogue_document(tmp_path, [(source, manifest)], {})["plugins"] == []
+    config["unreleased_plugins"] = ["example.other"]
+    (tmp_path / "catalogue.json").write_text(json.dumps(config))
+    with pytest.raises(ValueError, match="missing release history"):
+        catalogue_document(tmp_path, [(source, manifest)], {})

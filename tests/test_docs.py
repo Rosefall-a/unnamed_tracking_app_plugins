@@ -15,7 +15,7 @@ def documentation(root: Path, body: str):
         encoding="utf-8",
     )
     (root / "README.md").write_text("[Wiki](docs/index.md)", encoding="utf-8")
-    (root / "wiki/docs/index.md").write_text(body, encoding="utf-8")
+    (root / "docs/index.md").write_text(body, encoding="utf-8")
 
 
 def test_current_documentation_references_exist():
@@ -69,7 +69,7 @@ def test_examples_remote_links_and_escaped_paths_are_handled(tmp_path):
 @pytest.mark.parametrize("manifest", ["host-components.json", "workflow-captures.json"])
 def test_screenshot_provenance_detects_changed_bytes(tmp_path, manifest):
     documentation(tmp_path, "# Home")
-    assets = tmp_path / "wiki/docs/assets/screenshots"
+    assets = tmp_path / "docs/assets/screenshots"
     assets.mkdir(parents=True)
     (assets / "capture.png").write_bytes(b"original")
     (assets / manifest).write_text(json.dumps({"captures": [{

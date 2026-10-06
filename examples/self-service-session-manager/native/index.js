@@ -144,12 +144,14 @@ export function activate(context) {
       label,
     );
   const select = (value, options, change, label) =>
-    h("label", [
+    h("label", { class: "ssm-select" }, [
       label,
       h(
         "select",
         {
           value,
+          class: "ui-field",
+          "aria-label": label,
           onChange: (event) => change(event.target.value),
         },
         options.map(([id, title]) => h("option", { value: id }, title)),

@@ -1,4 +1,5 @@
 {
+  "api_contract_version": "1.1.0",
   "application_version_range": "^1.0.0",
   "capabilities": [
     {
@@ -44,10 +45,18 @@
     {
       "name": "frontend.context.media",
       "version": 1
+    },
+    {
+      "name": "frontend.placement.sidebar",
+      "version": 1
+    },
+    {
+      "name": "frontend.placement.settings.account",
+      "version": 1
     }
   ],
   "dependencies": [],
-  "description": "Installation-wide Jellyfin server with approved user identities, explicit library mapping, durable media identity, episode completion and Watch Now.",
+  "description": "Working example of installation-wide Jellyfin configuration, approved identities, durable media sync, episode completion and native Watch Now contributions.",
   "entrypoint": "plugin:main",
   "integrity": {
     "key_id": null,
@@ -55,7 +64,7 @@
     "signature": null
   },
   "manifest_version": 1,
-  "name": "Jellyfin Media Sync",
+  "name": "Jellyfin Media Sync (Demo)",
   "native_frontend": {
     "entry": "native/app.js",
     "styles": [
@@ -139,10 +148,24 @@
         "version": 1
       },
       "rationale": "Resolve Watch Now for the authenticated media-page context."
+    },
+    {
+      "capability": {
+        "name": "frontend.placement.sidebar",
+        "version": 1
+      },
+      "rationale": "Place this extension beneath the existing library and media headings in the main sidebar. This grants placement throughout the sidebar, not access to library records."
+    },
+    {
+      "capability": {
+        "name": "frontend.placement.settings.account",
+        "version": 1
+      },
+      "rationale": "Place these settings beneath the built-in account headings. Approval covers this settings area and its folders, not other settings areas or backend actions."
     }
   ],
   "plugin_id": "example.jellyfin-media-sync",
-  "sdk_version_range": "^1.0.0",
+  "sdk_version_range": "^1.1.0",
   "storage": {
     "quota_mb": 32
   },
@@ -170,5 +193,5 @@
     ],
     "settings": []
   },
-  "version": "3.0.0"
+  "version": "3.1.0"
 }

@@ -21,7 +21,7 @@ explicitly uses the actual host; plugins never import it at runtime.
 ```sh
 python -m pip install -r requirements-dev.txt
 python -m pytest
-node --test tests/session_manager_ui.test.mjs tests/native_frontends.test.mjs
+node --test tests/session_manager_ui.test.mjs tests/native_frontends.test.mjs tests/jellyfin_official_ui.test.mjs
 npm ci
 npx playwright install --with-deps chromium --only-shell
 npm run check
@@ -29,7 +29,7 @@ npm test
 python tools/check_source_layout.py
 python tools/check_docs.py
 python tools/build_packages.py
-python tools/distribution.py --root .validation --check-source
+python tools/distribution.py --root .validation --check-source --include-unreleased
 python tools/distribution.py --baseline-ref origin/main
 python tools/verify_packages.py dist/*.utp
 python tools/validate_packages.py dist/*.utp

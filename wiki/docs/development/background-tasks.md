@@ -1,5 +1,39 @@
 # Background tasks: queue work and return promptly
 
+## Host-managed schedules (v1.1)
+
+For a short bounded action, declare `scheduled_tasks` in `manifest.json` and an
+explicit `tasks.background` permission. The host adds native interval, enabled,
+Run now and result controls in Administration → Tasks. Schedules start off.
+
+```json
+{
+  "id": "library-summary",
+  "name": "Library summary",
+  "description": "Reports the background administrator's library count.",
+  "action_id": "scheduled-summary",
+  "min_interval_minutes": 5,
+  "max_interval_minutes": 10080,
+  "default_interval_minutes": 1440
+}
+```
+
+Declare the referenced action with a real handler and no confirmation. It receives
+`{"_scheduled_task":{"id":"library-summary","trigger":"scheduled"}}` or a
+`manual` trigger and uses the plugin's existing background administrator context.
+It may return `{"completed":true,"summary":"Read 3 games"}`. The host retains
+only this bounded public summary, enforces the action's live permission, prevents
+overlapping runs of one job and uses the existing 30-second isolated action limit.
+Plugin disable, permission withdrawal, an inactive administrator and runtime
+outages pause the controls. User-targeted background operations still require the
+existing opt-in subscriptions; scheduling does not broaden data access.
+
+IDs must be stable and unique, with at most 32 tasks and integer intervals between
+one minute and thirty days. The default must fit the declared bounds. Updates and
+ordinary reinstall retain settings within the same installation identity. The
+UI/API example includes this recipe. Long-running sync should retain its existing
+supervised worker and durable queue approach below.
+
 ## Goal
 
 Have an action record durable work for one supervised worker.

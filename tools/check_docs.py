@@ -48,7 +48,7 @@ def check(root: Path = ROOT) -> None:
     errors = []
     for target in navigation_paths(config["nav"]):
         if not (docs / target).is_file():
-            errors.append(f"{config_path.relative_to(root)}: missing navigation page {target}")
+            errors.append(f"mkdocs.yml: missing navigation page {target}")
     pages = [root / "README.md", *sorted(docs.rglob("*.md"))]
     for page in pages:
         source = page.read_text(encoding="utf-8")
@@ -58,10 +58,7 @@ def check(root: Path = ROOT) -> None:
             parsed = urlsplit(target)
             if parsed.scheme or parsed.netloc or not parsed.path:
                 continue
-            relative_target = unquote(parsed.path).lstrip("/")
-            path = (root if parsed.path.startswith("/") else page.parent) / relative_target
-            if not path.exists() and page == root / "README.md" and relative_target.startswith("docs/"):
-                path = root / "wiki" / relative_target
+            path = (root if parsed.path.startswith("/") else page.parent) / unquote(parsed.path).lstrip("/")
             if not path.resolve().is_relative_to(root) or not path.exists():
                 errors.append(f"{page.relative_to(root)}: missing local link {target}")
         # Validate commands, including fenced blocks, rather than illustrative

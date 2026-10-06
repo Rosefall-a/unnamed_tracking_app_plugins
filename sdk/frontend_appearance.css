@@ -1,0 +1,26 @@
+/* Cosmetic defaults; verified host snapshots override these semantic roles. */
+:root {
+ --ui-bg:#f5f4f1; --ui-surface:#ffffff; --ui-surface-2:#eeece7;
+ --ui-text:#252a30; --ui-dim:#59616c; --ui-accent:#a4520d;
+ --ui-good:#216e3e; --ui-warning:#855000; --ui-error:#b42318;
+ --ui-info:#265a8b; --ui-purple:#6951a2; --ui-on-accent:#ffffff;
+ --ui-control-height:44px;
+}
+:root[data-theme=dark] {
+ --ui-bg:#17191c; --ui-surface:#212428; --ui-surface-2:#2b2f34;
+ --ui-text:#edf0f3; --ui-dim:#adb5c0; --ui-accent:#efac59;
+ --ui-good:#96d5a9; --ui-warning:#f2c87a; --ui-error:#ffa6a0;
+ --ui-info:#a2c8ef; --ui-purple:#c6b5f1; --ui-on-accent:#000000;
+}
+:root {
+ --ui-border:color-mix(in srgb,var(--ui-text) 22%,var(--ui-surface));
+ --ui-border-strong:color-mix(in srgb,var(--ui-text) 45%,var(--ui-surface));
+ --ui-accent-soft:color-mix(in srgb,var(--ui-accent) 12%,var(--ui-surface));
+ --ui-danger:var(--ui-error); --ui-danger-soft:color-mix(in srgb,var(--ui-error) 12%,var(--ui-surface));
+}
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation-duration:0.01ms!important; transition-duration:0.01ms!important; }
+* { scrollbar-width:thin; scrollbar-color:var(--ui-border-strong) var(--ui-surface-2); }
+::-webkit-scrollbar { width:10px; height:10px; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background:var(--ui-surface-2); }
+::-webkit-scrollbar-thumb { background:var(--ui-border-strong); border:2px solid var(--ui-surface-2); border-radius:var(--ui-radius-control,10px); }
+::-webkit-scrollbar-thumb:hover { background:var(--ui-dim); }

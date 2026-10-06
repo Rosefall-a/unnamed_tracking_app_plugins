@@ -1,4 +1,9 @@
-# Jellyfin Media Sync
+# Jellyfin Media Sync (Demo)
+
+This is a working example of Plugin API capabilities, retained as a demonstration
+under `example.jellyfin-media-sync`. It is not the supported official feature.
+The separate official preview uses `official.jellyfin-media-sync` and begins at
+0.0.1; it does not inherit this demo's configuration, credentials or grants.
 
 An installation-wide Jellyfin integration for Movies, TV and Anime, using the
 existing Plugin API v1 gateway, secure plugin storage and supervised worker.

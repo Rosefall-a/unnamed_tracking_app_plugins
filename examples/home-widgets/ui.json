@@ -1,0 +1,75 @@
+{
+  "schema_version": "v1",
+  "api_contract_version": "1.1.0",
+  "plugin_id": "example.home-widgets",
+  "title": "Home Widgets",
+  "native_frontend": {
+    "entry": "native/index.js",
+    "styles": [
+      "native/style.css"
+    ]
+  },
+  "settings": [],
+  "actions": [
+    {
+      "id": "library-glance",
+      "label": "Refresh library glance",
+      "handler": "plugin:library_glance",
+      "capability": {
+        "name": "games.read",
+        "version": 1
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "library-glance",
+      "title": "Library glance",
+      "actions": [
+        "library-glance"
+      ]
+    },
+    {
+      "id": "library-glance-mobile",
+      "title": "Library glance",
+      "actions": [
+        "library-glance"
+      ]
+    },
+    {
+      "id": "embedded-media",
+      "title": "Embedded media",
+      "actions": []
+    }
+  ],
+  "home_widgets": [
+    {
+      "id": "library-glance",
+      "title": "Library glance",
+      "description": "A few picks from your personal game library.",
+      "page_id": "library-glance",
+      "mobile_page_id": "library-glance-mobile",
+      "order": 0,
+      "configuration": [
+        {
+          "id": "limit",
+          "label": "Number of games",
+          "type": "number",
+          "required": true,
+          "default": 4,
+          "validation": {
+            "minimum": 1,
+            "maximum": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "embedded-media",
+      "title": "Embedded media",
+      "description": "An example embedded video player.",
+      "page_id": "embedded-media",
+      "order": 10
+    }
+  ]
+}

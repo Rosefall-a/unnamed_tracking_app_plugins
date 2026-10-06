@@ -18,7 +18,7 @@ package/source, review identity, publisher/signature, compatibility and permissi
 then complete approval/configuration and enable it as required by the host flow.
 
 Maintained user-facing functionality lives in [official/](official/README.md).
-The [PWA](official/pwa/README.md) remains 0.0.1 during integration; its production
+The [PWA](official/pwa/README.md) appearance migration remains unreleased 0.0.2; its production
 release waits for a separate protected official signing identity. Examples remain
 demonstrations, even when their historical publisher text contains Official.
 See [folder-specific signing and environment keys](docs/official-signing.md).
@@ -26,6 +26,20 @@ See [folder-specific signing and environment keys](docs/official-signing.md).
 Catalogue membership does not establish trust. Publisher signing and host
 permission approval are separate. Unsigned preview packages remain untrusted.
 Full API/native frontend authority needs particular review; request narrow scopes.
+
+To test a branch or pull request, open its [Plugin checks workflow run](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/actions/workflows/ci.yml)
+and download **unsigned-dist**. This job runs on every branch push and PR,
+independently of the full test job. Extract the artifact and upload the chosen
+`.utp` through the install screen. Review permissions and explicitly consent to
+the unsigned preview. No build tools or signing key are needed on your machine.
+The artifact includes source commits and package digests; it never updates
+published packages or release history. Previews disable automatic updates.
+
+[Collector's Archive](official/collectors-archive/README.md) is an official source
+preview preserving Cards, Sets and Bounties. Its personal, retryable import reads
+the host's retained legacy records through a separate permission. Its compiled
+native pages share the host's Vue runtime and themed components. Run `npm ci`
+and `npm run build:native` after editing its UI; CI checks the committed bundle.
 
 ## Create your first plugin
 
@@ -42,7 +56,7 @@ python tools/check_source_layout.py
 python tools/check_docs.py
 python -m pytest
 python tools/build_packages.py
-python tools/distribution.py --root .validation --check-source
+python tools/distribution.py --root .validation --check-source --include-unreleased
 python -m mkdocs build --strict
 python -m mkdocs serve
 ```
@@ -61,6 +75,15 @@ Use the [tutorial map](wiki/docs/development/index.md) for one-feature exercises
 
 | Source | Purpose |
 | --- | --- |
+| [UI/API](examples/ui-api/README.md) | Small reference: declarative page, setting and library action |
+| [Home Widgets](examples/home-widgets/README.md) | v1.1 personal widget options, separate phone layout and embedded media demo |
+| [Blue Hour and Purple Blocks](examples/theme-palettes/README.md) | Personal light/dark palettes and optional square-control CSS with a separate native permission |
+| [Shortcut Playground](examples/shortcut-playground/README.md) | v1.1.x host-managed random bindings, removal and a deliberate Search conflict |
+| [Playtime Report](examples/playtime-report/README.md) | Read → calculate → persist a user-scoped report |
+| [Recently Played Notifier](examples/recently-played-notifier/README.md) | Library data and host notifications |
+| [Metadata Curator](examples/metadata-curator/README.md) | Settings, metadata search and normalized state |
+| [Discord Delivery Provider](examples/discord-delivery-provider/README.md) | Core-coordinated external delivery and write-only secrets |
+| [UI Playground](examples/ui-playground/README.md) | Sandboxed Vue pages and bridge; CDN teaching limitation |
 | [Help Button](examples/help-button/README.md) | Native contributions, dialogs, overlays, navigation and cleanup |
 | [Jellyfin Media Sync](examples/jellyfin-media-sync/README.md) | Master server, approved user identities, library mapping, episode completion and Watch Now |
 | [Scoped Document Viewer](examples/scoped-document-viewer/README.md) | Scoped document APIs and sandbox PDF/text/Office reader |
@@ -73,14 +96,15 @@ Small references stay small; real demos document supported behavior and host lim
 
 | Path | Role |
 | --- | --- |
-| `examples/` | Complete maintained plugin source; one intentional source tree |
-| `retired_plugins.json` | Explicit policy for plugins removed from the current catalogue; historical packages remain immutable |
+| `examples/` | Functional reference/demo sources, including the original Jellyfin demo |
+| `official/` | Independently packaged official features and clearly labelled previews |
 | `sdk/` | Public v1 protocol helper bundled with packages |
 | `tools/`, `tests/` | Existing build/validation tools and conformance tests |
 | `wiki/docs/`, `mkdocs.yml` | Developer wiki, real assets and dated evidence |
 | `publishers/` | Reviewed public keys/registry; never private signing keys |
 | `dist/` | Generated immutable installable `.utp` versions |
 | `releases/` | Append-only generated release metadata/history, including retired plugins |
+| `retired_plugins.json` | Reviewed retirement decisions; historical archives and release records stay immutable |
 | `catalogue.json` | Authored display name and HTTPS hosting base URL |
 | `list.json` | Generated current catalogue with complete per-plugin histories |
 
@@ -88,6 +112,13 @@ Development builds write isolated `.validation/` previews. Published packages
 and historical records remain unchanged. Do not manually edit generated lists,
 re-sign old ZIPs, or remove historical packages to tidy the repository. GitHub
 Releases distributes/presents these same outputs; repository history is retained.
+
+Official features and examples use the same SDK, package validator, permission
+review and sandbox. [Jellyfin's official preview](official/jellyfin-media-sync/README.md)
+starts at 0.0.1 with a separate identity; the original Jellyfin package stays a demo.
+`catalogue.json.unreleased_plugins` explicitly keeps previews outside signed
+publication until reviewed signer scope exists. Development builds still include
+and fully validate every maintained source, including unreleased previews.
 
 ## Sign and publish independently
 

@@ -20,7 +20,9 @@ const mime = { ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+
 const server = createServer(async (incoming, outgoing) => {
   if (incoming.url.startsWith("/api/")) {
     const upstream = httpRequest(new URL(incoming.url, backend), {
-      method: incoming.method, headers: incoming.headers,
+      // This supplemental proxy reuses the backend's authenticated session.
+      // Keep its canonical Host: session cookies are scoped to host and port.
+      method: incoming.method, headers: { ...incoming.headers, host: new URL(backend).host },
     }, (response) => { outgoing.writeHead(response.statusCode, response.headers); response.pipe(outgoing); });
     upstream.on("error", () => { outgoing.writeHead(502); outgoing.end("Host unavailable"); });
     incoming.pipe(upstream);
@@ -45,6 +47,8 @@ try {
   const cookies = JSON.parse(await readFile(cookieFile, "utf8"));
   assert.ok(cookies.length, "Authenticated acceptance cookies are required");
   await context.addCookies(cookies.map(({ name, value }) => ({ name, value, url: origin })));
+  const authenticated = await context.request.get(origin + "/api/auth/me");
+  assert.equal(authenticated.status(), 200, "Capture proxy must retain the actual backend session");
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (error) => errors.push(String(error)));
@@ -54,16 +58,17 @@ try {
     captures.push({ filename, description, sha256: createHash("sha256").update(await readFile(file)).digest("hex") });
   };
   await page.goto(origin + "/settings?section=plugins");
-  const plugin = page.locator("article.plugin").filter({ has: page.getByRole("heading", { name: "Jellyfin Media Sync", exact: true }) });
+  const plugin = page.locator("article.plugin").filter({ has: page.getByRole("heading", { name: /^Jellyfin Media Sync(?: \(Demo\))?$/ }) });
   await plugin.getByText("running", { exact: true }).waitFor();
   await capture("installed-plugin.png", "Authenticated installed Jellyfin predecessor after denying a newly requested update scope.");
-  await page.getByRole("button", { name: "Install a plugin", exact: true }).click();
-  const install = page.getByRole("dialog", { name: "Install a plugin", exact: true });
+  const acquisitionLabel = await page.getByRole("button", { name: "Install package or URL", exact: true }).count() ? "Install package or URL" : "Install a plugin";
+  await page.getByRole("button", { name: acquisitionLabel, exact: true }).click();
+  const install = page.getByRole("dialog", { name: acquisitionLabel, exact: true });
   await install.waitFor();
   await capture("plugin-install.png", "Actual authenticated installer source chooser with live catalogue data.");
-  await install.getByRole("button", { name: "Close", exact: true }).click();
-  await plugin.getByRole("button", { name: "Manage plugin", exact: true }).click();
-  const dialog = page.getByRole("dialog", { name: "Jellyfin Media Sync", exact: true });
+  await install.getByRole("button", { name: "Close dialog", exact: true }).click();
+  await plugin.getByRole("button", { name: "Settings & access", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: /^Jellyfin Media Sync(?: \(Demo\))?$/ });
   await dialog.getByRole("button", { name: "Stop", exact: true }).waitFor();
   await capture("lifecycle-controls.png", "Actual authenticated lifecycle controls; predecessor remains enabled and healthy.");
   await dialog.getByRole("button", { name: "Settings", exact: true }).click();
@@ -76,14 +81,19 @@ try {
   // Capture the persisted response rather than the initial empty form.
   await page.waitForFunction(() => [...document.querySelectorAll("input")]
     .some((input) => input.value.startsWith("http://127.0.0.1:")));
-  const masterCredential = page.getByLabel("Server credential · blank keeps existing");
+  const masterCredential = page.getByLabel("Server credential", { exact: true });
   const legacyCredential = page.getByLabel("API key or access token (blank keeps existing token)");
   const credential = await masterCredential.count() ? masterCredential : legacyCredential;
   assert.equal(await credential.getAttribute("type"), "password");
   assert.equal(await credential.inputValue(), "");
   await capture("plugin-settings.png", "Actual configured Jellyfin native settings/UI; saved token is not returned to the input.");
   assert.deepEqual(errors, [], "Authenticated host browser errors");
-  const revision = (repository) => execFileSync("git", ["-C", repository, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  const revision = (repository) => {
+    // A Windows worktree's gitdir cannot resolve inside a Linux bind mount.
+    // Use only an explicit, valid revision read by the caller on that host.
+    if (repository === host && /^[a-f0-9]{40}$/.test(process.env.JELLYFIN_HOST_REVISION || "")) return process.env.JELLYFIN_HOST_REVISION;
+    return execFileSync("git", ["-C", repository, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  };
   await writeFile(path.join(work, "workflow-captures.json"), JSON.stringify({
     kind: "authenticated-real-host", captured_at: new Date().toISOString(),
     host_revision: revision(host), plugin_revision: revision(plugins),

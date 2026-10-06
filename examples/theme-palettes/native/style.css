@@ -1,0 +1,47 @@
+/* Optional global CSS uses the host's selected-theme scope. */
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] {
+  --ui-radius-control: 0px;
+  --ui-radius-card: 0px;
+  --ui-radius-row: 0px;
+  --ui-radius-dialog: 0px;
+  --ui-radius-nav: 0px;
+  --ui-font-family: "Trebuchet MS", Verdana, sans-serif;
+}
+/* Host selectors may use their own radius instead of a public token. This
+   deliberately square example demonstrates the stylesheet's full reach. */
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :where(*) {
+  border-radius: 0 !important;
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .navigation, .phone-navigation, .mobile-tabs, .account-chip, .settings-nav
+) {
+  border: 2px solid var(--ui-accent);
+  box-shadow: 4px 4px 0 var(--ui-accent-soft);
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .nav-item, .settings-nav button, .mobile-tabs a, .mobile-tabs button
+) {
+  border: 1px solid transparent;
+  font-weight: 700;
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .nav-item.active, .settings-nav .active, .mobile-tabs .active
+) {
+  border-color: var(--ui-accent-line);
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .game-card, .collection-card, .home-widget, .settings-card, .preview-card
+) {
+  border: 2px solid var(--ui-border-strong);
+  box-shadow: 4px 4px 0 var(--ui-accent-soft);
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .ui-btn, .nav-item, .preview-menu button, .preview-dropdown button
+) {
+  font-weight: 700;
+}
+[data-plugin-theme="plugin:example.theme-palettes:purple-blocks"] :is(
+  .page-header h1, .page-header h2, .preview-card h3
+) {
+  letter-spacing: 0.03em;
+}

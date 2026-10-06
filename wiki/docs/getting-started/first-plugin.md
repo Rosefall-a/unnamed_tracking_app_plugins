@@ -34,12 +34,13 @@ Save the following as `examples/library-summary/manifest.json`:
 ```json
 {
   "manifest_version": 1,
+  "api_contract_version": "1.1.0",
   "plugin_id": "org.example.library-summary",
   "name": "Library Summary",
   "version": "1.0.0",
   "description": "Count up to 50 games for the authenticated caller.",
   "entrypoint": "plugin:main",
-  "sdk_version_range": "^1.0.0",
+  "sdk_version_range": "^1.1.0",
   "application_version_range": "^1.0.0",
   "capabilities": [{"name": "games.read", "version": 1}],
   "permissions": [{"capability": {"name": "games.read", "version": 1}, "rationale": "Count the caller's game library on request."}],
@@ -92,6 +93,7 @@ Save `examples/library-summary/ui.json`:
 ```json
 {
   "schema_version": "v1",
+  "api_contract_version": "1.1.0",
   "plugin_id": "org.example.library-summary",
   "title": "Library Summary",
   "settings": [],
@@ -123,7 +125,7 @@ From the repository root:
 ```sh
 python tools/check_source_layout.py
 python tools/build_packages.py
-python tools/distribution.py --root .validation --check-source
+python tools/distribution.py --root .validation --check-source --include-unreleased
 python tools/verify_packages.py .validation/dist/org.example.library-summary-1.0.0.utp
 python tools/validate_packages.py --full .validation/dist/org.example.library-summary-1.0.0.utp
 python -m zipfile -l .validation/dist/org.example.library-summary-1.0.0.utp

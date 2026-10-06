@@ -2,7 +2,7 @@ name: Publish plugin packages
 
 on:
   push:
-    branches: [main]
+    branches: ["**"]
     paths-ignore:
       - 'dist/**'
       - 'releases/**'
@@ -41,7 +41,7 @@ jobs:
         run: python tools/check_docs.py
       - name: Validate developer wiki before publication
         run: python -m mkdocs build --strict
-      - run: node --test tests/session_manager_ui.test.mjs tests/native_frontends.test.mjs
+      - run: node --test tests/session_manager_ui.test.mjs tests/native_frontends.test.mjs tests/jellyfin_official_ui.test.mjs
       - run: node --check examples/self-service-session-manager/frontend/app.js
       - run: pytest
       - run: npm ci

@@ -1,0 +1,53 @@
+{
+  "manifest_version": 1,
+  "api_contract_version": "1.1.0",
+  "plugin_id": "example.theme-palettes",
+  "name": "Blue Hour and Purple Blocks",
+  "version": "1.1.0",
+  "description": "Personal palettes and an optional blocky purple interface style.",
+  "entrypoint": "plugin:main",
+  "sdk_version_range": "^1.1.0",
+  "application_version_range": "*",
+  "capabilities": [
+    {
+      "name": "frontend.themes",
+      "version": 1
+    },
+    {
+      "name": "frontend.native",
+      "version": 1
+    }
+  ],
+  "permissions": [
+    {
+      "capability": {
+        "name": "frontend.themes",
+        "version": 1
+      },
+      "rationale": "Offer an optional light and dark color palette in personal Appearance settings."
+    },
+    {
+      "capability": {
+        "name": "frontend.native",
+        "version": 1
+      },
+      "rationale": "Load a privileged native stylesheet that changes host component shapes only while Purple Blocks is selected. Native JavaScript has access to the signed-in application."
+    }
+  ],
+  "dependencies": [],
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": ["native/style.css"]
+  },
+  "ui": {
+    "settings": [],
+    "actions": [],
+    "pages": [],
+    "menus": []
+  },
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signature": null,
+    "key_id": null
+  }
+}

@@ -15,57 +15,91 @@ import tempfile
 from pathlib import Path
 from uuid import uuid4
 
+from pydantic import BaseModel, Field
+
+
+def load_catalogue_entry(host_root: Path, dependency_model: type[BaseModel]) -> type[BaseModel]:
+    """Load transport models from either supported host route layout."""
+    source = host_root / "src/backend/src/api/routes/plugin_manager/models.py"
+    if not source.exists():
+        source = host_root / "src/backend/src/api/routes/plugins.py"
+    tree = ast.parse(source.read_text(encoding="utf-8"))
+    models = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.ClassDef)
+        and node.name in {"PluginCatalogRelease", "PluginCatalogEntry"}
+    ]
+    if not any(node.name == "PluginCatalogEntry" for node in models):
+        raise ValueError(f"Host catalogue entry model is missing from {source}")
+    namespace = {"BaseModel": BaseModel, "Field": Field, "PluginDependency": dependency_model}
+    exec(compile(ast.Module(body=models, type_ignores=[]), str(source), "exec"), namespace)
+    for model in models:
+        namespace[model.name].model_rebuild(_types_namespace=namespace)
+    return namespace["PluginCatalogEntry"]
+
 
 def main() -> None:
+    """Inspect actual distribution packages against the selected host contract."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--host-root", required=True, type=Path)
     parser.add_argument("--temporary-root", type=Path)
-    parser.add_argument("--distribution-root", type=Path, default=Path(__file__).parents[1] / ".validation")
+    parser.add_argument(
+        "--distribution-root", type=Path, default=Path(__file__).parents[1] / ".validation"
+    )
     args = parser.parse_args()
     sys.path.insert(0, str(args.host_root / "src/backend"))
     sys.path.insert(0, str(args.host_root / "src/plugin-runtime"))
+    from distribution import discover_plugins
+    from publisher_registry import load_registry
     from runtime import PluginRegistry, PluginSupervisor, RuntimePolicyError
     from src.plugin_api.capabilities import capability_definition
-    from src.plugin_api.contracts import Capability, PluginDependency, PluginManifest, PluginUiDocument
-    from src.plugin_api.updates import PackageVerificationError, PluginPackageVerifier, TrustedPublisher
-    from pydantic import BaseModel, Field
-    from publisher_registry import load_registry
-    from distribution import discover_plugins
+    from src.plugin_api.contracts import (
+        Capability,
+        PluginDependency,
+        PluginManifest,
+        PluginUiDocument,
+    )
+    from src.plugin_api.updates import (
+        PackageVerificationError,
+        PluginPackageVerifier,
+        TrustedPublisher,
+    )
 
     root = Path(__file__).parents[1]
     catalogue = json.loads((args.distribution_root / "list.json").read_text(encoding="utf-8"))
     # Evaluate the actual public catalogue entry model without loading database
     # configuration or the API server. Additional distribution fields remain
     # additive to its v1 contract; this does not imply old hosts consume them.
-    api_source = args.host_root / "src/backend/src/api/routes/plugins.py"
-    tree = ast.parse(api_source.read_text(encoding="utf-8"))
-    model = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "PluginCatalogEntry")
-    namespace = {"BaseModel": BaseModel, "Field": Field, "PluginDependency": PluginDependency}
-    exec(compile(ast.Module(body=[model], type_ignores=[]), str(api_source), "exec"), namespace)
+    catalogue_entry = load_catalogue_entry(args.host_root, PluginDependency)
     for entry in catalogue["plugins"]:
-        namespace["PluginCatalogEntry"].model_validate(entry)
-    publishers = {key: TrustedPublisher(key_id=key, public_key=record.public_key, publisher=record.publisher,
-                    status=record.status, plugin_id_prefixes=record.plugin_id_prefixes, channel=record.channel, legacy_manifest_hashes=record.legacy_manifest_hashes, require_manifest_binding=True) for key, record in load_registry().items()}
+        catalogue_entry.model_validate(entry)
+    publishers = {
+        key: TrustedPublisher(
+            key_id=key,
+            public_key=record.public_key,
+            publisher=record.publisher,
+            status=record.status,
+            plugin_id_prefixes=record.plugin_id_prefixes,
+            channel=record.channel,
+            legacy_manifest_hashes=record.legacy_manifest_hashes,
+            require_manifest_binding=True,
+        )
+        for key, record in load_registry().items()
+    }
     with tempfile.TemporaryDirectory(dir=args.temporary_root) as temporary:
         work = Path(temporary)
-        supervisor = PluginSupervisor(
-            root=work / "workers", storage_root=work / "storage"
-        )
+        supervisor = PluginSupervisor(root=work / "workers", storage_root=work / "storage")
         registry = PluginRegistry(work / "installed", supervisor)
         for source, _ in discover_plugins(root):
-            manifest = PluginManifest.model_validate_json(
-                (source / "manifest.json").read_bytes()
-            )
-            document = PluginUiDocument.model_validate_json(
-                (source / "ui.json").read_bytes()
-            )
+            manifest = PluginManifest.model_validate_json((source / "manifest.json").read_bytes())
+            document = PluginUiDocument.model_validate_json((source / "ui.json").read_bytes())
             assert manifest.plugin_id == document.plugin_id
+            assert manifest.api_contract_version == document.api_contract_version == "1.1.0"
             assert all(capability_definition(ref.name) for ref in manifest.capabilities)
             assert capability_definition(Capability.FRONTEND_NATIVE).highly_privileged
             for key in ("settings", "actions", "pages", "menus"):
-                assert set(getattr(manifest.ui, key)) == {
-                    x.id for x in getattr(document, key)
-                }
+                assert set(getattr(manifest.ui, key)) == {x.id for x in getattr(document, key)}
             entry = next(e for e in catalogue["plugins"] if e["plugin_id"] == manifest.plugin_id)
             path = args.distribution_root / "dist" / entry["package"]["filename"]
             manifest = PluginManifest.model_validate(entry["manifest"])
@@ -84,28 +118,26 @@ def main() -> None:
             )
             assert installed["plugin_id"] == manifest.plugin_id
             assert installed["version"] == manifest.version
-            item = next(
-                item
-                for item in registry.list()
-                if item["plugin_id"] == manifest.plugin_id
-            )
+            item = next(item for item in registry.list() if item["plugin_id"] == manifest.plugin_id)
             assert item["enabled"] is False
             runtime_document = registry.ui(manifest.plugin_id)
             PluginUiDocument.model_validate(runtime_document)
             if manifest.native_frontend is None:
-                print(f"{manifest.plugin_id}: host manifest/UI, payload digest, installation and disabled lifecycle passed")
+                print(
+                    f"{manifest.plugin_id}: host manifest/UI, payload digest, "
+                    "installation and disabled lifecycle passed"
+                )
                 continue
             assert runtime_document["native_frontend"]["entry"] == manifest.native_frontend.entry
             try:
-                registry.frontend(
-                    manifest.plugin_id, manifest.native_frontend.entry, native=True
-                )
+                registry.frontend(manifest.plugin_id, manifest.native_frontend.entry, native=True)
             except RuntimePolicyError:
                 pass
             else:
                 raise AssertionError("Disabled native assets were served")
             print(
-                f"{manifest.plugin_id}: strict manifest/UI, permissions, digest, real installation and disabled lifecycle passed"
+                f"{manifest.plugin_id}: strict manifest/UI, permissions, digest, "
+                "real installation and disabled lifecycle passed"
             )
 
 

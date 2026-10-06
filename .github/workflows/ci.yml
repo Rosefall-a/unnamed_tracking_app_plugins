@@ -6,6 +6,30 @@ on:
   workflow_dispatch:
 
 jobs:
+  unsigned-dist:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - run: python -m pip install -r requirements-dev.txt
+      - run: npm ci
+      - run: npm run check:native
+      - run: python -m tools.build_unsigned_previews
+      - uses: actions/upload-artifact@v7
+        with:
+          name: unsigned-dist
+          path: unsigned-dist/
+          if-no-files-found: error
+      - name: Require preview builds to leave tracked source unchanged
+        run: git diff --exit-code
   test-and-build:
     runs-on: ubuntu-24.04
     steps:
@@ -20,13 +44,18 @@ jobs:
           node-version: "22"
           package-manager-cache: false
       - run: python -m pip install --upgrade pip -r requirements-dev.txt
+      - run: npm ci
+      - run: npm run check:native
       - run: python tools/check_source_layout.py
       - name: Validate documentation and repository references
         run: python tools/check_docs.py
       - name: Build developer wiki with strict validation
-        run: python -m mkdocs build --strict -f wiki/mkdocs.yml
+        run: python -m mkdocs build --strict
       - run: node --test tests/session_manager_ui.test.mjs
       - run: node --test tests/native_frontends.test.mjs
+      - run: node --test tests/frontend_appearance.test.mjs
+      - run: node --test tests/shortcut_playground.test.mjs
+      - run: node --test tests/jellyfin_official_ui.test.mjs
       - run: node --check examples/self-service-session-manager/frontend/app.js
       - run: pytest
       - run: python tools/build_packages.py
@@ -37,7 +66,7 @@ jobs:
         env:
           BASELINE_REF: ${{ github.event.pull_request.base.sha || 'origin/main' }}
         run: python tools/distribution.py --baseline-ref "$BASELINE_REF"
-      - run: python tools/distribution.py --root .validation --check-source
+      - run: python tools/distribution.py --root .validation --check-source --include-unreleased
       - run: python tools/verify_packages.py .validation/dist/*.utp
       - run: python tools/validate_packages.py .validation/dist/*.utp
       - name: Select companion repository ref
@@ -48,7 +77,8 @@ jobs:
         run: |
           ref="$REQUESTED_REF"
           if [ -z "$ref" ]; then
-            ref=plugin-manager
+            # Current native plugins require the public Plugin API 1.1 host.
+            ref=feat/ui-ux-redevelopment
             # Repository main branches have different ownership targets.
             if [ "$COMPANION_BRANCH" != main ] && git ls-remote --exit-code --heads https://github.com/Rosefall-a/unnamed_tracking_app.git "refs/heads/$COMPANION_BRANCH" >/dev/null; then
               ref="$COMPANION_BRANCH"
@@ -68,8 +98,13 @@ jobs:
           COMPANION_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           ref=main
-          if [ "$COMPANION_BRANCH" != main ] && git ls-remote --exit-code --heads https://github.com/Rosefall-a/unnamed-tracking-mobile-app.git "refs/heads/$COMPANION_BRANCH" >/dev/null; then
-            ref="$COMPANION_BRANCH"
+          mobile_branch="$COMPANION_BRANCH"
+          # The appearance migration has a separate canonical mobile-source PR.
+          if [ "$COMPANION_BRANCH" = feat/ui-ux-redevelopment ]; then
+            mobile_branch=feat/pwa-personal-appearance
+          fi
+          if [ "$mobile_branch" != main ] && git ls-remote --exit-code --heads https://github.com/Rosefall-a/unnamed-tracking-mobile-app.git "refs/heads/$mobile_branch" >/dev/null; then
+            ref="$mobile_branch"
           fi
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v7

@@ -1,0 +1,82 @@
+{
+  "manifest_version": 1,
+  "plugin_id": "example.shortcut-playground",
+  "name": "Shortcut playground",
+  "version": "0.0.1",
+  "api_contract_version": "1.1.0",
+  "sdk_version_range": ">=1.1.0,<1.2.0",
+  "application_version_range": "^1.0.0",
+  "description": "v1.1-only example of dynamic keyboard shortcuts, personal remapping and an intentional Search conflict.",
+  "entrypoint": "plugin:main",
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": [
+      "native/style.css"
+    ]
+  },
+  "capabilities": [
+    {
+      "name": "frontend.navigation.main",
+      "version": 1
+    },
+    {
+      "name": "frontend.routes",
+      "version": 1
+    },
+    {
+      "name": "frontend.shortcuts",
+      "version": 1
+    },
+    {
+      "name": "frontend.native",
+      "version": 1
+    }
+  ],
+  "permissions": [
+    {
+      "capability": {
+        "name": "frontend.navigation.main",
+        "version": 1
+      },
+      "rationale": "Add the teaching example to Extensions."
+    },
+    {
+      "capability": {
+        "name": "frontend.routes",
+        "version": 1
+      },
+      "rationale": "Expose the plugin-owned playground route."
+    },
+    {
+      "capability": {
+        "name": "frontend.shortcuts",
+        "version": 1
+      },
+      "rationale": "Register editable host shortcuts, including an intentional Search conflict."
+    },
+    {
+      "capability": {
+        "name": "frontend.native",
+        "version": 1
+      },
+      "rationale": "Run the native Vue teaching page and scoped CSS; requires privileged frontend approval."
+    }
+  ],
+  "dependencies": [],
+  "storage": {
+    "quota_mb": 1
+  },
+  "ui": {
+    "settings": [],
+    "actions": [],
+    "pages": [
+      "playground"
+    ],
+    "menus": []
+  },
+  "integrity": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "key_id": null,
+    "signature": null
+  }
+}

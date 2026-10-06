@@ -1,6 +1,12 @@
 .ssm {
-  color: var(--text-primary, #ddd);
+  color: var(--ui-text);
+  min-width: 0;
   max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.ssm,
+.ssm * {
+  box-sizing: border-box;
 }
 .ssm header,
 .ssm-toolbar {
@@ -11,14 +17,15 @@
   margin-bottom: 14px;
 }
 .ssm header > div {
-  flex: 1;
+  flex: 1 1 220px;
+  min-width: 0;
 }
 .ssm h2,
 .ssm h3 {
   margin: 0 0 8px;
 }
 .ssm p {
-  color: var(--text-secondary, #aaa);
+  color: var(--ui-dim);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -27,15 +34,31 @@
   align-items: center;
   gap: 8px;
   font-size: 12px;
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+.ssm label.ssm-select {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 220px;
+}
+.ssm .ssm-select select {
+  width: 100%;
+  padding-right: 34px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .ssm input,
 .ssm select,
 .ssm button {
-  background: var(--bg-secondary, #1b1b1b);
+  background-color: var(--ui-surface);
   color: inherit;
-  border: 1px solid #444;
-  border-radius: 7px;
+  border: 1px solid var(--ui-border-strong);
+  border-radius: var(--ui-radius-control, 7px);
   padding: 8px 10px;
+  min-width: 0;
+  max-width: 100%;
 }
 .ssm button,
 .ssm summary {
@@ -48,7 +71,7 @@
 .ssm button.ssm-danger,
 .ssm .ssm-error,
 .ssm .ssm-anomaly {
-  color: #fca5a5;
+  color: var(--ui-error);
 }
 .ssm .ssm-list {
   display: grid;
@@ -59,19 +82,19 @@
 .ssm details,
 .ssm-map-card {
   padding: 16px;
-  border: 1px solid #333;
-  border-radius: 10px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-card, 10px);
   margin-block: 12px;
-  background: var(--bg-secondary, #141414);
+  background: var(--ui-surface);
 }
 .ssm dl {
   display: grid;
-  grid-template-columns: minmax(100px, 150px) 1fr;
+  grid-template-columns: minmax(100px, 150px) minmax(0, 1fr);
   gap: 6px 14px;
   font-size: 13px;
 }
 .ssm dt {
-  color: #999;
+  color: var(--ui-dim);
 }
 .ssm dd {
   margin: 0;
@@ -81,8 +104,13 @@
   margin-block: 10px;
   flex-wrap: wrap;
 }
+.ssm .ssm-file input {
+  width: 100%;
+}
 .ssm-table-wrap {
   overflow: auto;
+  min-width: 0;
+  width: 100%;
   max-width: 100%;
   margin-block: 14px;
 }
@@ -96,7 +124,7 @@
 .ssm td {
   padding: 10px 8px;
   text-align: left;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--ui-border);
   max-width: 250px;
   min-width: 85px;
   overflow-wrap: anywhere;
@@ -110,7 +138,7 @@
   white-space: nowrap;
 }
 .ssm th {
-  color: #999;
+  color: var(--ui-dim);
 }
 .ssm-compact th,
 .ssm-compact td {
@@ -125,11 +153,11 @@
   position: relative;
   height: 340px;
   overflow: hidden;
-  background: #ccd6de;
+  background: var(--ui-surface-2);
   cursor: grab;
   touch-action: none;
   user-select: none;
-  border-radius: 8px;
+  border-radius: var(--ui-radius-control, 8px);
 }
 .ssm .ssm-tile {
   position: absolute;
@@ -144,11 +172,11 @@
   z-index: 2;
   border: 2px solid white;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  color: white;
-  background: #b91c1c;
+  color: var(--ui-on-accent);
+  background: var(--ui-accent);
   box-shadow: 0 2px 5px #0008;
 }
 .ssm-attribution {
@@ -156,8 +184,8 @@
   right: 2px;
   bottom: 2px;
   z-index: 3;
-  background: #ffffffe0;
-  color: #333;
+  background: var(--ui-surface);
+  color: var(--ui-border);
   padding: 3px;
   font-size: 10px;
 }
@@ -165,7 +193,8 @@
   margin-top: 12px;
 }
 @media (max-width: 650px) {
-  .ssm-toolbar label {
+  .ssm-toolbar label,
+  .ssm label.ssm-select {
     width: 100%;
   }
   .ssm-toolbar input:not([type="checkbox"]) {
@@ -173,6 +202,17 @@
     min-width: 0;
   }
   .ssm dl {
-    grid-template-columns: 100px 1fr;
+    grid-template-columns: 100px minmax(0, 1fr);
   }
+}
+
+.ssm button, .ssm input:not([type=checkbox]):not([type=radio]), .ssm select, .ssm summary {
+  min-height: var(--ui-control-height, 44px);
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.ssm button:focus-visible, .ssm input:focus-visible, .ssm select:focus-visible, .ssm summary:focus-visible {
+  outline: 3px solid var(--ui-accent);
+  outline-offset: 3px;
 }
