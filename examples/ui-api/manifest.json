@@ -60,6 +60,17 @@
     }
   ],
   "plugin_id": "example.ui-api",
+  "scheduled_tasks": [
+    {
+      "action_id": "scheduled-summary",
+      "default_interval_minutes": 1440,
+      "description": "Reports the number of games read from the plugin background administrator library.",
+      "id": "library-summary",
+      "max_interval_minutes": 10080,
+      "min_interval_minutes": 5,
+      "name": "Library summary"
+    }
+  ],
   "sdk_version_range": "^1.1.0",
   "storage": {
     "quota_mb": 1
@@ -76,16 +87,5 @@
       "settings"
     ]
   },
-  "version": "1.1.0",
-  "scheduled_tasks": [
-    {
-      "id": "library-summary",
-      "name": "Library summary",
-      "description": "Reports the number of games read from the plugin background administrator library.",
-      "action_id": "scheduled-summary",
-      "min_interval_minutes": 5,
-      "max_interval_minutes": 10080,
-      "default_interval_minutes": 1440
-    }
-  ]
+  "version": "1.2.0"
 }

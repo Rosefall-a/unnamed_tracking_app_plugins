@@ -71,6 +71,12 @@
   },
   "manifest_version": 1,
   "name": "Scoped Document Viewer",
+  "native_frontend": {
+    "entry": "native/settings.js",
+    "styles": [
+      "native/style.css"
+    ]
+  },
   "permissions": [
     {
       "capability": {
@@ -149,11 +155,5 @@
       "viewer-settings"
     ]
   },
-  "version": "1.7.0",
-  "native_frontend": {
-    "entry": "native/settings.js",
-    "styles": [
-      "native/style.css"
-    ]
-  }
+  "version": "1.8.0"
 }

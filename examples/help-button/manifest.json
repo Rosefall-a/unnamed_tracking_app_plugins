@@ -68,7 +68,7 @@
     "signature": null
   },
   "manifest_version": 1,
-  "name": "Help Button \u00b7 Capability Showcase",
+  "name": "Help Button · Capability Showcase",
   "native_frontend": {
     "entry": "native/app.js",
     "styles": [
@@ -200,5 +200,5 @@
       "showcase"
     ]
   },
-  "version": "2.1.0"
+  "version": "2.2.0"
 }
