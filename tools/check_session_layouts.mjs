@@ -304,7 +304,13 @@ for (const engineName of engines) {
               window.scrollTo({ top: 0, left: 0, behavior: "instant" }),
             );
             await page.screenshot({ path: path.join(output, filename) });
-            report.captures.push(filename);
+            report.captures.push({
+              filename,
+              description: `Installed native ${section} in ${engineName}, ${width} pixels, ${mode} mode`,
+              sha256: createHash("sha256")
+                .update(await readFile(path.join(output, filename)))
+                .digest("hex"),
+            });
           }
         }
       }
