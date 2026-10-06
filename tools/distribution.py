@@ -20,12 +20,16 @@ except ImportError:
 ROOT = Path(__file__).parents[1]
 SEMVER = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
 TAG = re.compile(r"^[a-z0-9][a-z0-9-]{0,47}$")
-DEFAULT_BASE = "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main"
+DEFAULT_BASE = (
+    "https://raw.githubusercontent.com/Rosefall-a/unnamed_tracking_app_plugins/main"
+)
 RETIREMENT_FILE = "retired_plugins.json"
 
 
 def canonical_json(value: object) -> bytes:
-    return (json.dumps(value, sort_keys=True, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    return (
+        json.dumps(value, sort_keys=True, indent=2, ensure_ascii=False) + "\n"
+    ).encode("utf-8")
 
 
 def write_json(path: Path, value: object) -> None:
@@ -41,7 +45,11 @@ def version_key(version: str) -> tuple[int, int, int]:
 
 def git(root: Path, *args: str) -> str | None:
     result = subprocess.run(
-        ["git", "-C", str(root), *args], capture_output=True, text=True, encoding="utf-8"
+        ["git", "-C", str(root), *args],
+        capture_output=True,
+        check=False,
+        text=True,
+        encoding="utf-8",
     )
     return result.stdout.strip() if result.returncode == 0 else None
 
@@ -55,7 +63,10 @@ def discover_plugins(root: Path) -> list[tuple[Path, dict]]:
         if not tree.exists():
             continue
         for source in sorted(tree.iterdir()):
-            if source.name.startswith(".") or source.name in {"__pycache__", "node_modules"}:
+            if source.name.startswith(".") or source.name in {
+                "__pycache__",
+                "node_modules",
+            }:
                 continue
             if source.is_symlink():
                 raise ValueError("plugin source cannot be a symbolic link")
@@ -65,10 +76,17 @@ def discover_plugins(root: Path) -> list[tuple[Path, dict]]:
                         f"{source.name}: manifest.json is missing (incomplete plugin source)"
                     )
                 plugins.append(
-                    (source, json.loads((source / "manifest.json").read_text(encoding="utf-8")))
+                    (
+                        source,
+                        json.loads(
+                            (source / "manifest.json").read_text(encoding="utf-8")
+                        ),
+                    )
                 )
     if not plugins:
-        raise ValueError("no plugin manifests found under examples/, official/ or plugins/")
+        raise ValueError(
+            "no plugin manifests found under examples/, official/ or plugins/"
+        )
     ids = [m["plugin_id"] for _, m in plugins]
     if len(ids) != len(set(ids)):
         raise ValueError("duplicate plugin_id")
@@ -82,7 +100,14 @@ def discover_plugins(root: Path) -> list[tuple[Path, dict]]:
 
 
 def validate_metadata(metadata: dict, *, packaged: bool = False) -> None:
-    allowed = {"schema_version", "publisher", "tags", "icon", "automatic_update", "release_notes"}
+    allowed = {
+        "schema_version",
+        "publisher",
+        "tags",
+        "icon",
+        "automatic_update",
+        "release_notes",
+    }
     if packaged:
         allowed |= {"version", "build"}
     if set(metadata) - allowed or metadata.get("schema_version") != 1:
@@ -97,14 +122,20 @@ def validate_metadata(metadata: dict, *, packaged: bool = False) -> None:
         or len(tags) != len(set(tags))
     ):
         raise ValueError("tags must be unique lowercase category slugs (up to 32)")
-    if not isinstance(metadata.get("publisher"), str) or not 1 <= len(metadata["publisher"]) <= 256:
+    if (
+        not isinstance(metadata.get("publisher"), str)
+        or not 1 <= len(metadata["publisher"]) <= 256
+    ):
         raise ValueError("publisher must be a non-empty display name")
     if (
         metadata.get("automatic_update") is not None
         and type(metadata["automatic_update"]) is not bool
     ):
         raise ValueError("automatic_update must be a boolean or null")
-    if not isinstance(metadata.get("release_notes"), str) or len(metadata["release_notes"]) > 4000:
+    if (
+        not isinstance(metadata.get("release_notes"), str)
+        or len(metadata["release_notes"]) > 4000
+    ):
         raise ValueError("release_notes must be text of at most 4000 characters")
     icon = metadata.get("icon")
     if icon is not None and (not isinstance(icon, str) or not safe_path(icon)):
@@ -126,12 +157,15 @@ def source_bytes(path: Path) -> bytes:
     # Text is stored as LF in Git, independent of the author's checkout settings.
     return (
         data.replace(b"\r\n", b"\n")
-        if path.suffix in {".py", ".js", ".css", ".html", ".md", ".json", ".svg", ".webmanifest"}
+        if path.suffix
+        in {".py", ".js", ".css", ".html", ".md", ".json", ".svg", ".webmanifest"}
         else data
     )
 
 
-def collect_payload(root: Path, source: Path, manifest: dict) -> tuple[dict[str, bytes], dict]:
+def collect_payload(
+    root: Path, source: Path, manifest: dict
+) -> tuple[dict[str, bytes], dict]:
     path = source / "release.json"
     metadata = (
         json.loads(path.read_text(encoding="utf-8"))
@@ -148,8 +182,12 @@ def collect_payload(root: Path, source: Path, manifest: dict) -> tuple[dict[str,
     validate_metadata(metadata)
     files = {"sdk/plugin_protocol.py": source_bytes(root / "sdk/plugin_protocol.py")}
     if manifest.get("frontend"):
-        files["frontend/appearance.js"] = source_bytes(root / "sdk/frontend_appearance.js")
-        files["frontend/appearance.css"] = source_bytes(root / "sdk/frontend_appearance.css")
+        files["frontend/appearance.js"] = source_bytes(
+            root / "sdk/frontend_appearance.js"
+        )
+        files["frontend/appearance.css"] = source_bytes(
+            root / "sdk/frontend_appearance.css"
+        )
     for path in source.rglob("*.py"):
         if not any(
             part.startswith(".") or part in {"__pycache__", "node_modules"}
@@ -165,7 +203,8 @@ def collect_payload(root: Path, source: Path, manifest: dict) -> tuple[dict[str,
     for name in ("frontend", "native", "pwa"):
         for path in (source / name).rglob("*"):
             if path.is_file() and not any(
-                p.startswith(".") or p == "node_modules" for p in path.relative_to(source).parts
+                p.startswith(".") or p == "node_modules"
+                for p in path.relative_to(source).parts
             ):
                 if path.is_symlink():
                     raise ValueError("package assets cannot be symbolic links")
@@ -178,7 +217,9 @@ def collect_payload(root: Path, source: Path, manifest: dict) -> tuple[dict[str,
 
 def source_digest(manifest: dict, files: dict[str, bytes]) -> str:
     source = {k: v for k, v in manifest.items() if k not in {"version", "integrity"}}
-    return canonical_payload_digest([("manifest.json", canonical_json(source)), *files.items()])
+    return canonical_payload_digest(
+        [("manifest.json", canonical_json(source)), *files.items()]
+    )
 
 
 def load_retired_plugins(root: Path) -> set[str]:
@@ -196,7 +237,7 @@ def load_retired_plugins(root: Path) -> set[str]:
     ids = []
     for record in data["plugins"]:
         if not isinstance(record, dict) or not isinstance(record.get("plugin_id"), str):
-            raise ValueError("invalid retired plugin identity")
+            raise TypeError("retired plugin records require a string plugin_id")
         if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{0,127}", record["plugin_id"]):
             raise ValueError("invalid retired plugin identity")
         if (
@@ -248,7 +289,9 @@ def release_record(
         icon = (
             {
                 "path": icon_path,
-                "sha256": hashlib.sha256(archive.read("payload/" + icon_path)).hexdigest(),
+                "sha256": hashlib.sha256(
+                    archive.read("payload/" + icon_path)
+                ).hexdigest(),
             }
             if icon_path
             else None
@@ -258,7 +301,9 @@ def release_record(
     if metadata:
         validate_metadata(metadata, packaged=True)
         if key and metadata["publisher"] != key.publisher:
-            raise ValueError("declared publisher does not match the registered signing identity")
+            raise ValueError(
+                "declared publisher does not match the registered signing identity"
+            )
     # Legacy artifacts predate release policy: do not invent automatic approval.
     return {
         "plugin_id": manifest["plugin_id"],
@@ -266,8 +311,14 @@ def release_record(
         "manifest": manifest,
         "sha256": manifest["integrity"]["sha256"],
         "package_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-        "package": {"filename": path.name, "size_bytes": path.stat().st_size, "format": "utp-v1"},
-        "publisher": key.publisher if key else (metadata["publisher"] if metadata else None),
+        "package": {
+            "filename": path.name,
+            "size_bytes": path.stat().st_size,
+            "format": "utp-v1",
+        },
+        "publisher": key.publisher
+        if key
+        else (metadata["publisher"] if metadata else None),
         "signing": manifest["integrity"],
         "tags": metadata["tags"] if metadata else [],
         "readme": readme,
@@ -278,10 +329,15 @@ def release_record(
         else "Legacy distributed package; automatic-update approval was not recorded.",
         "lifecycle": "published" if published else "built",
         "lifecycle_stages": (
-            ["source", "validated", "built", "catalogued"] if metadata else ["built", "catalogued"]
+            ["source", "validated", "built", "catalogued"]
+            if metadata
+            else ["built", "catalogued"]
         )
         + (["published", "downloadable"] if published else []),
-        "build": {**(metadata.get("build", {}) if metadata else {}), "legacy": metadata is None},
+        "build": {
+            **(metadata.get("build", {}) if metadata else {}),
+            "legacy": metadata is None,
+        },
     }
 
 
@@ -291,20 +347,29 @@ def import_history(root: Path, histories: dict[str, list[dict]]) -> None:
         with zipfile.ZipFile(path) as archive:
             manifest = json.loads(archive.read("manifest.json"))
         history = histories.setdefault(manifest["plugin_id"], [])
-        existing = next((r for r in history if r["version"] == manifest["version"]), None)
+        existing = next(
+            (r for r in history if r["version"] == manifest["version"]), None
+        )
         if existing:
-            if existing["package_sha256"] != hashlib.sha256(path.read_bytes()).hexdigest():
+            if (
+                existing["package_sha256"]
+                != hashlib.sha256(path.read_bytes()).hexdigest()
+            ):
                 raise ValueError(f"historical package changed: {path.name}")
         else:
             record = release_record(path, root=root)
             introduced = git(
                 root, "log", "--diff-filter=A", "--format=%H", "--", "dist/" + path.name
             )
-            record["build"]["source_commit"] = introduced.splitlines()[-1] if introduced else None
+            record["build"]["source_commit"] = (
+                introduced.splitlines()[-1] if introduced else None
+            )
             record["build"]["source_digest"] = None
             record["build"]["source_path"] = None
             record["build"]["source_committed_at"] = (
-                git(root, "show", "-s", "--format=%cI", record["build"]["source_commit"])
+                git(
+                    root, "show", "-s", "--format=%cI", record["build"]["source_commit"]
+                )
                 if introduced
                 else None
             )
@@ -355,7 +420,9 @@ def next_release(
     if previous_path and safe_path(previous_path) and previous_path not in paths:
         paths.append(previous_path)
     messages = (
-        git(root, "log", f"{revision}..HEAD", "--format=%B%x00", "--", *paths) if revision else ""
+        git(root, "log", f"{revision}..HEAD", "--format=%B%x00", "--", *paths)
+        if revision
+        else ""
     )
     bump = "patch"
     for message in (messages or "").split("\0"):
@@ -436,7 +503,10 @@ def catalogue_document(
 
 
 def generate_catalogue(
-    root: Path, output: Path, plugins: list[tuple[Path, dict]], histories: dict[str, list[dict]]
+    root: Path,
+    output: Path,
+    plugins: list[tuple[Path, dict]],
+    histories: dict[str, list[dict]],
 ) -> None:
     """Write the catalogue derived from retained packages and maintained sources."""
     write_json(output / "list.json", catalogue_document(root, plugins, histories))
@@ -517,8 +587,12 @@ def validate_distribution(
                 "lifecycle_stages",
             ):
                 if actual[field] != release[field]:
-                    raise ValueError(f"{name}: generated {field} does not match package")
-            if type(release["automatic_update"]) is not bool or release["lifecycle"] not in {
+                    raise ValueError(
+                        f"{name}: generated {field} does not match package"
+                    )
+            if type(release["automatic_update"]) is not bool or release[
+                "lifecycle"
+            ] not in {
                 "built",
                 "published",
             }:
@@ -528,7 +602,9 @@ def validate_distribution(
             # new releases must pass the full current contract.
             if not release["build"]["legacy"]:
                 if actual["build"] != release["build"]:
-                    raise ValueError("release build provenance does not match signed package")
+                    raise ValueError(
+                        "release build provenance does not match signed package"
+                    )
                 validate_package(path, full=True)
             filenames.add(name)
     if filenames != {p.name for p in (output / "dist").glob("*.utp")}:
@@ -537,10 +613,16 @@ def validate_distribution(
     # The targeted host bounds decoded catalogue downloads to 1 MiB. Fail before
     # publication instead of producing an endpoint it cannot consume.
     if catalogue_path.stat().st_size > 1024 * 1024:
-        raise ValueError("catalogue exceeds the current Plugin Manager's 1 MiB download limit")
+        raise ValueError(
+            "catalogue exceeds the current Plugin Manager's 1 MiB download limit"
+        )
     catalogue = json.loads(catalogue_path.read_text(encoding="utf-8"))
-    if catalogue != catalogue_document(source_root, discover_plugins(source_root), histories):
-        raise ValueError("catalogue differs from authoritative package/release metadata")
+    if catalogue != catalogue_document(
+        source_root, discover_plugins(source_root), histories
+    ):
+        raise ValueError(
+            "catalogue differs from authoritative package/release metadata"
+        )
     if catalogue["version"] != 1:
         raise ValueError("unsupported catalogue schema")
     entries = catalogue["plugins"]
@@ -548,7 +630,11 @@ def validate_distribution(
         raise ValueError("duplicate catalogue identity")
     sources = {m["plugin_id"]: (s, m) for s, m in discover_plugins(source_root)}
     pending = (
-        set(json.loads((source_root / "catalogue.json").read_text()).get("unreleased_plugins", []))
+        set(
+            json.loads((source_root / "catalogue.json").read_text()).get(
+                "unreleased_plugins", []
+            )
+        )
         if (source_root / "catalogue.json").exists()
         else set()
     )
@@ -557,7 +643,8 @@ def validate_distribution(
     released_sources = {
         plugin_id
         for plugin_id, (source, _) in sources.items()
-        if plugin_id in histories or source.relative_to(source_root).parts[0] != "official"
+        if plugin_id in histories
+        or source.relative_to(source_root).parts[0] != "official"
     }
     required_sources = (
         set(sources)
@@ -593,24 +680,31 @@ def validate_distribution(
             "permissions",
             "dependencies",
         ):
-            if entry[field] != manifest.get(field, [] if field == "dependencies" else ""):
+            if entry[field] != manifest.get(
+                field, [] if field == "dependencies" else ""
+            ):
                 raise ValueError(f"catalogue {field} mismatch")
         if check_source:
             source, authored = sources[entry["plugin_id"]]
             files, _ = collect_payload(source_root, source, authored)
             if history[-1]["build"]["source_digest"] != source_digest(authored, files):
-                raise ValueError("generated package does not correspond to current source")
+                raise ValueError(
+                    "generated package does not correspond to current source"
+                )
     if baseline_ref:
         validate_immutable_history(output, source_root, baseline_ref)
 
 
-def validate_immutable_history(output: Path, repository: Path, baseline_ref: str) -> None:
+def validate_immutable_history(
+    output: Path, repository: Path, baseline_ref: str
+) -> None:
     """Enforce reviewed retirements while preserving baseline packages and record prefixes."""
     if not git(repository, "rev-parse", "--verify", baseline_ref):
         raise ValueError("baseline Git revision is unavailable; fetch full history")
     baseline_catalogue = subprocess.run(
         ["git", "-C", str(repository), "show", f"{baseline_ref}:list.json"],
         capture_output=True,
+        check=False,
     )
     if baseline_catalogue.returncode:
         raise ValueError("cannot read baseline catalogue")
@@ -618,7 +712,8 @@ def validate_immutable_history(output: Path, repository: Path, baseline_ref: str
         entry["plugin_id"] for entry in json.loads(baseline_catalogue.stdout)["plugins"]
     }
     current_ids = {
-        entry["plugin_id"] for entry in json.loads((output / "list.json").read_bytes())["plugins"]
+        entry["plugin_id"]
+        for entry in json.loads((output / "list.json").read_bytes())["plugins"]
     }
     removed = previous_ids - current_ids
     retired = load_retired_plugins(repository)
@@ -639,13 +734,26 @@ def validate_immutable_history(output: Path, repository: Path, baseline_ref: str
     histories = load_histories(output)
     for plugin_id in retired:
         if plugin_id not in histories:
-            raise ValueError(f"retired plugin has no retained release history: {plugin_id}")
-    names = git(repository, "ls-tree", "-r", "--name-only", baseline_ref, "--", "dist", "releases")
+            raise ValueError(
+                f"retired plugin has no retained release history: {plugin_id}"
+            )
+    names = git(
+        repository,
+        "ls-tree",
+        "-r",
+        "--name-only",
+        baseline_ref,
+        "--",
+        "dist",
+        "releases",
+    )
     for name in (names or "").splitlines():
         if not name.endswith((".utp", ".json")):
             continue
         result = subprocess.run(
-            ["git", "-C", str(repository), "show", f"{baseline_ref}:{name}"], capture_output=True
+            ["git", "-C", str(repository), "show", f"{baseline_ref}:{name}"],
+            capture_output=True,
+            check=False,
         )
         if result.returncode:
             raise ValueError("cannot read baseline distribution")
