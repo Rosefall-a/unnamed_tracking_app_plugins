@@ -12,8 +12,8 @@ function all(tree) {
 }
 const flush = () => new Promise(resolve => setImmediate(resolve));
 
-async function fixture(name, respond = () => ({})) {
-  const source = await readFile(new URL(`../examples/${name}/native/app.js`, import.meta.url), "utf8");
+async function fixture(name, respond = () => ({}), entry = "app.js", ui = {}) {
+  const source = await readFile(new URL(`../examples/${name}/native/${entry}`, import.meta.url), "utf8");
   const { activate } = await import("data:text/javascript;base64," + Buffer.from(source).toString("base64"));
   const components = {}, cleanup = [], calls = [], timers = new Map();
   const originalTimeout = global.setTimeout, originalClear = global.clearTimeout;
@@ -21,11 +21,12 @@ async function fixture(name, respond = () => ({})) {
   global.clearTimeout = id => timers.delete(id);
   const host = {
     async runAction(id, values = {}) { calls.push([id, values]); return respond(id, values); },
-    async saveSettings(values) { calls.push(["settings", values]); },
+    async saveSettings(values) { calls.push(["settings", values]); return respond("settings", values); },
     async navigate(path) { calls.push(["navigate", path]); },
     openDialog(id) { calls.push(["dialog", id]); },
   };
-  activate({ pluginId: `example.${name}`, vue: { h, ref: value => ({ value }), reactive: x => x, defineComponent: x => x },
+  activate({ pluginId: `example.${name}`, ui, vue: { h, ref: value => ({ value }), reactive: x => x, defineComponent: x => x,
+    onBeforeUnmount: fn => cleanup.push(fn) },
     host, registerComponent: (id, component) => { components[id] = component; }, onCleanup: fn => cleanup.push(fn) });
   await flush();
   return { components, calls, timers, host, close() {
@@ -106,5 +107,62 @@ test("Jellyfin denied operation shows useful failure and cleans up timers", asyn
     await all(render()).find(x => x.tag === "button" && x.children === "Sync now").props.onClick();
     assert(all(render()).some(x => x.props.role === "status" && String(x.children).includes("Operation failed")));
     f.close(); assert.equal(f.timers.size, 0);
+  } finally { f.close(); }
+});
+
+test("Document settings load, validate and save through the public native SDK", async () => {
+  const f = await fixture("scoped-document-viewer", id => id === "load-settings" ? { value: 8 } : {}, "settings.js");
+  try {
+    const render = f.components["reader-settings"].setup();
+    await flush();
+    const input = () => all(render()).find(x => x.tag === "input");
+    const submit = () => all(render()).find(x => x.tag === "form").props.onSubmit({ preventDefault() {} });
+    assert.equal(input().props.value, 8);
+    input().props.onInput({ target: { value: "-1" } });
+    await submit();
+    assert(all(render()).some(x => x.props.role === "alert" && String(x.children).includes("whole number")));
+    assert(!f.calls.some(x => x[0] === "settings"));
+    input().props.onInput({ target: { value: "12" } });
+    await submit();
+    assert.deepEqual(f.calls.find(x => x[0] === "settings"), ["settings", { max_preview_mb: 12 }]);
+    assert(all(render()).some(x => x.props.role === "status" && x.children === "Viewer settings saved."));
+    await all(render()).find(x => x.tag === "button" && x.children === "Open document browser").props.onClick();
+    assert(f.calls.some(x => x[0] === "navigate" && x[1].endsWith("/documents")));
+  } finally { f.close(); }
+});
+
+test("Document settings recover from errors and ignore responses after unmount", async () => {
+  let fail = true, release;
+  const f = await fixture("scoped-document-viewer", id => {
+    if (fail) throw new Error("unavailable");
+    if (id === "load-settings") return new Promise(resolve => { release = resolve; });
+    return {};
+  }, "settings.js");
+  try {
+    const render = f.components["reader-settings"].setup();
+    await flush();
+    assert(all(render()).some(x => x.props.role === "alert" && String(x.children).includes("could not load")));
+    await all(render()).find(x => x.tag === "form").props.onSubmit({ preventDefault() {} });
+    assert(all(render()).some(x => x.props.role === "alert" && String(x.children).includes("could not save")));
+    fail = false;
+    const pending = all(render()).find(x => x.tag === "button" && x.children === "Reload settings").props.onClick();
+    f.close(); release({ value: 99 }); await pending;
+    assert.equal(all(render()).find(x => x.tag === "input").props.value, 0);
+    assert(!all(render()).some(x => x.props.role === "status"));
+  } finally { f.close(); }
+});
+
+
+test("Demo Jellyfin uses the shared replacement password box and clears saved credentials", async () => {
+  const PasswordInput = { name: "PasswordInput" };
+  const f = await fixture("jellyfin-media-sync", id => id === "get-config" ? {is_admin: true, master: {}, profile: {}, users: []} : {}, "app.js", {PasswordInput});
+  try {
+    const render = f.components.sync.setup({host: f.host}); await flush();
+    const password = () => all(render()).find(x => x.tag === PasswordInput);
+    assert.equal(password().props.mode, "replace");
+    password().props["onUpdate:modelValue"]("DisposableCredential");
+    await all(render()).find(x => x.tag === "button" && x.children === "Save server").props.onClick();
+    assert.equal(f.calls.find(x => x[0] === "save-master")[1].api_key, "DisposableCredential");
+    assert.equal(password().props.modelValue, "");
   } finally { f.close(); }
 });

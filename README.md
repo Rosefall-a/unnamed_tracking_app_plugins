@@ -18,7 +18,7 @@ package/source, review identity, publisher/signature, compatibility and permissi
 then complete approval/configuration and enable it as required by the host flow.
 
 Maintained user-facing functionality lives in [official/](official/README.md).
-The [PWA](official/pwa/README.md) remains 0.0.1 during integration; its production
+The [PWA](official/pwa/README.md) appearance migration remains unreleased 0.0.2; its production
 release waits for a separate protected official signing identity. Examples remain
 demonstrations, even when their historical publisher text contains Official.
 See [folder-specific signing and environment keys](docs/official-signing.md).
@@ -26,6 +26,20 @@ See [folder-specific signing and environment keys](docs/official-signing.md).
 Catalogue membership does not establish trust. Publisher signing and host
 permission approval are separate. Unsigned preview packages remain untrusted.
 Full API/native frontend authority needs particular review; request narrow scopes.
+
+To test a branch or pull request, open its [Plugin checks workflow run](https://github.com/Rosefall-a/unnamed_tracking_app_plugins/actions/workflows/ci.yml)
+and download **unsigned-dist**. This job runs on every branch push and PR,
+independently of the full test job. Extract the artifact and upload the chosen
+`.utp` through the install screen. Review permissions and explicitly consent to
+the unsigned preview. No build tools or signing key are needed on your machine.
+The artifact includes source commits and package digests; it never updates
+published packages or release history. Previews disable automatic updates.
+
+[Collector's Archive](official/collectors-archive/README.md) is an official source
+preview preserving Cards, Sets and Bounties. Its personal, retryable import reads
+the host's retained legacy records through a separate permission. Its compiled
+native pages share the host's Vue runtime and themed components. Run `npm ci`
+and `npm run build:native` after editing its UI; CI checks the committed bundle.
 
 ## Create your first plugin
 
@@ -62,6 +76,9 @@ Use the [tutorial map](wiki/docs/development/index.md) for one-feature exercises
 | Source | Purpose |
 | --- | --- |
 | [UI/API](examples/ui-api/README.md) | Small reference: declarative page, setting and library action |
+| [Home Widgets](examples/home-widgets/README.md) | v1.1 personal widget options, separate phone layout and embedded media demo |
+| [Blue Hour and Purple Blocks](examples/theme-palettes/README.md) | Personal light/dark palettes and optional square-control CSS with a separate native permission |
+| [Shortcut Playground](examples/shortcut-playground/README.md) | v1.1.x host-managed random bindings, removal and a deliberate Search conflict |
 | [Playtime Report](examples/playtime-report/README.md) | Read → calculate → persist a user-scoped report |
 | [Recently Played Notifier](examples/recently-played-notifier/README.md) | Library data and host notifications |
 | [Metadata Curator](examples/metadata-curator/README.md) | Settings, metadata search and normalized state |

@@ -1,4 +1,5 @@
 {
+  "api_contract_version": "1.1.0",
   "application_version_range": ">=1.0.0",
   "backend_routes": [
     {
@@ -108,6 +109,14 @@
     {
       "name": "sessions.geoip.configure",
       "version": 1
+    },
+    {
+      "name": "frontend.placement.settings.account",
+      "version": 1
+    },
+    {
+      "name": "frontend.placement.settings.admin",
+      "version": 1
     }
   ],
   "dependencies": [],
@@ -192,10 +201,24 @@
         "version": 1
       },
       "rationale": "DESTRUCTIVE, HIGH RISK: allow administrators to upload and replace host GeoIP databases after explicit confirmation."
+    },
+    {
+      "capability": {
+        "name": "frontend.placement.settings.account",
+        "version": 1
+      },
+      "rationale": "Place these settings beneath the built-in account headings. Approval covers this settings area and its folders, not other settings areas or backend actions."
+    },
+    {
+      "capability": {
+        "name": "frontend.placement.settings.admin",
+        "version": 1
+      },
+      "rationale": "Place these settings beneath the built-in administration headings. Approval covers this settings area and its folders, not other settings areas or backend actions."
     }
   ],
   "plugin_id": "example.self-service-session-manager",
-  "sdk_version_range": "^1.0.0",
+  "sdk_version_range": "^1.1.0",
   "storage": {
     "quota_mb": 1
   },
@@ -217,5 +240,5 @@
     ],
     "settings": []
   },
-  "version": "2.2.0"
+  "version": "2.3.1"
 }

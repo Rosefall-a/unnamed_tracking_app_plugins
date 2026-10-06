@@ -1,12 +1,18 @@
 # Jellyfin Media Sync â€” official preview
 
-Version **0.0.1** is an official preview under test, with automatic package updates
-disabled. The independently installable `official.jellyfin-media-sync` package is
+This official preview is under test, with automatic package updates disabled.
+The independently installable `official.jellyfin-media-sync` package is
 separate from `example.jellyfin-media-sync`, which remains a demonstration.
 There is no automatic conversion of the demo's private storage or permission grants.
 
-An administrator adds servers and discovery keys on **Jellyfin servers** in
-Settings, tests them, and approves libraries. Music, books, Live TV and collections
+An administrator adds servers and discovery keys on **Jellyfin servers** directly
+under **Administration → Server management** in Settings, tests them, and approves
+libraries. Personal connections live at **Account → Your Jellyfin accounts** and
+the direct **Media → Jellyfin** sidebar entry. These placements require separate
+consent for the administration and account settings areas. Loading and failed
+configuration requests show a retry control and the host's access/runtime details;
+administrator denial is shown only after a successful role check.
+Music, books, Live TV and collections
 are excluded. Explicit film/TV/anime mappings win over automatic anime tag/genre
 detection. Anime films become a one-episode anime entry; season zero is supported.
 

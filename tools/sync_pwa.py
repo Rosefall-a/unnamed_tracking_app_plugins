@@ -17,8 +17,11 @@ def sync(mobile_root: Path, host_root: Path, *, check: bool = False) -> None:
     if not version.startswith("0.0."):
         raise ValueError("PWA integration must remain 0.0.x")
     manifest = json.loads((ROOT / "official/pwa/manifest.json").read_text())
-    if manifest["version"] != version:
-        raise ValueError("mobile and plugin PWA versions differ")
+    # Host contract migrations may release a new plugin around unchanged,
+    # exactly reviewed mobile assets. Their versions remain separate.
+    plugin_version = manifest["version"]
+    if not plugin_version.startswith("0.0.") or int(plugin_version.split(".")[2]) < int(version.split(".")[2]):
+        raise ValueError("plugin PWA version must remain 0.0.x and cannot precede its mobile assets")
     names = ("manifest.webmanifest", "service-worker.js", "offline.html", "pwa-icon.svg",
              "icon-192.png", "icon-512.png", "version.json", "README.md")
     hashes = {}

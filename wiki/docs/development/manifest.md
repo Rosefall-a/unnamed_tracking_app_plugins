@@ -20,6 +20,10 @@ Distribution-only fields belong in `release.json`, not the manifest.
 
 ## Compatibility and dependencies
 
+The redesigned host requires `api_contract_version: "1.1.0"` in both manifest
+and UI documents. Absent declarations remain v1.0.0 and stop the whole plugin.
+Use a tested SDK range beginning at v1.1. See [the migration guide](v1.1-migration.md).
+
 Use stable `MAJOR.MINOR.PATCH` versions. The host supports exact versions, `^1.0.0`,
 `~1.0.0`, `1.x`, `*`, and comma-separated AND constraints such as
 `>=1.0.0,<2.0.0`; npm-style spaces or `||` are not supported. Declare a range

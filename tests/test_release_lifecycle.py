@@ -291,3 +291,20 @@ def test_package_generation_rejects_unindexed_output(built_distribution, tmp_pat
     shutil.copyfile(original, root / "dist/unindexed.utp")
     with pytest.raises(ValueError, match="untracked packages"):
         validate_distribution(root)
+
+
+def test_new_example_requires_explicit_unreleased_identity(tmp_path):
+    from tools.distribution import catalogue_document
+    source = tmp_path / "examples/new-example"
+    source.mkdir(parents=True)
+    manifest = {"plugin_id": "example.new-example"}
+    with pytest.raises(ValueError, match="missing release history"):
+        catalogue_document(tmp_path, [(source, manifest)], {})
+    config = {"name": "Preview", "base_url": "https://example.invalid/plugins",
+              "unreleased_plugins": ["example.new-example"]}
+    (tmp_path / "catalogue.json").write_text(json.dumps(config))
+    assert catalogue_document(tmp_path, [(source, manifest)], {})["plugins"] == []
+    config["unreleased_plugins"] = ["example.other"]
+    (tmp_path / "catalogue.json").write_text(json.dumps(config))
+    with pytest.raises(ValueError, match="missing release history"):
+        catalogue_document(tmp_path, [(source, manifest)], {})

@@ -90,11 +90,12 @@ try {
   await page.goto(origin);
   await page.getByRole("heading", { name: entry.name, exact: true }).waitFor();
   await capture("installed-plugin-component.png", "Actual Plugin Manager installed card; status/grants are fixture data.");
-  await page.getByRole("button", { name: "Install a plugin", exact: true }).click();
-  await page.getByRole("dialog", { name: "Install a plugin", exact: true }).waitFor();
+  const acquisitionLabel = await page.getByRole("button", { name: "Install package or URL", exact: true }).count() ? "Install package or URL" : "Install a plugin";
+  await page.getByRole("button", { name: acquisitionLabel, exact: true }).click();
+  await page.getByRole("dialog", { name: acquisitionLabel, exact: true }).waitFor();
   await capture("plugin-install-component.png", "Actual installer source chooser: upload, URL and catalogue; no install executed.");
-  await page.getByRole("dialog", { name: "Install a plugin", exact: true }).getByRole("button", { name: "Close", exact: true }).click();
-  await page.getByRole("button", { name: "Manage plugin", exact: true }).click();
+  await page.getByRole("dialog", { name: acquisitionLabel, exact: true }).getByRole("button", { name: "Close dialog", exact: true }).click();
+  await page.getByRole("button", { name: "Settings & access", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: entry.name, exact: true });
   await dialog.getByRole("button", { name: "Stop", exact: true }).waitFor();
   await capture("lifecycle-controls-component.png", "Actual stop/disable/reinstall/purge/uninstall controls; no operation executed.");

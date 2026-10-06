@@ -32,6 +32,18 @@ distinct from contributing a new host Settings section; that uses
 Test empty values, invalid settings, restart and update preservation. Keep tokens
 out of these ordinary fields; use [secrets](secrets.md).
 
+## Place a page in the host Settings areas
+
+With the separately granted `frontend.settings` capability, declare a `settings_sections` contribution targeting a declared page. Set `area` to `account`, `preferences` or `administration`, and use `group` for an existing or new group label within that area. Both native and declarative pages use this contract.
+
+```json
+{"id":"reader-settings","label":"Document reader","page_id":"reader-settings","area":"administration","group":"Documents","visibility":{"admin_only":true}}
+```
+
+Administration placement requires administrator-only visibility. It never grants backend permissions; retain action authorization. Omitted placement keeps existing behavior (administrator-only → Administration; other pages → Preferences; group Extensions). Group labels are plain text with a 64-character limit. Core section IDs cannot be replaced by these contributions.
+
+Jellyfin's personal sync page and Session Manager's personal page belong to Account; official Jellyfin server management and Document Reader installation limits belong to Administration. Help's showcase belongs to Preferences. These source examples demonstrate placement without private host imports.
+
 ![Actual Jellyfin configuration UI before entering a server URL](../assets/screenshots/jellyfin-native-ui.png)
 
 The empty-server validation state is intentional; see [capture provenance](../assets/screenshots/index.md).

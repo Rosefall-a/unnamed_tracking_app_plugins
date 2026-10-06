@@ -2,7 +2,16 @@
 
 The bundled `sdk.plugin_protocol.request` helper writes newline-delimited JSON
 to stdout and reads one response from stdin. Each request has `api_version: v1`,
-`method`, `capability` and object `payload`. Errors raise `RuntimeError`.
+`method`, `capability` and object `payload`. Errors raise `GatewayRequestError`,
+a `RuntimeError` subclass that retains the existing message and exposes the
+optional public `code` from `error_detail`. Older string-only responses have
+`code=None`; existing `except RuntimeError` callers continue to work.
+
+Retry `unavailable` only when the operation is safe to repeat. For example, the
+Discord provider's idempotent startup registration waits for the app callback
+with bounded backoff. It does not retry `forbidden`, invalid requests or other
+permanent errors, and the wait never delivers a notification. Do not blindly
+retry library edits, revocations or other actions with side effects.
 
 ```python
 from sdk.plugin_protocol import request

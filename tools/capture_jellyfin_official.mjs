@@ -23,6 +23,11 @@ try {
   browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, colorScheme: "dark" });
   assert((await context.request.post(`${base}/api/auth/login`, { data: { username_or_email: process.env.PRIMARY_USER_USERNAME, password: process.env.PRIMARY_USER_PASSWORD } })).ok());
+  // Capture a returning account; first-login appearance has separate host coverage.
+  const preferences = await context.request.get(`${base}/api/preferences`);
+  assert(preferences.ok());
+  if (Object.hasOwn(await preferences.json(), "ui_welcome_completed"))
+    assert((await context.request.patch(`${base}/api/preferences`, { data: { ui_welcome_completed: true } })).ok());
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
@@ -33,8 +38,8 @@ try {
   assert.equal(await page.getByLabel("Discovery API key", { exact: false }).count(), 0);
   await page.screenshot({ path: path.join(output, "jellyfin-official-accounts.png"), fullPage: true });
   // The settings contribution remains separate from the user's account route.
-  await page.goto(`${base}/settings`);
-  await page.getByRole("button", { name: "Jellyfin servers", exact: true }).first().click();
+  await page.goto(`${base}/settings?section=jellyfin-admin`);
+  await page.getByRole("heading", { name: "Jellyfin servers", exact: true }).waitFor();
   await page.getByTestId("jf-admin").waitFor();
   assert.equal(await page.getByTestId("jf-account").count(), 0);
   await page.screenshot({ path: path.join(output, "jellyfin-official-admin.png"), fullPage: true });

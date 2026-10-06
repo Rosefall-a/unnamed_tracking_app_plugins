@@ -1,8 +1,56 @@
 {
+  "api_contract_version": "1.1.0",
   "schema_version": "v1",
   "plugin_id": "example.ui-api",
   "title": "UI and API Example",
-  "settings": [{"id": "settings", "title": "Display settings", "fields": [{"id": "display_mode", "label": "Display mode", "type": "text", "default": "compact"}]}],
-  "actions": [{"id": "refresh", "label": "Read library", "handler": "plugin:refresh", "capability": {"name": "games.read", "version": 1}}],
-  "pages": [{"id": "games", "title": "Library API example", "description": "Read up to 50 games through the public gateway.", "settings": ["settings"], "actions": ["refresh"], "navigation": {"sidebar": true}}]
+  "settings": [
+    {
+      "id": "settings",
+      "title": "Display settings",
+      "fields": [
+        {
+          "id": "display_mode",
+          "label": "Display mode",
+          "type": "text",
+          "default": "compact"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "refresh",
+      "label": "Read library",
+      "handler": "plugin:refresh",
+      "capability": {
+        "name": "games.read",
+        "version": 1
+      }
+    },
+    {
+      "id": "scheduled-summary",
+      "label": "Run library summary",
+      "handler": "plugin:scheduled_summary",
+      "capability": {
+        "name": "games.read",
+        "version": 1
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "games",
+      "title": "Library API example",
+      "description": "Read up to 50 games through the public gateway.",
+      "settings": [
+        "settings"
+      ],
+      "actions": [
+        "refresh"
+      ],
+      "navigation": {
+        "sidebar": true
+      }
+    }
+  ]
 }

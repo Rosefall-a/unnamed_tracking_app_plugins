@@ -10,4 +10,10 @@ Permissions requested:
 
 The runtime accepts only HTTPS `discord.com` or `discordapp.com` `/api/webhooks/` destinations and limits message content to Discord's 2,000-character bound. The plugin never logs or returns the webhook. Set `PLUGIN_RUNTIME_DISCORD_EGRESS=true` to enable the narrowly scoped runtime sender; outbound access remains disabled otherwise.
 
+At startup, provider registration waits for the host gateway using bounded
+backoff when the public gateway reports a temporary `unavailable` error. This
+supports runtime-first startup and an app-only callback configuration without
+requiring a manual retry. Permission, invalid-request and other permanent errors
+are not retried. Registration is idempotent; this wait does not deliver messages.
+
 Build all packages with `python tools/build_packages.py`. Local builds are intentionally unsigned and require the host's untrusted-package confirmation; release CI supplies the reviewed signing identity. Requires the host Plugin API v1 notification-provider capabilities introduced by the Phase 2 plugin-manager work.

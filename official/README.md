@@ -13,3 +13,10 @@ example. Official plugins are maintained user-facing features. Demonstrations
 remain in `examples/` and use separate demo signing identities. Valid signature
 and official status are distinct; every plugin still requires its declared
 permissions, with no sandbox exemptions or special host APIs.
+
+[Collector's Archive](collectors-archive/README.md), **0.0.1**, preserves Cards,
+Sets and Bounties after their removal from the host. It is an unreleased source
+preview, available in branch CI's `unsigned-dist` artifact. Its native pages use
+the public host UI runtime, and its personal import preserves legacy identifiers,
+artwork, prestige links, evidence, journals and point history without deleting
+server originals. A signed production release requires the official publisher.

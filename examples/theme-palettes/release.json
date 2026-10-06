@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "publisher": "Unnamed Tracking Official",
+  "tags": [
+    "demo",
+    "frontend",
+    "themes"
+  ],
+  "icon": "icon.svg",
+  "automatic_update": null,
+  "release_notes": "Optional semantic palettes with personal saved colors. Purple Blocks now squares the complete desktop/mobile shell, navigation, dialogs and controls through its selected-theme stylesheet."
+}

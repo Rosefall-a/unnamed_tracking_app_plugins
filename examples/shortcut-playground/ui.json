@@ -1,0 +1,48 @@
+{
+  "schema_version": "v1",
+  "api_contract_version": "1.1.0",
+  "plugin_id": "example.shortcut-playground",
+  "title": "Shortcut playground",
+  "settings": [],
+  "actions": [],
+  "tables": [],
+  "dialogs": [],
+  "menus": [],
+  "pages": [
+    {
+      "id": "playground",
+      "title": "Shortcut playground",
+      "description": "Editable shortcut teaching example.",
+      "settings": [],
+      "actions": [],
+      "tables": [],
+      "dialogs": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "playground",
+      "path": "playground",
+      "page_id": "playground"
+    }
+  ],
+  "navigation": [
+    {
+      "id": "playground",
+      "location": "main.sidebar",
+      "route_id": "playground",
+      "label": "Shortcut playground",
+      "group": "Extensions",
+      "order": 50,
+      "visibility": {
+        "admin_only": false
+      }
+    }
+  ],
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": [
+      "native/style.css"
+    ]
+  }
+}

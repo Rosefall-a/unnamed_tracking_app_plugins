@@ -14,6 +14,13 @@ const root = path.resolve(
   __dirname,
   "../examples/scoped-document-viewer/frontend",
 );
+// The reviewed builder places these public SDK files in each themed package.
+// Source checkouts intentionally keep one SDK copy; serve those exact bytes here.
+function assetPath(file) {
+  if (file === "appearance.css" || file === "appearance.js")
+    return path.resolve(__dirname, "../sdk", `frontend_${file}`);
+  return path.resolve(root, file);
+}
 const csp =
   "default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-src 'self' blob:; object-src 'none'; base-uri 'none'; frame-ancestors 'self'";
 let server, browser, base;
@@ -42,11 +49,10 @@ before(async () => {
     const pathname = decodeURIComponent(
       new URL(req.url, "http://local").pathname,
     );
-    const target = path.resolve(
-      root,
-      "." + pathname.replace(/^\/frontend/, ""),
-    );
-    if (!target.startsWith(root + path.sep) || !fs.existsSync(target)) {
+    const relative = pathname.replace(/^\/frontend\//, "");
+    const target = assetPath(relative);
+    const sdkAsset = relative === "appearance.css" || relative === "appearance.js";
+    if ((!sdkAsset && !target.startsWith(root + path.sep)) || !fs.existsSync(target)) {
       res.writeHead(404);
       res.end();
       return;
@@ -63,12 +69,12 @@ before(async () => {
         .replace(
           /<link rel="stylesheet" href="\.\/([^"]+)"\s*\/>/g,
           (_, file) =>
-            `<style nonce="fixture">${fs.readFileSync(path.join(root, file), "utf8")}</style>`,
+            `<style nonce="fixture">${fs.readFileSync(assetPath(file), "utf8")}</style>`,
         )
         .replace(
-          /<script src="\.\/([^"]+)"><\/script>/g,
+          /<script src="\.\/([^"]+)"(?: defer)?><\/script>/g,
           (_, file) =>
-            `<script nonce="fixture">${fs.readFileSync(path.join(root, file), "utf8").replace(/<\/script/gi, "<\\/script")}</script>`,
+            `<script nonce="fixture">${fs.readFileSync(assetPath(file), "utf8").replace(/<\/script/gi, "<\\/script")}</script>`,
         );
       policy = policy.replace(
         "script-src 'self'",
@@ -134,6 +140,9 @@ async function openFixture({
   const calls = [];
   await page.exposeFunction("bridge", async (envelope) => {
     calls.push(envelope);
+    if (envelope.method === "plugin.theme")
+      return { api_contract_version: "1.1.0", mode: "light", high_contrast: false, reduce_motion: false, tokens: {} };
+    if (envelope.method === "plugin.resize") return {};
     if (envelope.payload.actionId === "load-settings")
       return { value: maxPreviewMiB };
     if (envelope.method === "plugin.save-settings") {

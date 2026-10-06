@@ -2,7 +2,7 @@ name: Publish plugin packages
 
 on:
   push:
-    branches: [main]
+    branches: ["**"]
     paths-ignore:
       - 'dist/**'
       - 'releases/**'

@@ -17,7 +17,7 @@
 .jf-official .jf-panel {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: var(--ui-radius-card);
   padding: 1.25rem;
   margin: 1rem 0;
 }
@@ -34,7 +34,8 @@
   color: var(--text-h);
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 0.45rem;
+  border-radius: var(--ui-radius-control);
+  min-height: max(44px, var(--ui-control-height));
   padding: 0.6rem;
   font: inherit;
   width: 100%;
@@ -60,7 +61,8 @@
   background: var(--accent-bg);
   border: 1px solid var(--accent-border);
   padding: 0.55rem 0.8rem;
-  border-radius: 0.45rem;
+  border-radius: var(--ui-radius-control);
+  min-height: max(44px, var(--ui-control-height));
   cursor: pointer;
   font: inherit;
 }
@@ -74,7 +76,7 @@
 }
 .jf-official.jf-sync fieldset {
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--ui-radius-card);
 }
 .jf-official .jf-review,
 .jf-official .jf-server {
@@ -84,14 +86,14 @@
 .jf-official .jf-status {
   padding: 0.7rem;
   background: var(--accent-bg);
-  border-radius: 0.5rem;
+  border-radius: var(--ui-radius-row);
 }
 .jf-official .jf-warning,
 .jf-official .jf-error {
   padding: 0.7rem;
   border: 1px solid var(--border);
   border-left: 3px solid var(--accent);
-  border-radius: 0.4rem;
+  border-radius: var(--ui-radius-control);
 }
 .jf-official.jf-sync p,
 .jf-official.jf-sync code {

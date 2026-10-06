@@ -29,6 +29,8 @@ export function activate(context) {
         });
         const statuses = ref({});
         const busy = ref(false);
+        const loading = ref(true);
+        const configurationError = ref("");
         const message = ref("");
         const warnings = ref([]);
         const pending = ref(null);
@@ -91,10 +93,10 @@ export function activate(context) {
             if (id === "quick-connect-finish" && result.ok)
               pending.value = null;
             await refresh();
-          } catch {
+          } catch (error) {
             if (life.live)
               message.value =
-                "Operation failed. Check credentials, server access and plugin permissions in runtime diagnostics.";
+                error?.message || "Operation failed. Check credentials, server access and plugin permissions in runtime diagnostics.";
           } finally {
             if (life.live) busy.value = false;
           }
@@ -104,19 +106,26 @@ export function activate(context) {
             const result = await run("status");
             if (life.live) statuses.value = result.accounts || {};
             await refresh(true);
-          } catch {
+          } catch (error) {
             if (life.live)
               message.value =
-                "Sync status is unavailable. Check plugin permissions.";
+                error?.message || "Sync status is unavailable. Check plugin permissions.";
           }
           if (life.live) life.timer = setTimeout(poll, 5000);
         }
-        refresh().catch(() => {
-          if (life.live)
-            message.value =
-              "Configuration unavailable. Check plugin permissions.";
-        });
-        if (!admin) poll();
+        async function loadConfiguration() {
+          loading.value = true;
+          configurationError.value = "";
+          try {
+            await refresh();
+            if (life.live && !admin) poll();
+          } catch (error) {
+            if (life.live) configurationError.value = error?.message || "Check the plugin's enabled state and storage permission in Plugin Manager.";
+          } finally {
+            if (life.live) loading.value = false;
+          }
+        }
+        loadConfiguration();
         const button = (label, id, values = () => ({})) =>
           h(
             "button",
@@ -130,7 +139,11 @@ export function activate(context) {
         const field = (target, key, label, type = "text") =>
           h("label", { class: "jf-field" }, [
             h("span", label),
-            h("input", {
+            type === "password" && context.ui?.PasswordInput ? h(context.ui.PasswordInput, {
+              modelValue: target[key], disabled: busy.value, mode: "replace",
+              inputAriaLabel: label, autocomplete: "new-password",
+              "onUpdate:modelValue": value => { target[key] = value; },
+            }) : h("input", {
               type,
               value: target[key],
               disabled: busy.value,
@@ -635,6 +648,14 @@ export function activate(context) {
             ]),
           ];
         }
+        function contents() {
+          if (loading.value) return [h("p", { role: "status" }, "Loading Jellyfin configuration…")];
+          if (configurationError.value) return [panel("Jellyfin configuration unavailable", [
+            h("p", { role: "alert", class: "jf-error" }, configurationError.value),
+            h("button", { type: "button", onClick: loadConfiguration }, "Retry loading"),
+          ])];
+          return admin ? adminContents() : userContents();
+        }
         return () =>
           h("section", { class: "jf-official jf-sync" }, [
             h(
@@ -652,7 +673,7 @@ export function activate(context) {
                 ? "Manage servers and library approval for this installation."
                 : "Use every enabled account for sync. Your priority order chooses the Watch Now shortcut.",
             ),
-            !admin
+            !admin && !loading.value && !configurationError.value
               ? h("p", [
                   "Your host user ID: ",
                   h("code", config.value.host_user_id || "Loading…"),
@@ -662,7 +683,7 @@ export function activate(context) {
             ...warnings.value.map((warning) =>
               h("p", { class: "jf-warning", role: "alert" }, warning),
             ),
-            ...(admin ? adminContents() : userContents()),
+            ...contents(),
           ]);
       },
     });

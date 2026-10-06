@@ -1,0 +1,82 @@
+{
+  "schema_version": "v1",
+  "api_contract_version": "1.1.0",
+  "plugin_id": "example.theme-palettes",
+  "title": "Blue Hour and Purple Blocks",
+  "themes": [
+    {
+      "id": "blue-hour",
+      "label": "Blue Hour",
+      "description": "Cool blue menus and calm surfaces for your personal library.",
+      "colors": {
+        "light": {
+          "background": "#f1f5fc",
+          "surface": "#ffffff",
+          "surface_alt": "#e5edf8",
+          "text": "#20304b",
+          "muted": "#51617a",
+          "accent": "#3961a6",
+          "success": "#216e3e",
+          "warning": "#855000",
+          "error": "#b42318",
+          "info": "#265a8b",
+          "purple": "#6951a2"
+        },
+        "dark": {
+          "background": "#121a29",
+          "surface": "#1c293e",
+          "surface_alt": "#273650",
+          "text": "#edf3fc",
+          "muted": "#b0bfd6",
+          "accent": "#93b8fa",
+          "success": "#96d5a9",
+          "warning": "#f2c87a",
+          "error": "#ffa6a0",
+          "info": "#a2c8ef",
+          "purple": "#c6b5f1"
+        }
+      },
+      "order": 0
+    },
+    {
+      "id": "purple-blocks",
+      "label": "Purple Blocks",
+      "description": "A gloriously purple interface with square controls, bold borders and blocky cards.",
+      "colors": {
+        "light": {
+          "background": "#efe1ff",
+          "surface": "#fbf5ff",
+          "surface_alt": "#e5caff",
+          "text": "#321047",
+          "muted": "#664078",
+          "accent": "#7600b8",
+          "success": "#235b42",
+          "warning": "#754800",
+          "error": "#b12743",
+          "info": "#594aad",
+          "purple": "#8500c4"
+        },
+        "dark": {
+          "background": "#1e082b",
+          "surface": "#30103f",
+          "surface_alt": "#48175b",
+          "text": "#faeaff",
+          "muted": "#d2abdf",
+          "accent": "#dd9bff",
+          "success": "#a9dfbd",
+          "warning": "#f4d197",
+          "error": "#ffacbe",
+          "info": "#c7bdff",
+          "purple": "#e2aaff"
+        }
+      },
+      "order": 10
+    }
+  ],
+  "native_frontend": {
+    "entry": "native/app.js",
+    "styles": [
+      "native/style.css"
+    ]
+  }
+}

@@ -1,4 +1,5 @@
 {
+  "api_contract_version": "1.1.0",
   "schema_version": "v1",
   "plugin_id": "example.scoped-document-viewer",
   "title": "Scoped Document Viewer",
@@ -75,6 +76,17 @@
         "label": "Documents",
         "order": 40
       }
+    },
+    {
+      "id": "reader-settings",
+      "title": "Document reader settings",
+      "description": "Configure safe previews and original downloads.",
+      "settings": [
+        "viewer-settings"
+      ],
+      "actions": [
+        "load-settings"
+      ]
     }
   ],
   "document_readers": [
@@ -86,6 +98,40 @@
         "*"
       ],
       "order": 0
+    }
+  ],
+  "native_frontend": {
+    "entry": "native/settings.js",
+    "styles": [
+      "native/style.css"
+    ]
+  },
+  "settings_sections": [
+    {
+      "id": "reader-settings",
+      "label": "Document reader",
+      "page_id": "reader-settings",
+      "order": 45,
+      "visibility": {
+        "admin_only": true
+      },
+      "area": "administration",
+      "group": "Server management",
+      "folders": [
+        "Documents"
+      ]
+    }
+  ],
+  "navigation": [
+    {
+      "id": "reader-settings-link",
+      "location": "settings.sidebar",
+      "label": "Document reader",
+      "settings_section_id": "reader-settings",
+      "order": 45,
+      "visibility": {
+        "admin_only": true
+      }
     }
   ]
 }
